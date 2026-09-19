@@ -1,0 +1,217 @@
+\section{The \texttt{numpy} module, vectorization and other miscellanea}
+
+\subsection{Introduction to \texttt{numpy}}
+As a data scientist, the \texttt{numpy}, \texttt{pandas} and \texttt{scipy} modules will be your best friends.
+Among many other things, \texttt{numpy} offers:
+\begin{itemize}
+    \item[-] a powerful n-dimensional array object;
+    \item[-] mathematical functions that interoperate natively with arrays.
+\end{itemize}
+\texttt{scipy} provides the user with powerful functions for:
+\begin{itemize}
+    \item[-] numerical integration;
+    \item[-] optimization (a.k.a. fitting);
+    \item[-] interpolation;
+    \item[-] signal processing.
+\end{itemize}
+Finally, \texttt{pandas} is the best tool to interoperate your code with Excel.
+
+In this section we will sum up some of the most important functions, objects and capabilities of the \texttt{numpy} library. As a fellow Python user, you should be familiar with the basics, so we will fly through the first introductory snippets of code and focus more on the concept of vectorization.
+
+\subsection{Basics of \texttt{numpy}}
+\subsubsection{- \texttt{numpy} arrays}
+Let's start by reviewing how to create and manipulate basic \texttt{numpy} arrays:
+
+\input{pygments/numpy_arrays}
+
+\subsubsection{- \texttt{numpy} arrays vs. Python lists}
+Arrays and lists are fundamentally different objects:
+\begin{itemize}
+    \item[-] They have a different footprint in memory, and operate at different speeds;
+    \item[-] Arrays are homogeneous (which means that each element is of the same type), lists don't need to be;
+    \item[-] Arrays offer a much more powerful indexing/slicing method;
+    \item[-] Arrays interoperate with \texttt{numpy} mathematical functions.
+\end{itemize}
+
+Here is a code snippet demonstrating some of these differences:
+
+\input{pygments/numpy_arrays_vs_lists}
+
+\subsubsection{- Broadcasting}
+Broadcasting is a powerful mechanism that allows \texttt{numpy} to work with arrays of different shapes when performing arithmetic operations:
+
+\input{pygments/numpy_arrays_broadcasting}
+
+\subsubsection{- Mathematical functions in \texttt{numpy}}
+Here are some examples of how mathematical functions are applied to arrays:
+
+\input{pygments/numpy_functions}
+
+\texttt{numpy} mathematical functions interoperate natively with arrays (and work on plain old numbers, too). Under certain conditions, \texttt{numpy} can make operations on arrays of different shapes. This is extremely useful when vectorizing problems.
+
+\subsubsection{- Arrays and masks}
+Masks are a powerful tool in \texttt{numpy}. They can replace conditional expressions in a for loop in a vectorization context (more on this later). The following example shows how masks can be applied:
+
+\input{pygments/numpy_masks}
+
+\subsection{Vectorization}
+
+Python is known to be slow. This is the price you pay for being so beautiful and flexible. Does it matter? It depends on the situation. If you are parsing a text file or fetching a web page, then probably not, but if you are performing CPU-intensive processing on a TB of data, probably yes.
+
+What's so magical about using \texttt{numpy}? \texttt{numpy} is written in C as a Python extension, so routines are highly optimized to crunch numbers. When you perform an array operation in Python you are actually executing optimized C code. Here comes \textbf{vectorization}, which is the practice of substituting explicit \texttt{for} or \texttt{while} loops with operations on arrays. If you are working with large amounts of data you must find a way to vectorize your processes. Of course, not every problem can be vectorized, but the ones that can will surely experience a significant speed-up.
+
+\textbf{Basic message: avoid loops in pure Python when crunching numbers and vectorize your problems (if you can)}.
+
+To illustrate the power of vectorization, consider this comparison between a standard loop and a vectorized approach:
+
+\input{pygments/vectorization}
+
+\subsection{Pseudo-random number generators}
+Every programming language comes with a Pseudo Random Number Generator (PRNG) that produces random floats uniformly in $[0.0,~1.0)$. Python is no exception: 
+\begin{verbatim}
+import random
+x = random.random()
+\end{verbatim}
+Here's the link for the \texttt{random} library documentation: \url{https://docs.python.org/3/library/random.html}. \texttt{numpy} itself has a PRNG, that you can find in the \texttt{numpy.random} module.
+
+PRNGs are an interesting (and fun) subject by themselves. See for example:
+\begin{itemize}
+    \item[-] Donald E. Knuth, \emph{The Art of Computer Programming, Volume 2: Seminumerical Algorithms}, 3rd Edition
+    \item[-] M. Matsumoto and T. Nishimura, \emph{Mersenne Twister: A 623-dimensionally equidistributed uniform pseudorandom number generator}, ACM Transactions on Modeling and Computer Simulation Vol. 8, No. 1, January pp.3--30 1998.
+\end{itemize}
+
+\subsection{Generating points with fixed PDF using PRNGs}
+
+\footnote{These next two sections were surely NOT generated by AI starting from the lesson slides. How could you think something like that?!} Let's say we want to simulate the results of the measurements of a certain quantity $x$ knowing its Probability Density Function (PDF) $p(x)$.
+
+\subsubsection{Method 1: The Rejection Method (Hit or Miss)}
+
+\begin{center}
+\includegraphics[width=0.5\textwidth]{hitmiss}
+\end{center}
+The "Hit or Miss" approach, formally known as the \textbf{Rejection Method}, is a geometric strategy. The idea is to enclose your target PDF inside a bounding box (or a simpler distribution) that is easy to sample from.
+
+\begin{enumerate}
+    \item Generate a candidate $x$ from the bounding box.
+    \item Generate a random height $y$.
+    \item \textit{Accept} the candidate if $y \leq p(x)$ (the point falls "under" the curve).
+    \item \textit{Reject} it otherwise.
+\end{enumerate}
+
+While conceptually simple, this method is often computationally inefficient because many generated points are discarded, especially if the bounding box creates a large empty area above the curve.
+
+\subsubsection{Method 2: Inverse Transform Sampling}
+A much more elegant and efficient approach is the \textbf{Inverse Transform Sampling}. Instead of throwing points and hoping they land correctly, we leverage the mathematical properties of the Cumulative Distribution Function (CDF).
+
+Let us define the fundamental components:
+\begin{itemize}
+    \item[-] \textbf{PDF ($p(x)$):} The probability density we want to simulate.
+    \item[-] \textbf{CDF ($F(x)$):} The integral of the PDF, representing the probability that a variable takes a value less than or equal to $x$:
+    \begin{equation}
+        F(x) = \int_{-\infty}^{x} p(x') \, dx'
+    \end{equation}
+    Since it is a probability, the range of $F(x)$ is always $[0, 1]$.
+\end{itemize}
+
+The core idea relies on the \textit{Percent-Point Function (PPF)}, which is simply the inverse of the CDF: $x = F^{-1}(q)$.
+
+There is a fundamental theorem stating that:
+\begin{quote}
+    \textit{If $q$ is a uniformly distributed random number in $[0, 1]$, then the variable $x = F^{-1}(q)$ is distributed according to $p(x)$.}
+\end{quote}
+
+This means we can transform a simple uniform random number (which any computer can generate easily) into a complex distribution just by passing it through the inverse CDF.
+
+To implement this method in a real scenario, follow these three steps:
+
+\begin{enumerate}
+    \item \textit{Integrate:} Calculate the CDF, $F(x)$, by integrating your target PDF.
+    \item \textit{Invert:} Algebraically solve the equation $y = F(x)$ for $x$. This gives you the inverse function $x = F^{-1}(y)$.
+    \item \textit{Sample:}
+    \begin{itemize}
+        \item[-] Generate a random number $u$ from a uniform distribution ($0 \le u \le 1$).
+        \item[-] Compute your target value: $x_{target} = F^{-1}(u)$.
+    \end{itemize}
+\end{enumerate}
+
+\underline{Practical example: the exponential distribution} \\
+Let's see how this translates into practice. Suppose we want to sample from $p(x) = \lambda e^{-\lambda x}$ (for $x \ge 0$).
+\begin{enumerate}
+    \item Find the CDF: $F(x) = \int_0^x \lambda e^{-\lambda t} dt = 1 - e^{-\lambda x}$.
+    \item Invert: Set $u = 1 - e^{-\lambda x}$. Solving for $x$, we get $x = -\frac{\ln(1-u)}{\lambda}$.
+    \item Code it: Generate a series of random numbers $u$  and plug them into the formula above. The result is a series of numbers with the desired PDF.
+\end{enumerate}
+
+\begin{comment}
+\subsection{How do I throw PRN with arbitrary pdf? (Hit or miss)}
+\centering\includegraphics[width=0.5\textwidth]{hitmiss}
+
+\begin{itemize}
+    \item Hit or miss, aka acceptance/rejection method:
+    \begin{itemize}
+        \item Enclose your pdf in a rectangle
+        \item Throw a $x$ and a $y$
+        \item Accept $x$ if $y \leq f(x)$
+    \end{itemize}
+    \item \textbf{This is horrible---please don't use it!}
+\end{itemize}
+
+\subsection{How do I throw PRN with arbitrary pdf? (Inverse transform)}
+\begin{itemize}
+    \item Probability density function (pdf)
+    $$
+    p(x) \quad (\ge 0)
+    $$
+    \item Cumulative function (cf)
+    $$
+    F(x) = \int_{-\infty}^{x} p(x') dx'
+    $$
+    \item Percent-point function (ppf)
+    $$
+    x = F^{-1}(q)
+    $$
+    \item \textbf{Awesome fact: if $q$ is uniformly distributed in $[0, 1]$, then $x = F^{-1}(q)$ is distributed according to $p(x)$!}
+\end{itemize}
+\end{comment}
+
+\subsection{An interesting object: splines}
+
+Spline interpolation represents a sophisticated alternative to global polynomial fitting, designed to avoid the oscillatory instability often seen with high-degree polynomials (Runge's phenomenon). 
+
+Instead of using a single function for the entire dataset, a spline is defined \textbf{piecewise}: the interval between two consecutive data points is bridged by a low-degree polynomial, most commonly a cubic one ($k=3$). 
+Crucially, these segments are not isolated; they are mathematically "glued" together at the control points (knots) by enforcing continuity not just of the function itself, but of its first $k-1$ derivatives. This ensures the resulting curve is smooth and differentiable everywhere.
+
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{spline}
+\end{center}
+
+From a computational standpoint, splines are extremely efficient. Provided that the input $x$-array is sorted, the specific polynomial segment corresponding to a query point can be located via a binary search, resulting in a complexity of $\mathbf{O(\log N)}$. 
+
+Since the underlying structure is purely polynomial, analytical operations such as differentiation and integration can be computed \emph{exactly} using elementary arithmetic, without the need for numerical approximation.
+
+Here is how you can perform spline interpolation in Python using \texttt{scipy}:
+
+\input{pygments/spline}
+
+\subsection{References}
+\begin{itemize}
+    \item[-] \url{https://numpy.org/}
+    \item[-] \url{https://www.scipy.org/}
+    \item[-] \url{https://pandas.pydata.org/}
+    \item[-] \url{https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html}
+    \item[-] \url{https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html}
+    \item[-] \url{https://docs.scipy.org/doc/scipy/reference/interpolate.html}
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+

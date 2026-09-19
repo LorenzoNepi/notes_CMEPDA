@@ -1,0 +1,39 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/pima_classifier.py}},commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Necessary modules}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{numpy}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{loadtxt}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{models}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{Sequential}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{layers}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{Dense}
+
+\PY{c+c1}{\PYZsh{} Dataset taken from txt}
+\PY{n}{dataset}\PY{o}{=}\PY{n}{loadtxt}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{pima\PYZus{}indians\PYZus{}diabetes.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{,}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{x}\PY{o}{=}\PY{n}{dataset}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{:}\PY{l+m+mi}{8}\PY{p}{]}
+\PY{n}{y}\PY{o}{=}\PY{n}{dataset}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Building a fully connected NN in a sequential way }
+\PY{c+c1}{\PYZsh{} (Note which activation function we are using)}
+\PY{n}{model} \PY{o}{=} \PY{n}{Sequential}\PY{p}{(}\PY{p}{)}
+\PY{n}{model}\PY{o}{.}\PY{n}{add}\PY{p}{(}\PY{n}{Dense}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{n}{input\PYZus{}dim}\PY{o}{=}\PY{l+m+mi}{8}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{relu}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+\PY{n}{model}\PY{o}{.}\PY{n}{add}\PY{p}{(}\PY{n}{Dense}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{relu}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+\PY{n}{model}\PY{o}{.}\PY{n}{add}\PY{p}{(}\PY{n}{Dense}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sigmoid}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Compiling the model using Adam as optimizer and accuracy as metric}
+\PY{n}{model}\PY{o}{.}\PY{n}{compile}\PY{p}{(}\PY{n}{loss}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{binary\PYZus{}crossentropy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{optimizer}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adam}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{metrics}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{accuracy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Fitting our model in 150 epochs and using batches of data}
+\PY{n}{model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{x}\PY{p}{,}\PY{n}{y}\PY{p}{,} \PY{n}{epochs}\PY{o}{=}\PY{l+m+mi}{150}\PY{p}{,} \PY{n}{batch\PYZus{}size}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{)}
+\PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{accuracy} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{evaluate}\PY{p}{(}\PY{n}{x}\PY{p}{,}\PY{n}{y}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Accuracy: }\PY{l+s+si}{\PYZpc{}f}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}}\PY{p}{(}\PY{n}{accuracy}\PY{o}{*}\PY{l+m+mi}{100}\PY{p}{)}\PY{p}{)}
+
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/pima_classifier.py}},commandchars=\\\{\}]
+[Output]
+> python pima_classifier.py
+Epoch 1/150
+77/77 [==============================] - 1s 2ms/step - loss: 1.9542 - accuracy: 0.5286
+...
+Epoch 150/150
+77/77 [==============================] - 0s 2ms/step - loss: 0.4678 - accuracy: 0.7773
+24/24 [==============================] - 0s 1ms/step - loss: 0.4531 - accuracy: 0.7812
+Accuracy: 78.125000
+\end{Verbatim}

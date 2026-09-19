@@ -1,0 +1,29 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/variables_and_printf.c}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{c+cm}{// Variable definition }
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{n}{b}\PY{p}{,}\PY{+w}{ }\PY{n}{c}\PY{p}{;}
+\PY{+w}{    }\PY{n}{a}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{2}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{d}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{e}\PY{p}{;}
+\PY{+w}{    }\PY{n}{e}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{2.0}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{f}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{1.27}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{double}\PY{+w}{ }\PY{n}{g}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{2.19293993847}\PY{p}{;}
+
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{e = \PYZpc{}d, }\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{e}\PY{p}{)}\PY{p}{;}\PY{+w}{  }\PY{c+cm}{// Never pass a float and declare int !!!}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{e = \PYZpc{}f, }\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{e}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{e = \PYZpc{}.1f}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{e}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{g = \PYZpc{}d, }\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{g}\PY{p}{)}\PY{p}{;}\PY{+w}{  }\PY{c+cm}{// Never pass a float and declare int !!!}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{g = \PYZpc{}f, }\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{g}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{g = \PYZpc{}.11f}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{g}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+a = 2
+e = 0, e = 2.000000, e = 2.0
+g = 405705013, g = 2.192940, g = 2.19293993847
+\end{Verbatim}

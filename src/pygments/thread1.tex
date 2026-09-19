@@ -1,0 +1,35 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/threading_basic.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{threading}
+\PY{k}{import} \PY{n+nn}{os}
+
+\PY{k}{def} \PY{n+nf}{task1}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Task 1 assigned to thread: }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n}{threading}\PY{o}{.}\PY{n}{current\PYZus{}thread}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{name}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ID of process running task 1: }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{os}\PY{o}{.}\PY{n}{getpid}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+\PY{k}{def} \PY{n+nf}{task2}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Task 2 assigned to thread: }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n}{threading}\PY{o}{.}\PY{n}{current\PYZus{}thread}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{name}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ID of process running task 2: }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{os}\PY{o}{.}\PY{n}{getpid}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+\PY{c+c1}{\#MAIN}
+\PY{k}{if} \PY{n}{\_\_name\_\_}\PY{o}{==}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\_\_main\_\_}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+        \PY{c+c1}{\# Print ID of current process}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ID of process running main program: }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{os}\PY{o}{.}\PY{n}{getpid}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+        \PY{c+c1}{\# Print name of main thread}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Main thread name: }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n}{threading}\PY{o}{.}\PY{n}{main\PYZus{}thread}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{name}\PY{p}{)}
+
+        \PY{c+c1}{\# Creating threads}
+        \PY{n}{t1} \PY{o}{=} \PY{n}{threading}\PY{o}{.}\PY{n}{Thread}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{task1}\PY{p}{,} \PY{n}{name}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{t1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{t2} \PY{o}{=} \PY{n}{threading}\PY{o}{.}\PY{n}{Thread}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{task2}\PY{p}{,} \PY{n}{name}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{t2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{c+c1}{\# Starting threads}
+        \PY{n}{t1}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+        \PY{n}{t2}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+        \PY{c+c1}{\# Wait until all threads finish}
+        \PY{n}{t1}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+        \PY{n}{t2}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+
+[Output]
+ID of process running main program: 54321
+Main thread name: MainThread
+Task 1 assigned to thread: t1
+ID of process running task 1: 54321
+Task 2 assigned to thread: t2
+ID of process running task 2: 54321
+\end{Verbatim}

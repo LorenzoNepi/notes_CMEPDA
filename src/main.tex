@@ -1,0 +1,219 @@
+\documentclass[a4paper, 11pt]{report}
+
+% --- PACCHETTI FONDAMENTALI ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{comment}
+
+% Gestione Immagini e Grafica
+\usepackage{graphicx}
+\usepackage{float}       % Per forzare il posizionamento delle figure (H)
+\usepackage{caption}     % Per gestire le didascalie
+\DeclareCaptionFormat{nocaption}{} % Per gestire i notebook
+\newcommand{\jupytercaptions}{\captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}}
+\graphicspath{{./figures/}} % Assicura che legga la cartella figures
+
+% Matematica
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+
+% Gestione Codice (Pygments/Listings)
+% Se usi minted o listings nelle slide, assicurati che siano qui.
+% Esempio generico per input di codice:
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Gestione Layout e Link
+\usepackage[margin=2.5cm]{geometry} % Margini da dispensa
+\usepackage{hyperref}    % Indice cliccabile e link
+\usepackage{parskip}     % Spazio tra paragrafi invece dell'indentazione (più leggibile per dispense)
+\usepackage{pdfpages} % Permette di includere file PDF esterni
+
+
+\usepackage{fancyvrb}
+\usepackage{xcolor}
+\usepackage{textcomp} % Importante per certi simboli
+
+% --- INIZIO DEFINIZIONI COMPLETE PYGMENTS ---
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+% --- Definizioni dei caratteri speciali (parentesi, backslash, ecc.) ---
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\textquotesingle}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+\def\PYZat{\char`\@}
+\def\PYZlb{\char`\[}
+\def\PYZrb{\char`\]}
+
+% --- Stile dei colori (Default Style) ---
+\expandafter\def\csname PY@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}} % Keyword
+\expandafter\def\csname PY@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}} % Keyword.Pseudo
+\expandafter\def\csname PY@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}} % Keyword.Reserved
+\expandafter\def\csname PY@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}} % Keyword.Type
+\expandafter\def\csname PY@n\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.00}{##1}}} % Name
+\expandafter\def\csname PY@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}} % Name.Attribute
+\expandafter\def\csname PY@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}} % Name.Builtin
+\expandafter\def\csname PY@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}} % Name.Class
+\expandafter\def\csname PY@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}} % Name.Constant
+\expandafter\def\csname PY@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}} % Name.Decorator
+\expandafter\def\csname PY@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.47,0.47,0.47}{##1}}} % Name.Entity
+\expandafter\def\csname PY@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}} % Name.Exception
+\expandafter\def\csname PY@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}} % Name.Function
+\expandafter\def\csname PY@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}} % Name.Namespace
+\expandafter\def\csname PY@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}} % Name.Tag
+\expandafter\def\csname PY@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}} % Name.Variable
+\expandafter\def\csname PY@l\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}} % Literal
+\expandafter\def\csname PY@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}} % Literal.Number
+\expandafter\def\csname PY@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}} % Literal.Number.Bin
+\expandafter\def\csname PY@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}} % Literal.Number.Float
+\expandafter\def\csname PY@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}} % Literal.Number.Hex
+\expandafter\def\csname PY@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}} % Literal.Number.Integer
+\expandafter\def\csname PY@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}} % Literal.Number.Oct
+\expandafter\def\csname PY@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}} % Literal.String
+\expandafter\def\csname PY@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}} % Literal.String.Backtick
+\expandafter\def\csname PY@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}} % Literal.String.Char
+\expandafter\def\csname PY@sd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}} % Literal.String.Doc
+\expandafter\def\csname PY@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}} % Literal.String.Double
+\expandafter\def\csname PY@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}} % Literal.String.Escape
+\expandafter\def\csname PY@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}} % Literal.String.Heredoc
+\expandafter\def\csname PY@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}} % Literal.String.Interpol
+\expandafter\def\csname PY@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}} % Literal.String.Other
+\expandafter\def\csname PY@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}} % Literal.String.Regex
+\expandafter\def\csname PY@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}} % Literal.String.Single
+\expandafter\def\csname PY@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}} % Literal.String.Symbol
+\expandafter\def\csname PY@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}} % Comment
+\expandafter\def\csname PY@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}} % Comment.Preproc
+\expandafter\def\csname PY@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}} % Comment.Single
+\expandafter\def\csname PY@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}} % Comment.Special
+\expandafter\def\csname PY@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}} % Generic.Deleted
+\expandafter\def\csname PY@ge\endcsname{\let\PY@it=\textit} % Generic.Emph
+\expandafter\def\csname PY@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}} % Generic.Error
+\expandafter\def\csname PY@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}} % Generic.Heading
+\expandafter\def\csname PY@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}} % Generic.Inserted
+\expandafter\def\csname PY@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}} % Generic.Output
+\expandafter\def\csname PY@gp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}} % Generic.Prompt
+\expandafter\def\csname PY@gs\endcsname{\let\PY@bf=\textbf} % Generic.Strong
+\expandafter\def\csname PY@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}} % Generic.Subheading
+\expandafter\def\csname PY@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}} % Generic.Traceback
+\expandafter\def\csname PY@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}} % Operator
+\expandafter\def\csname PY@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}} % Operator.Word
+\makeatother
+% --- FINE DEFINIZIONI PYGMENTS ---
+
+% ------------------
+
+\title{\textbf{Computing Methods for Experimental Physics and Data Analysis}}
+\author{Notes adjusted from the 2025-26 course slides}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+% -------------------------------------------------------------------
+% PART I: BASICS
+% -------------------------------------------------------------------
+\chapter[Python basics]{Python basics \\[0.5ex] \large \textit{(Prof. Baldini)}}
+
+
+%\begin{comment}
+\include{lezioni/a_python_basics_1}
+\include{lezioni/a_python_basics_2}
+\include{lezioni/a_python_basics_3}
+\include{lezioni/a_python_basics_4}
+\include{lezioni/a_python_basics_5}
+\include{lezioni/a_python_basics_6}
+\include{lezioni/a_python_basics_7}
+%\end{comment}
+
+% -------------------------------------------------------------------
+% PART II: ADVANCED
+% -------------------------------------------------------------------
+\chapter[Advanced Python concepts]{Advanced Python concepts \\[0.5ex] \large \textit{(Prof. Baldini, Prof. Rizzi)}}
+
+%\begin{comment}
+\include{lezioni/b_python_advanced_1}
+\include{lezioni/b_python_advanced_2}
+\include{lezioni/b_python_advanced_3}
+\include{lezioni/b_python_advanced_4}
+%\end{comment}
+
+% -------------------------------------------------------------------
+% PART III: PARALLEL PROGRAMMING
+% -------------------------------------------------------------------
+\chapter[Parallel computing]{Parallel computing \\[0.5ex] \large \textit{(Prof. Lamanna)}}
+
+%\begin{comment}
+\include{lezioni/c_parallel1}
+\include{lezioni/c_parallel2}
+\include{lezioni/c_parallel3_c_reminder}
+\include{lezioni/c_parallel3}
+\include{lezioni/c_parallel4}
+\include{lezioni/parallel5}
+%\end{comment}
+
+% -------------------------------------------------------------------
+% PART III: Machine Learning (Basis)
+% -------------------------------------------------------------------
+\chapter[Introduction to Machine Learning]{Introduction to Machine Learning \\[0.5ex] \large \textit{(Prof.essa Retico, Prof. Di Bello, Prof. Rizzi)}}
+
+%\begin{comment}
+\include{lezioni/d_ML1}
+\include{lezioni/d_ML2}
+\include{lezioni/d_ML2hands_on}
+\include{lezioni/d_ML3}
+\include{lezioni/d_ML4}
+\include{lezioni/d_ML4hands_on}
+\include{lezioni/d_ML5}
+\include{lezioni/d_ML5hands_on}
+\include{lezioni/d_ML6}
+\include{lezioni/d_ML6hands_on}
+%\end{comment}
+
+
+% -------------------------------------------------------------------
+% PART IV: Machine Learning (Advanced)
+% -------------------------------------------------------------------
+\chapter[Advanced concepts in Machine Learning]{Advanced concepts in Machine Learning \\[0.5ex] \large \textit{(Prof. Di Bello, Prof. Rizzi)}}
+
+%\begin{comment}
+\include{lezioni/e_ML_adv_1}
+\include{lezioni/e_ML_adv_2}
+\include{lezioni/e_ML_adv_3}
+\include{lezioni/e_ML_adv_4}
+\include{lezioni/e_ML_adv_5}
+\include{lezioni/e_ML_adv_6}
+%\end{comment}
+
+\include{lezioni/Appendix}
+
+\end{document}

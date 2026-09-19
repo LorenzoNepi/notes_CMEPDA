@@ -1,0 +1,15 @@
+\begin{Verbatim}[label=\makebox{\url{argparse_example.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{argparse}
+
+\PY{n}{parser} \PY{o}{=} \PY{n}{argparse}\PY{o}{.}\PY{n}{ArgumentParser}\PY{p}{(}\PY{p}{)}
+\PY{n}{parser}\PY{o}{.}\PY{n}{add\PYZus{}argument}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}speed}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{n+nb}{int}\PY{p}{,} \PY{n}{default}\PY{o}{=}\PY{l+m+mi}{5}\PY{p}{)}
+
+\PY{n}{args} \PY{o}{=} \PY{n}{parser}\PY{o}{.}\PY{n}{parse\PYZus{}args}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sf}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{I}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{m running at this speed: }\PY{l+s+si}{\PYZob{}}\PY{n}{args}\PY{o}{.}\PY{n}{speed}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+[Output]
+PS C:\PYZbs{}Università\PYZbs{}Magistrale\PYZbs{}Computing Methods> python script.py --speed 10
+I'm running at this speed: 10
+PS C:\PYZbs{}Università\PYZbs{}Magistrale\PYZbs{}Computing Methods> python script.py --speed 15
+I'm running at this speed: 15
+\end{Verbatim}

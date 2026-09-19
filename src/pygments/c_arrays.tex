@@ -1,0 +1,51 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/arrays_and_malloc.c}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdlib.h\PYZgt{}}\PY{c+c1}{ // Required for malloc and free}
+
+\PY{c+c1}{// Array passed to a function decays to a pointer}
+\PY{k+kt}{void}\PY{+w}{ }\PY{n+nf}{printArrayInfo}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{theArray}\PY{p}{[}\PY{p}{]}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{c+c1}{// This will print the size of a pointer (usually 8 bytes), NOT the array!}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Size inside function: \PYZpc{}lu bytes}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{n}{theArray}\PY{p}{)}\PY{p}{)}\PY{p}{;}\PY{+w}{ }
+\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{// Function returning a pointer to dynamically allocated Heap memory}
+\PY{k+kt}{char}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n+nf}{ones}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{size}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{k+kt}{char}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{ret}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{malloc}\PY{p}{(}\PY{n}{size}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{k+kt}{char}\PY{p}{)}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Allocate memory explicitly}
+\PY{+w}{    }\PY{k}{for}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{size}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{o}{+}\PY{o}{+}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{        }\PY{n}{ret}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{;}
+\PY{+w}{    }\PY{p}{\PYZcb{}}
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{n}{ret}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Returning the pointer is safe because memory is on the Heap}
+\PY{p}{\PYZcb{}}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{c+c1}{// Arrays and Pointers}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{anArray}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{p}{\PYZob{}}\PY{l+m+mi}{10}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{20}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{30}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{40}\PY{p}{\PYZcb{}}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{o}{*}\PY{n}{p}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{anArray}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Arrays can be directly assigned to pointers}
+\PY{+w}{    }
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Size in main: \PYZpc{}lu bytes}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{n}{anArray}\PY{p}{)}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Size of the full array (16 bytes)}
+\PY{+w}{    }\PY{n}{printArrayInfo}\PY{p}{(}\PY{n}{anArray}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }
+\PY{+w}{    }\PY{c+c1}{// Accessing elements}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{anArray[2] = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{anArray}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{p[2] = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{p}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}\PY{p}{;}\PY{+w}{            }\PY{c+c1}{// [] operator works on pointers}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{*(p+2) = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{o}{*}\PY{p}{(}\PY{n}{p}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}\PY{p}{;}\PY{+w}{      }\PY{c+c1}{// Pointer arithmetic achieves the same}
+\PY{+w}{    }
+\PY{+w}{    }\PY{c+c1}{// Dynamic Memory usage}
+\PY{+w}{    }\PY{k+kt}{char}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{hundredOnes}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{ones}\PY{p}{(}\PY{l+m+mi}{100}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{hundredOnes[10] = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{hundredOnes}\PY{p}{[}\PY{l+m+mi}{10}\PY{p}{]}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }
+\PY{+w}{    }\PY{n}{free}\PY{p}{(}\PY{n}{hundredOnes}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// NEVER forget to free memory allocated with malloc!}
+\PY{+w}{    }
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+Size in main: 16 bytes
+Size inside function: 8 bytes
+
+anArray[2] = 30
+p[2] = 30
+*(p+2) = 30
+
+hundredOnes[10] = 1
+\end{Verbatim}

@@ -1,0 +1,26 @@
+\begin{Verbatim}[label=\makebox{\url{namespaces_example.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{math}
+
+\PY{c+c1}{\PYZsh{} A variable in the global namespace}
+\PY{n}{global\PYZus{}var} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{I am global}\PY{l+s+s2}{\PYZdq{}}
+
+\PY{c+c1}{\PYZsh{} Proof that namespace is a dictionary: accessing via key}
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{globals}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{global\PYZus{}var}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+
+\PY{k}{def} \PY{n+nf}{my\PYZus{}function}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} New namespace created for this function call}
+    \PY{n}{local\PYZus{}var} \PY{o}{=} \PY{l+m+mi}{10}
+    
+    \PY{c+c1}{\PYZsh{} Accessing local (direct name) and global (scope above)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sf}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Local: }\PY{l+s+si}{\PYZob{}}\PY{n}{local\PYZus{}var}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{, Global: }\PY{l+s+si}{\PYZob{}}\PY{n}{global\PYZus{}var}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{my\PYZus{}function}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Using the dot operator to access objects in other namespaces}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{math}\PY{o}{.}\PY{n}{pi}\PY{p}{)}
+
+[Output]
+I am global
+Local: 10, Global: I am global
+3.141592653589793
+\end{Verbatim}

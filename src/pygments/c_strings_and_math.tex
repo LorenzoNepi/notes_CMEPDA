@@ -1,0 +1,36 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/strings_and_math.c}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}string.h\PYZgt{}}\PY{c+c1}{ // For string operations}
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}math.h\PYZgt{}}\PY{c+c1}{   // For mathematical functions}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} STRINGS \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{+w}{    }\PY{k+kt}{char}\PY{+w}{ }\PY{n}{str1}\PY{p}{[}\PY{l+m+mi}{50}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+s}{\PYZdq{}}\PY{l+s}{Hello}\PY{l+s}{\PYZdq{}}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{char}\PY{+w}{ }\PY{n}{str2}\PY{p}{[}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+s}{\PYZdq{}}\PY{l+s}{ CLASSROOM}\PY{l+s}{\PYZdq{}}\PY{p}{;}
+
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Original str1: \PYZpc{}s}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{str1}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{n}{strcat}\PY{p}{(}\PY{n}{str1}\PY{p}{,}\PY{+w}{ }\PY{l+s}{\PYZdq{}}\PY{l+s}{, welcome to the}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Concatenate a literal}
+\PY{+w}{    }\PY{n}{strcat}\PY{p}{(}\PY{n}{str1}\PY{p}{,}\PY{+w}{ }\PY{n}{str2}\PY{p}{)}\PY{p}{;}\PY{+w}{               }\PY{c+c1}{// Concatenate another string variable}
+
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Modified str1: \PYZpc{}s}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{str1}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Length of str1: \PYZpc{}lu characters}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{strlen}\PY{p}{(}\PY{n}{str1}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} MATH \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{0.1f}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Using math.h functions}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{arccos(\PYZpc{}.2f) = \PYZpc{}f}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{n}{acos}\PY{p}{(}\PY{n}{a}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{floor(acos(\PYZpc{}.2f)) = \PYZpc{}f}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{n}{floor}\PY{p}{(}\PY{n}{acos}\PY{p}{(}\PY{n}{a}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+Original str1: Hello
+Modified str1: Hello, welcome to the CLASSROOM
+Length of str1: 31 characters
+
+arccos(0.10) = 1.470629
+floor(acos(0.10)) = 1.000000
+\end{Verbatim}

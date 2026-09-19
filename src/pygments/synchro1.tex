@@ -1,0 +1,46 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/synchro1.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{multiprocessing}
+
+\PY{k}{def} \PY{n+nf}{withdraw}\PY{p}{(}\PY{n}{balance}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\# Function to withdraw from account}
+    \PY{k}{for} \PY{n}{x} \PY{k}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{10000}\PY{p}{)}\PY{p}{:}
+            \PY{n}{balance}\PY{o}{.}\PY{n}{value} \PY{o}{=} \PY{n}{balance}\PY{o}{.}\PY{n}{value}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}
+
+\PY{k}{def} \PY{n+nf}{deposit}\PY{p}{(}\PY{n}{balance}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\# Function to deposit in the account}
+    \PY{k}{for} \PY{n}{x} \PY{k}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{10000}\PY{p}{)}\PY{p}{:}
+        \PY{n}{balance}\PY{o}{.}\PY{n}{value} \PY{o}{=} \PY{n}{balance}\PY{o}{.}\PY{n}{value} \PY{o}{+} \PY{l+m+mi}{1}
+
+\PY{k}{def} \PY{n+nf}{perform\PYZus{}transactions}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\# Initial balance (in shared memory) = 100\PYZdl{}}
+    \PY{n}{balance} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Value}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{i}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{100}\PY{p}{)}
+    \PY{c+c1}{\# Creating new processes}
+    \PY{n}{p1} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{withdraw}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{balance}\PY{p}{,}\PY{p}{)}\PY{p}{)}
+    \PY{n}{p2} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{deposit}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{balance}\PY{p}{,}\PY{p}{)}\PY{p}{)}
+    \PY{c+c1}{\# Starting processes}
+    \PY{n}{p1}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+    \PY{n}{p2}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+    \PY{c+c1}{\# Wait until processes are finished}
+    \PY{n}{p1}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+    \PY{n}{p2}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+    \PY{c+c1}{\# Print final balance}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Final balance = }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{balance}\PY{o}{.}\PY{n}{value}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\#MAIN}
+\PY{k}{if} \PY{n}{\_\_name\_\_}\PY{o}{==}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\_\_main\_\_}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+    \PY{k}{for} \PY{n}{x} \PY{k}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{:}
+        \PY{c+c1}{\# Perform the same transaction process 10 times without syncrhonization}
+        \PY{n}{perform\PYZus{}transactions}\PY{p}{(}\PY{p}{)}
+
+[Output]
+Final balance = 614
+Final balance = -4609
+Final balance = -176
+Final balance = -1183
+Final balance = 1896
+Final balance = 138
+Final balance = 699
+Final balance = 2840
+Final balance = -473
+Final balance = -2117
+\end{Verbatim}

@@ -1,0 +1,46 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/pointers.c}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+
+\PY{c+c1}{// Pass by value (creates a local copy, cannot modify original)}
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{notIncrement}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{i}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{n}{i}\PY{+w}{ }\PY{o}{+}\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{;}
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{n}{i}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{// Pass by pointer (receives the address, modifies original data)}
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{increment}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{o}{*}\PY{n}{i}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{p}{(}\PY{o}{*}\PY{n}{i}\PY{p}{)}\PY{+w}{ }\PY{o}{+}\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Dereference the pointer to modify the actual value}
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{o}{*}\PY{n}{i}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{0.0f}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{b}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{0.0f}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{o}{*}\PY{n}{ap}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{n}{a}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// \PYZsq{}ap\PYZsq{} holds the memory address of \PYZsq{}a\PYZsq{}}
+\PY{+w}{    }
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a: \PYZpc{}f, ap points to: \PYZpc{}f}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{o}{*}\PY{n}{ap}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }
+\PY{+w}{    }\PY{n}{a}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{1.0f}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a: \PYZpc{}f, ap points to: \PYZpc{}f}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{o}{*}\PY{n}{ap}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Changing \PYZsq{}a\PYZsq{} changes \PYZsq{}*ap\PYZsq{}}
+\PY{+w}{    }
+\PY{+w}{    }\PY{o}{*}\PY{n}{ap}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{2.0f}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Modifying the value stored at the address pointed by \PYZsq{}ap\PYZsq{}}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a: \PYZpc{}f, ap points to: \PYZpc{}f}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{o}{*}\PY{n}{ap}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// \PYZsq{}a\PYZsq{} is now 2.0}
+\PY{+w}{    }
+\PY{+w}{    }\PY{c+c1}{// Passing pointers to functions}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{myNum}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{10}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{Original myNum: \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{myNum}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{notIncrement returns: \PYZpc{}d | myNum is still: \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{notIncrement}\PY{p}{(}\PY{n}{myNum}\PY{p}{)}\PY{p}{,}\PY{+w}{ }\PY{n}{myNum}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{increment returns: \PYZpc{}d | myNum is now: \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{increment}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{myNum}\PY{p}{)}\PY{p}{,}\PY{+w}{ }\PY{n}{myNum}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+a: 0.000000, ap points to: 0.000000
+a: 1.000000, ap points to: 1.000000
+a: 2.000000, ap points to: 2.000000
+
+Original myNum: 10
+notIncrement returns: 11 | myNum is still: 10
+increment returns: 11 | myNum is now: 11
+\end{Verbatim}

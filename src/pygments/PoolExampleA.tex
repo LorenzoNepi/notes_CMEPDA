@@ -1,0 +1,25 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/multiprocessing_map_async_timeout.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{multiprocessing} \PY{k}{as} \PY{n+nn}{mp}
+\PY{k}{import} \PY{n+nn}{os}
+
+\PY{k}{def} \PY{n+nf}{cube}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print} \PY{p}{(}\PY{n+nb}{str}\PY{p}{(}\PY{n}{os}\PY{o}{.}\PY{n}{getpid}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{o}{+}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{os}\PY{o}{.}\PY{n}{getppid}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{o}{+}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{x}\PY{o}{**}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
+    \PY{k}{return} \PY{n}{x}\PY{o}{**}\PY{l+m+mi}{3}
+
+\PY{k}{if} \PY{n}{\_\_name\_\_}\PY{o}{==}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\_\_main\_\_}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+    \PY{c+c1}{\# Define a group of processes (\PYZdq{}workers\PYZdq{})}
+    \PY{n}{pool} \PY{o}{=} \PY{n}{mp}\PY{o}{.}\PY{n}{Pool}\PY{p}{(}\PY{n}{processes}\PY{o}{=}\PY{l+m+mi}{4}\PY{p}{)}
+    \PY{c+c1}{\# Make each worker do something without interrupting the main process}
+    \PY{n}{results} \PY{o}{=} \PY{n}{pool}\PY{o}{.}\PY{n}{map\_async}\PY{p}{(}\PY{n}{cube}\PY{p}{,} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{7}\PY{p}{)}\PY{p}{)}
+    \PY{c+c1}{\# Print the results using a timeout to be sure results is full}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{results}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{n}{timeout}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+
+[Output]
+17428 17425 1
+17429 17425 8
+17428 17425 64
+17428 17425 216
+17431 17425 125
+17430 17425 27
+[1, 8, 27, 64, 125, 216]
+\end{Verbatim}

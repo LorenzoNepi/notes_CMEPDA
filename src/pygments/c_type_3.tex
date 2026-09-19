@@ -1,0 +1,41 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/literals_and_precision.c}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{c+c1}{// Integer Literals}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{dec}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{42}\PY{p}{;}\PY{+w}{           }\PY{c+c1}{// Standard decimal}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{hex}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mh}{0x2A}\PY{p}{;}\PY{+w}{         }\PY{c+c1}{// Hexadecimal (0x prefix)}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{oct}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mo}{052}\PY{p}{;}\PY{+w}{          }\PY{c+c1}{// Octal (0 prefix)}
+\PY{+w}{    }\PY{k+kt}{unsigned}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{u}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{42U}\PY{p}{;}\PY{+w}{   }\PY{c+c1}{// Unsigned (U or u suffix)}
+\PY{+w}{    }\PY{k+kt}{long}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{l}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{42L}\PY{p}{;}\PY{+w}{       }\PY{c+c1}{// Long (L or l suffix)}
+
+\PY{+w}{    }\PY{c+c1}{// Floating\PYZhy{}point Literals}
+\PY{+w}{    }\PY{k+kt}{double}\PY{+w}{ }\PY{n}{d}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{3.14}\PY{p}{;}\PY{+w}{        }\PY{c+c1}{// Double (Default)}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{f}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{3.14f}\PY{p}{;}\PY{+w}{        }\PY{c+c1}{// Float (f or F suffix)}
+\PY{+w}{    }\PY{k+kt}{long}\PY{+w}{ }\PY{k+kt}{double}\PY{+w}{ }\PY{n}{ld}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{3.14L}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Long double (L suffix)}
+\PY{+w}{    }\PY{k+kt}{double}\PY{+w}{ }\PY{n}{sci}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{3.14e\PYZhy{}2}\PY{p}{;}\PY{+w}{   }\PY{c+c1}{// Scientific notation (e or E exponent)}
+
+\PY{+w}{    }\PY{c+c1}{// Precision Division Example}
+\PY{+w}{    }\PY{c+c1}{// Demonstration of how suffixes affect the calculation}
+\PY{+w}{    }\PY{k+kt}{long}\PY{+w}{ }\PY{k+kt}{double}\PY{+w}{ }\PY{n}{r}\PY{p}{;}
+
+\PY{+w}{    }\PY{n}{r}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{1}\PY{+w}{ }\PY{o}{/}\PY{+w}{ }\PY{l+m+mi}{3}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{1/3     (int)         = \PYZpc{}.30Lf}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{r}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{r}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{1.f}\PY{+w}{ }\PY{o}{/}\PY{+w}{ }\PY{l+m+mf}{3.f}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{1.f/3.f (float)       = \PYZpc{}.30Lf}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{r}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{r}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{1.}\PY{+w}{ }\PY{o}{/}\PY{+w}{ }\PY{l+m+mf}{3.}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{1./3.   (double)      = \PYZpc{}.30Lf}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{r}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{r}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{1.L}\PY{+w}{ }\PY{o}{/}\PY{+w}{ }\PY{l+m+mf}{3.L}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{1.L/3.L (long double) = \PYZpc{}.30Lf}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{r}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{r}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{1L}\PY{+w}{ }\PY{o}{/}\PY{+w}{ }\PY{l+m+mf}{3L}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{1L/3L   (long int)    = \PYZpc{}.30Lf}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{r}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+1/3     (int)         = 0.000000000000000000000000000000
+1.f/3.f (float)       = 0.333333343267440795898437500000
+1./3.   (double)      = 0.333333333333333314829616256247
+1.L/3.L (long double) = 0.333333333333333333342368351437
+1L/3L   (long int)    = 0.000000000000000000000000000000
+\end{Verbatim}

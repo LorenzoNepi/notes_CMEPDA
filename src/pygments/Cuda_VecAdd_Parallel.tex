@@ -1,0 +1,82 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/cuda_vec_add_complete.cu}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdlib.h\PYZgt{}}
+\PY{c+cp}{\#}\PY{c+cp}{define N 1048576}
+\PY{c+cp}{\#}\PY{c+cp}{define THREADS\_PER\_BLOCK 128}
+
+\PY{c+c1}{// Function to define a vector with N elements (with N\PYZgt{}10\PYZca{}6)}
+\PY{k+kt}{void}\PY{+w}{ }\PY{n+nf}{RandomVector}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{o}{*}\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{nn}\PY{p}{)}\PY{p}{\PYZob{}}
+\PY{+w}{  }\PY{k}{for}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{i}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{;}\PY{n}{i}\PY{o}{\PYZlt{}}\PY{n}{nn}\PY{p}{;}\PY{n}{i}\PY{o}{+}\PY{o}{+}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{n}{a}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{=}\PY{n}{rand}\PY{p}{(}\PY{p}{)}\PY{o}{\PYZpc{}}\PY{l+m+mi}{100}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{;}
+\PY{+w}{  }\PY{p}{\PYZcb{}}
+\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{// Kernel to add 2 vectors using the GPU}
+\PY{k+kr}{\_\_global\_\_}\PY{+w}{ }\PY{k+kt}{void}\PY{+w}{ }\PY{n}{VecAddGpu}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{o}{*}\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{o}{*}\PY{n}{b}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{o}{*}\PY{n}{c}\PY{p}{)}\PY{p}{\PYZob{}}
+\PY{+w}{  }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{index}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n+nb}{threadIdx}\PY{p}{.}\PY{n}{x}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n+nb}{blockIdx}\PY{p}{.}\PY{n}{x}\PY{o}{*}\PY{n+nb}{blockDim}\PY{p}{.}\PY{n}{x}\PY{p}{;}
+\PY{+w}{  }\PY{n}{c}\PY{p}{[}\PY{n}{index}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{a}\PY{p}{[}\PY{n}{index}\PY{p}{]}\PY{o}{+}\PY{n}{b}\PY{p}{[}\PY{n}{index}\PY{p}{]}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n}{main}\PY{p}{(}\PY{k+kt}{void}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{  }\PY{k+kt}{int}\PY{+w}{ }\PY{o}{*}\PY{n}{h\_a}\PY{p}{,}\PY{+w}{ }\PY{o}{*}\PY{n}{h\_b}\PY{p}{,}\PY{+w}{ }\PY{o}{*}\PY{n}{h\_c}\PY{p}{;}
+\PY{+w}{  }\PY{k+kt}{int}\PY{+w}{ }\PY{o}{*}\PY{n}{d\_a}\PY{p}{,}\PY{+w}{ }\PY{o}{*}\PY{n}{d\_b}\PY{p}{,}\PY{+w}{ }\PY{o}{*}\PY{n}{d\_c}\PY{p}{;}
+\PY{+w}{  }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{size}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{N}\PY{o}{*}\PY{k}{sizeof}\PY{p}{(}\PY{k+kt}{int}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{time}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaEvent\_t}\PY{+w}{ }\PY{n}{start}\PY{p}{,}\PY{n}{stop}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaEventCreate}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{start}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaEventCreate}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{stop}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Allocation of a memory space in the host for the 2 vectors (and filling)}
+\PY{+w}{  }\PY{n}{h\_a}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{o}{*}\PY{p}{)}\PY{n}{malloc}\PY{p}{(}\PY{n}{size}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{h\_b}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{o}{*}\PY{p}{)}\PY{n}{malloc}\PY{p}{(}\PY{n}{size}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{h\_c}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{o}{*}\PY{p}{)}\PY{n}{malloc}\PY{p}{(}\PY{n}{size}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{RandomVector}\PY{p}{(}\PY{n}{h\_a}\PY{p}{,}\PY{n}{N}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{RandomVector}\PY{p}{(}\PY{n}{h\_b}\PY{p}{,}\PY{n}{N}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Allocation of a memory space in the GPU for the 2 vectors}
+\PY{+w}{  }\PY{n}{cudaMalloc}\PY{p}{(}\PY{p}{(}\PY{k+kt}{void}\PY{+w}{ }\PY{o}{*}\PY{o}{*}\PY{p}{)}\PY{o}{\PYZam{}}\PY{n}{d\_a}\PY{p}{,}\PY{+w}{ }\PY{n}{size}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaMalloc}\PY{p}{(}\PY{p}{(}\PY{k+kt}{void}\PY{+w}{ }\PY{o}{*}\PY{o}{*}\PY{p}{)}\PY{o}{\PYZam{}}\PY{n}{d\_b}\PY{p}{,}\PY{+w}{ }\PY{n}{size}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaMalloc}\PY{p}{(}\PY{p}{(}\PY{k+kt}{void}\PY{+w}{ }\PY{o}{*}\PY{o}{*}\PY{p}{)}\PY{o}{\PYZam{}}\PY{n}{d\_c}\PY{p}{,}\PY{+w}{ }\PY{n}{size}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Copy input vectors form host to GPU}
+\PY{+w}{  }\PY{n}{cudaMemcpy}\PY{p}{(}\PY{n}{d\_a}\PY{p}{,}\PY{+w}{ }\PY{n}{h\_a}\PY{p}{,}\PY{+w}{ }\PY{n}{size}\PY{p}{,}\PY{+w}{ }\PY{n}{cudaMemcpyHostToDevice}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaMemcpy}\PY{p}{(}\PY{n}{d\_b}\PY{p}{,}\PY{+w}{ }\PY{n}{h\_b}\PY{p}{,}\PY{+w}{ }\PY{n}{size}\PY{p}{,}\PY{+w}{ }\PY{n}{cudaMemcpyHostToDevice}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Start time}
+\PY{+w}{  }\PY{n}{cudaEventRecord}\PY{p}{(}\PY{n}{start}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Launch Kernel  on GPU}
+\PY{+w}{  }\PY{n}{VecAddGpu}\PY{o}{\PYZlt{}}\PY{o}{\PYZlt{}}\PY{o}{\PYZlt{}}\PY{n}{N}\PY{o}{/}\PY{n}{THREADS\_PER\_BLOCK}\PY{p}{,}\PY{n}{THREADS\_PER\_BLOCK}\PY{o}{\PYZgt{}}\PY{o}{\PYZgt{}}\PY{o}{\PYZgt{}}\PY{p}{(}\PY{n}{d\_a}\PY{p}{,}\PY{n}{d\_b}\PY{p}{,}\PY{n}{d\_c}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaDeviceSynchronize}\PY{p}{(}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Stop time}
+\PY{+w}{  }\PY{n}{cudaEventRecord}\PY{p}{(}\PY{n}{stop}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaEventSynchronize}\PY{p}{(}\PY{n}{stop}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaEventElapsedTime}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{time}\PY{p}{,}\PY{+w}{ }\PY{n}{start}\PY{p}{,}\PY{+w}{ }\PY{n}{stop}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Ask Cuda if there was an error}
+\PY{+w}{  }\PY{n}{cudaError\_t}\PY{+w}{ }\PY{n}{KernelError}\PY{o}{=}\PY{n}{cudaGetLastError}\PY{p}{(}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Error: \PYZpc{}s}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{n}{cudaGetErrorString}\PY{p}{(}\PY{n}{KernelError}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Copy back the results}
+\PY{+w}{  }\PY{n}{cudaMemcpy}\PY{p}{(}\PY{n}{h\_c}\PY{p}{,}\PY{+w}{ }\PY{n}{d\_c}\PY{p}{,}\PY{+w}{ }\PY{n}{size}\PY{p}{,}\PY{+w}{ }\PY{n}{cudaMemcpyDeviceToHost}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Print time}
+\PY{+w}{  }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Time: \PYZpc{}3.5f ms}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{n}{time}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Cleanup}
+\PY{+w}{  }\PY{n}{free}\PY{p}{(}\PY{n}{h\_a}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{free}\PY{p}{(}\PY{n}{h\_b}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{free}\PY{p}{(}\PY{n}{h\_c}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaFree}\PY{p}{(}\PY{n}{d\_a}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaFree}\PY{p}{(}\PY{n}{d\_b}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaFree}\PY{p}{(}\PY{n}{d\_c}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{k}{return}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+Error: no error
+Time: 0.53261 ms
+\end{Verbatim}

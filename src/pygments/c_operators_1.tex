@@ -1,0 +1,41 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/operators.c}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{10}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{b}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{7}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Math operators}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a+b=\PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{o}{+}\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{    }\PY{c+c1}{// a+b=17}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a\PYZhy{}b=\PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{o}{\PYZhy{}}\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{    }\PY{c+c1}{// a\PYZhy{}b=3}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a*b=\PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{o}{*}\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{    }\PY{c+c1}{// a*b=70}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a/b=\PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{o}{/}\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{    }\PY{c+c1}{// a/b=1 (integer division!)}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a\PYZpc{}\PYZpc{}b=\PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{o}{\PYZpc{}}\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{   }\PY{c+c1}{// a\PYZpc{}b=3}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{\PYZhy{}a=\PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{o}{\PYZhy{}}\PY{n}{a}\PY{p}{)}\PY{p}{;}\PY{+w}{      }\PY{c+c1}{// \PYZhy{}a=\PYZhy{}10}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{!a=\PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{o}{!}\PY{n}{a}\PY{p}{)}\PY{p}{;}\PY{+w}{      }\PY{c+c1}{// !a=0 (10 is true, so NOT 10 is false/0)}
+
+\PY{+w}{    }\PY{c+c1}{// Relational operators}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a==b \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{o}{=}\PY{o}{=}\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{  }\PY{c+c1}{// a==b 0}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a!=b \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{o}{!}\PY{o}{=}\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{  }\PY{c+c1}{// a!=b 1}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a\PYZgt{}b  \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{o}{\PYZgt{}}\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{   }\PY{c+c1}{// a\PYZgt{}b 1}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a\PYZgt{}=b \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{o}{\PYZgt{}}\PY{o}{=}\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{  }\PY{c+c1}{// a\PYZgt{}=b 1}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a\PYZlt{}b  \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{o}{\PYZlt{}}\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{   }\PY{c+c1}{// a\PYZlt{}b 0}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a\PYZlt{}=b \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{o}{\PYZlt{}}\PY{o}{=}\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{  }\PY{c+c1}{// a\PYZlt{}=b 0}
+
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+a+b=17
+a-b=3
+a*b=70
+a/b=1
+a%b=3
+-a=-10
+!a=0
+a==b 0
+a!=b 1
+a>b  1
+a>=b 1
+a<b  0
+a<=b 0
+\end{Verbatim}

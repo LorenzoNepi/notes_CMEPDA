@@ -1,0 +1,56 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/synchro2.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{multiprocessing}
+
+\PY{k}{def} \PY{n+nf}{withdraw}\PY{p}{(}\PY{n}{balance}\PY{p}{,} \PY{n}{lock}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\# Function to withdraw from account}
+    \PY{k}{for} \PY{n}{x} \PY{k}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{10000}\PY{p}{)}\PY{p}{:}
+        \PY{c+c1}{\# Implementing a locking mechanism: syncrhonization}
+        \PY{n}{lock}\PY{o}{.}\PY{n}{acquire}\PY{p}{(}\PY{p}{)}
+        \PY{n}{balance}\PY{o}{.}\PY{n}{value} \PY{o}{=} \PY{n}{balance}\PY{o}{.}\PY{n}{value} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}
+        \PY{n}{lock}\PY{o}{.}\PY{n}{release}\PY{p}{(}\PY{p}{)}
+
+\PY{k}{def} \PY{n+nf}{deposit}\PY{p}{(}\PY{n}{balance}\PY{p}{,} \PY{n}{lock}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\# Function to deposit to account}
+    \PY{k}{for} \PY{n}{x} \PY{k}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{10000}\PY{p}{)}\PY{p}{:}
+        \PY{c+c1}{\# Implementing a locking mechanism: syncrhonization}
+        \PY{n}{lock}\PY{o}{.}\PY{n}{acquire}\PY{p}{(}\PY{p}{)}
+        \PY{n}{balance}\PY{o}{.}\PY{n}{value} \PY{o}{=} \PY{n}{balance}\PY{o}{.}\PY{n}{value} \PY{o}{+} \PY{l+m+mi}{1}
+        \PY{n}{lock}\PY{o}{.}\PY{n}{release}\PY{p}{(}\PY{p}{)}
+
+\PY{k}{def} \PY{n+nf}{perform\PYZus{}transactions}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\# Initial balance (in shared memory)}
+    \PY{n}{balance} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Value}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{i}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{100}\PY{p}{)}
+    \PY{c+c1}{\# Creating a lock object}
+    \PY{n}{lock} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Lock}\PY{p}{(}\PY{p}{)}
+
+    \PY{c+c1}{\# Creating new processes}
+    \PY{n}{p1} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{withdraw}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{balance}\PY{p}{,}\PY{n}{lock}\PY{p}{)}\PY{p}{)}
+    \PY{n}{p2} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{deposit}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{balance}\PY{p}{,}\PY{n}{lock}\PY{p}{)}\PY{p}{)}
+    \PY{c+c1}{\# Starting processes}
+    \PY{n}{p1}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+    \PY{n}{p2}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+    \PY{c+c1}{\# Wait until processes are finished}
+    \PY{n}{p1}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+    \PY{n}{p2}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+
+    \PY{c+c1}{\# Print final balance}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Final balance = }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{balance}\PY{o}{.}\PY{n}{value}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\#MAIN}
+\PY{k}{if} \PY{n}{\_\_name\_\_}\PY{o}{==}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\_\_main\_\_}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+    \PY{k}{for} \PY{n}{x} \PY{k}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{:}
+        \PY{c+c1}{\# Perform the same transaction process 10 times with syncrhonization}
+        \PY{n}{perform\PYZus{}transactions}\PY{p}{(}\PY{p}{)}
+
+[Output]
+Final balance = 100
+Final balance = 100
+Final balance = 100
+Final balance = 100
+Final balance = 100
+Final balance = 100
+Final balance = 100
+Final balance = 100
+Final balance = 100
+Final balance = 100
+\end{Verbatim}

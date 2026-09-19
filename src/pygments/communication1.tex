@@ -1,0 +1,27 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/multiprocessing_global_scope.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{multiprocessing}
+
+\PY{c+c1}{\# Empty list with global scope}
+\PY{n}{result} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+
+\PY{k}{def} \PY{n+nf}{square\_list}\PY{p}{(}\PY{n}{mylist}\PY{p}{)}\PY{p}{:}
+        \PY{k}{global} \PY{n}{result}
+        \PY{k}{for} \PY{n}{num} \PY{k}{in} \PY{n}{mylist}\PY{p}{:}
+                \PY{n}{result}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{num} \PY{o}{*} \PY{n}{num}\PY{p}{)}
+        \PY{c+c1}{\# Print result list from the function}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Result(in process p1): }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{result}\PY{p}{)}\PY{p}{)}
+
+\PY{k}{if} \PY{n}{\_\_name\_\_}\PY{o}{==}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\_\_main\_\_}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+    \PY{c+c1}{\# Input list}
+    \PY{n}{mylist} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{]}
+    \PY{c+c1}{\# Creating the new process}
+    \PY{n}{p1} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{square\_list}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{mylist}\PY{p}{,}\PY{p}{)}\PY{p}{)}
+    \PY{n}{p1}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+    \PY{n}{p1}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+    \PY{c+c1}{\# Print global result list}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Result(in main program): }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{result}\PY{p}{)}\PY{p}{)}
+
+[Output]
+Result(in process p1): [1, 4, 9, 16]
+Result(in main program): []
+\end{Verbatim}

@@ -1,0 +1,37 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/multiprocessing_shared_memory.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{multiprocessing}
+
+\PY{k}{def} \PY{n+nf}{square\_list}\PY{p}{(}\PY{n}{mylist}\PY{p}{,} \PY{n}{result}\PY{p}{,} \PY{n}{square\_sum}\PY{p}{)}\PY{p}{:}
+    \PY{k}{for} \PY{n}{idx}\PY{p}{,} \PY{n}{num} \PY{k}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{mylist}\PY{p}{)}\PY{p}{:}
+        \PY{n}{result}\PY{p}{[}\PY{n}{idx}\PY{p}{]} \PY{o}{=} \PY{n}{num} \PY{o}{*} \PY{n}{num}
+    \PY{c+c1}{\# Square\_sum value}
+    \PY{n}{square\_sum}\PY{o}{.}\PY{n}{value} \PY{o}{=} \PY{n+nb}{sum}\PY{p}{(}\PY{n}{result}\PY{p}{)}
+    \PY{c+c1}{\# Print result Array}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Result(in process p1): }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{result}\PY{p}{[}\PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+    \PY{c+c1}{\# Print square\_sum Value}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sum of squares(in process p1): }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{square\_sum}\PY{o}{.}\PY{n}{value}\PY{p}{)}\PY{p}{)}
+
+\PY{k}{if} \PY{n}{\_\_name\_\_}\PY{o}{==}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\_\_main\_\_}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+    \PY{c+c1}{\# Input list}
+    \PY{n}{mylist} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{]}
+    \PY{c+c1}{\# Creating Array of int data type with space for 4 integers}
+    \PY{n}{result} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Array}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{i}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{)}
+    \PY{c+c1}{\# Creating Value of int data type}
+    \PY{n}{square\_sum} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Value}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{i}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{c+c1}{\# Creating the new process}
+    \PY{n}{p1} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{square\_list}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{mylist}\PY{p}{,} \PY{n}{result}\PY{p}{,} \PY{n}{square\_sum}\PY{p}{)}\PY{p}{)}
+    \PY{n}{p1}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+    \PY{n}{p1}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+
+    \PY{c+c1}{\# Print result array}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Result(in main program): }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{result}\PY{p}{[}\PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+    \PY{c+c1}{\# Print square\_sum Value}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sum of squares(in main program): }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{square\_sum}\PY{o}{.}\PY{n}{value}\PY{p}{)}\PY{p}{)}
+
+[Output]
+Result(in process p1): [1, 4, 9, 16]
+Sum of squares(in process p1): 30
+Result(in main program): [1, 4, 9, 16]
+Sum of squares(in main program): 30
+\end{Verbatim}

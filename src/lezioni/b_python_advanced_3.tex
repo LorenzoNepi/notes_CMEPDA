@@ -1,0 +1,90 @@
+\section{Advanced features of functions and decorators}
+
+\subsection{Functions inside functions}
+Functions in python are \textbf{first class object}. The name is a bit misleading, but what it actually means is that functions can be passed as arguments to other functions and returned as result from other functions. This shouldn't surprise you much: functions are objects of a \texttt{function} class, so they behave like any other variable in Python. Another thing you can (and sometimes want to) do is \textit{defining} a function inside another. Let's see how it works:
+
+\input{pygments/inner_outer}
+
+\subsection{Closures and free variables}
+When a function is created inside another function it has access to the local variables of the outer function, even after its scope ended. This is technically possible because those variables are kept in a special space of memory, the \textbf{closure} of the inner function. Such variables are called \textbf{free variables}. In this way, a function can maintain a \textbf{state} within its closure. This makes possible the use of functions for tasks that in other languages are reserved to classes. Let's take a look at the following example. Here the function \texttt{rotate} is obviously inefficient, while \texttt{efficient\_rotate} requires the user to do most of the work:
+
+\input{pygments/rotation_naive}
+
+Here's the best way to do it thanks to free variables:
+
+\input{pygments/rotator}
+
+Pay attention when using free variables: if you \textit{assign} a free variable in the inner function, by default a new, local variable is created instead! To avoid this, you have to explicitly declare that you want to access the variable in the closure using the \textbf{nonlocal} keyword. Remember: \textit{"Explicit is better then implicit"}, The Zen of Python.
+Here's a wrongfully written code... 
+
+\input{pygments/closure_wrong}
+
+\bigskip
+
+...and here's how you should actually do it:
+
+\bigskip
+
+\input{pygments/closure_right}
+
+\subsection{Wrapping functions}
+The typical use of defining a function inside a function is to create a \textbf{wrapper}. A wrapper is a function that calls another one adding a layer of functionalities in between. For example it may do some pre-process of the input, or change the output in some way, or measure the execution time or whatever we want.
+
+The technique for creating a wrapper function in Python is:
+\begin{enumerate}
+    \item Pass the function that we want to wrap as argument of the outer function.
+    \item Inside the outer function we define an inner function, which is the actual wrapper.
+    \item The wrapper calls the wrapped function and adds its functionalities, before and/or after the call. It may return the same output or a manipulated one.
+    \item From the outer function we return the wrapper.
+\end{enumerate}
+Take a look at the following example:
+
+\input{pygments/wrapper}
+
+\subsection{Decorators}
+Often, when you wrap a function, you don't want to change it's name, so you reassign the wrapped function to its old name. In fact, this technique is so common that python introduced a special syntax for it: \textbf{decorators}. A decorated function has simply the name of the wrapper added with a \texttt{@} on top of its declaration. Here's an example:
+
+
+\input{pygments/decorator}
+\hrulefill
+\input{pygments/time_measuring_decor}
+
+Now, let's review some of the most common decorators:
+
+\subsubsection{- The \texttt{@classmethod} decorator}
+We have already seen a built-in Python decorator: \texttt{@property}. We used that to get proper encapsulation. There is another built-in decorator which is very useful for classes: \texttt{@classmethod}. A \textbf{classmethod} is like a class attribute: you don't need an instance to use it. A class method can access class attributes but not instance attributes. The main use for class methods is to provide \textbf{alternate constructors}.
+
+\input{pygments/classmethod}
+
+\subsubsection{- The \texttt{@staticmethod} decorator}
+Another built-in decorator (though less used than \texttt{@classmethod}) is \texttt{@staticmethod}. A static method is a method that does not receive the class or instance as first argument. Because of that, a static method does not alter the state of the class. In some sense a static method is only loosely coupled to the class - it is defined inside the class body just for convenience (maybe for semantic proximity) but it could be defined outside the class as well.
+
+\input{pygments/staticmethod}
+
+\subsubsection{- The \texttt{@dataclass} decorator}
+Another useful decorator is \texttt{@dataclass}. A \textbf{dataclass} is a class that is designed to only (or mostly) hold data values. A dataclass is defined by declaring the name and type of its attributes. You do not have to type any other code, the interpreter will automatically generate the \texttt{\_\_init\_\_}, \texttt{\_\_eq\_\_} and \texttt{\_\_repr\_\_} special methods for you.
+
+\input{pygments/dataclass}
+
+\subsection{Passing arguments to a decorator}
+Making a decorator that accepts arguments is somewhat more complex. The basic idea is that you need to add yet another level: a \textbf{decorator factory function}.
+
+So you now end up with three levels:
+\begin{enumerate}
+    \item The decorator factory that takes the parameters for the decorators, creates it and returns it;
+    \item The decorator that takes as input a function and returns the wrapper;
+    \item The wrapper that implements the actual additional functionalities; usually takes as input the same parameters as the decorated/wrapped function and returns its results, if any.
+\end{enumerate}
+Take a look at this four more complex examples to become a master of decorators:
+
+\textbf{- Example 1: Decorception}
+\input{pygments/decorator_factory}
+
+\textbf{- Example 2: Repeat}
+\input{pygments/decorator_repeat}
+
+\textbf{- Example 3: Customizing dataclass methods}
+\input{pygments/dataclass_customized}
+
+\textbf{- Example 4: Chaining decorators}
+\input{pygments/decorator_chain}

@@ -1,0 +1,41 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/multiprocessing_queue_passing.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{multiprocessing}
+
+\PY{k}{def} \PY{n+nf}{square\_list}\PY{p}{(}\PY{n}{mylist}\PY{p}{,} \PY{n}{q}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\# Append squares of mylist to queue}
+    \PY{k}{for} \PY{n}{num} \PY{k}{in} \PY{n}{mylist}\PY{p}{:}
+        \PY{n}{q}\PY{o}{.}\PY{n}{put}\PY{p}{(}\PY{n}{num} \PY{o}{*} \PY{n}{num}\PY{p}{)}
+
+\PY{k}{def} \PY{n+nf}{print\_queue}\PY{p}{(}\PY{n}{q}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\# Function to print the elements in the Queue and empty it}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Queue elements:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{k}{while} \PY{o}{not} \PY{n}{q}\PY{o}{.}\PY{n}{empty}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{q}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Queue is now empty!}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\#MAIN}
+\PY{k}{if} \PY{n}{\_\_name\_\_}\PY{o}{==}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\_\_main\_\_}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+    \PY{c+c1}{\# Input list}
+    \PY{n}{mylist} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{]}
+    \PY{c+c1}{\# Creating multiprocessing.Queue}
+    \PY{n}{q} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Queue}\PY{p}{(}\PY{p}{)}
+
+    \PY{c+c1}{\# Creating new processes}
+    \PY{n}{p1} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{square\_list}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{mylist}\PY{p}{,} \PY{n}{q}\PY{p}{)}\PY{p}{)}
+    \PY{n}{p2} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{print\_queue}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{q}\PY{p}{,}\PY{p}{)}\PY{p}{)}
+
+    \PY{c+c1}{\# Running process p1 to square list}
+    \PY{n}{p1}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+    \PY{n}{p1}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+    \PY{c+c1}{\# Running process p2 to get queue elements}
+    \PY{n}{p2}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+    \PY{n}{p2}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+
+[Output]
+Queue elements:
+1
+4
+9
+16
+Queue is now empty!
+\end{Verbatim}

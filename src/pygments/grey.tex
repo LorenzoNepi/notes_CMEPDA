@@ -1,0 +1,31 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/cuda_rgb_to_grayscale.cu}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{define CHANNELS 3}
+
+\PY{c+c1}{// GPU Kernel to convert RGB image to Grayscale}
+\PY{k+kr}{\_\_global\_\_}\PY{+w}{ }\PY{k+kt}{void}\PY{+w}{ }\PY{n}{colorConvert}\PY{p}{(}\PY{k+kt}{unsigned}\PY{+w}{ }\PY{k+kt}{char}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{grayImage}\PY{p}{,}
+\PY{+w}{                             }\PY{k+kt}{unsigned}\PY{+w}{ }\PY{k+kt}{char}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{rgbImage}\PY{p}{,}
+\PY{+w}{                             }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{width}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{height}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+
+\PY{+w}{    }\PY{c+c1}{// Determine the (X, Y) pixel coordinates for this thread}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{x}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n+nb}{threadIdx}\PY{p}{.}\PY{n}{x}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n+nb}{blockIdx}\PY{p}{.}\PY{n}{x}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n+nb}{blockDim}\PY{p}{.}\PY{n}{x}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{y}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n+nb}{threadIdx}\PY{p}{.}\PY{n}{y}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n+nb}{blockIdx}\PY{p}{.}\PY{n}{y}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n+nb}{blockDim}\PY{p}{.}\PY{n}{y}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Boundary check to prevent accessing memory outside the image}
+\PY{+w}{    }\PY{k}{if}\PY{+w}{ }\PY{p}{(}\PY{n}{x}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{width}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{o}{\PYZam{}}\PY{+w}{ }\PY{n}{y}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{height}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+
+\PY{+w}{        }\PY{c+c1}{// Convert 2D coordinates to a 1D array index for the grayscale image}
+\PY{+w}{        }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{grayOffset}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{y}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{width}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n}{x}\PY{p}{;}
+
+\PY{+w}{        }\PY{c+c1}{// Calculate the corresponding index in the RGB array (3 values per pixel)}
+\PY{+w}{        }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{rgbOffset}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{grayOffset}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{CHANNELS}\PY{p}{;}
+
+\PY{+w}{        }\PY{c+c1}{// Extract Red, Green, and Blue channels (adjacent in memory)}
+\PY{+w}{        }\PY{k+kt}{unsigned}\PY{+w}{ }\PY{k+kt}{char}\PY{+w}{ }\PY{n}{r}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{rgbImage}\PY{p}{[}\PY{n}{rgbOffset}\PY{+w}{    }\PY{p}{]}\PY{p}{;}
+\PY{+w}{        }\PY{k+kt}{unsigned}\PY{+w}{ }\PY{k+kt}{char}\PY{+w}{ }\PY{n}{g}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{rgbImage}\PY{p}{[}\PY{n}{rgbOffset}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{;}
+\PY{+w}{        }\PY{k+kt}{unsigned}\PY{+w}{ }\PY{k+kt}{char}\PY{+w}{ }\PY{n}{b}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{rgbImage}\PY{p}{[}\PY{n}{rgbOffset}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{;}
+
+\PY{+w}{        }\PY{c+c1}{// Apply luminance formula to convert RGB to a single grayscale value}
+\PY{+w}{        }\PY{n}{grayImage}\PY{p}{[}\PY{n}{grayOffset}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{unsigned}\PY{+w}{ }\PY{k+kt}{char}\PY{p}{)}\PY{p}{(}\PY{l+m+mf}{0.21f}\PY{o}{*}\PY{n}{r}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{l+m+mf}{0.71f}\PY{o}{*}\PY{n}{g}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{l+m+mf}{0.07f}\PY{o}{*}\PY{n}{b}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{p}{\PYZcb{}}
+\PY{p}{\PYZcb{}}
+\end{Verbatim}

@@ -1,0 +1,47 @@
+\begin{Verbatim}[fontsize=\footnotesize, label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/keras_callbacks_training.py}},commandchars=\\\{\}]
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{models}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{Sequential}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{layers}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{Dense}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{callbacks}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{EarlyStopping}\PY{p}{,} \PY{n}{ReduceLROnPlateau}
+\PY{k+kn}{import}\PY{+w}{ }\PY{n+nn}{numpy}\PY{+w}{ }\PY{k}{as}\PY{+w}{ }\PY{n+nn}{np}
+
+\PY{c+c1}{\PYZsh{} 1. Generate some dummy data}
+\PY{n}{X\_train}\PY{p}{,} \PY{n}{y\_train} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{rand}\PY{p}{(}\PY{l+m+mi}{1000}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{1000}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{X\_test}\PY{p}{,} \PY{n}{y\_test} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{rand}\PY{p}{(}\PY{l+m+mi}{200}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{200}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} 2. Build and compile a simple model}
+\PY{n}{model} \PY{o}{=} \PY{n}{Sequential}\PY{p}{(}\PY{p}{[}
+    \PY{n}{Dense}\PY{p}{(}\PY{l+m+mi}{64}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{relu}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{input\_shape}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{20}\PY{p}{,}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+    \PY{n}{Dense}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sigmoid}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{p}{]}\PY{p}{)}
+\PY{n}{model}\PY{o}{.}\PY{n}{compile}\PY{p}{(}\PY{n}{optimizer}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adam}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{loss}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{binary\_crossentropy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{metrics}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{accuracy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} 3. Setup training parameters}
+\PY{n}{n\_epochs} \PY{o}{=} \PY{l+m+mi}{50}
+\PY{n}{batch\_size} \PY{o}{=} \PY{l+m+mi}{32}
+
+\PY{c+c1}{\PYZsh{} 4. Train the model with callbacks (Advanced training capabilities)}
+\PY{n}{history} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\_train}\PY{p}{,} \PY{n}{y\_train}\PY{p}{,} \PY{n}{epochs}\PY{o}{=}\PY{n}{n\_epochs}\PY{p}{,} \PY{n}{batch\_size}\PY{o}{=}\PY{n}{batch\_size}\PY{p}{,} \PY{n}{verbose}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{,}
+                    \PY{n}{validation\_data}\PY{o}{=}\PY{p}{(}\PY{n}{X\_test}\PY{p}{,} \PY{n}{y\_test}\PY{p}{)}\PY{p}{,}
+                    \PY{n}{callbacks}\PY{o}{=}\PY{p}{[}
+                        \PY{n}{EarlyStopping}\PY{p}{(}\PY{n}{monitor}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{val\_loss}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{patience}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{,} \PY{n}{verbose}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}
+                        \PY{n}{ReduceLROnPlateau}\PY{p}{(}\PY{n}{monitor}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{val\_loss}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{factor}\PY{o}{=}\PY{l+m+mf}{0.1}\PY{p}{,} \PY{n}{patience}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{verbose}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+                    \PY{p}{]}\PY{p}{)}
+
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/keras_callbacks_trainingb.py}},commandchars=\\\{\}]
+[Output]
+> python keras_callbacks_training.py
+Epoch 1/50
+32/32 - 1s - loss: 0.7012 - accuracy: 0.4850 - val_loss: 0.6931 - val_accuracy: 0.5100 - lr: 0.0010
+Epoch 2/50
+32/32 - 0s - loss: 0.6930 - accuracy: 0.5120 - val_loss: 0.6930 - val_accuracy: 0.5150 - lr: 0.0010
+...
+Epoch 6/50
+32/32 - 0s - loss: 0.6750 - accuracy: 0.5750 - val_loss: 0.6995 - val_accuracy: 0.5100 - lr: 0.0010
+Epoch 6: ReduceLROnPlateau reducing learning rate to 0.00010000000474974513.
+...
+Epoch 16/50
+32/32 - 0s - loss: 0.6601 - accuracy: 0.6100 - val_loss: 0.7050 - val_accuracy: 0.4900 - lr: 1.0000e-04
+Epoch 16: early stopping
+\end{Verbatim}

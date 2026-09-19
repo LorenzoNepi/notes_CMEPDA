@@ -1,0 +1,42 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/cublas_saxpy.cpp}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}iostream\PYZgt{}}
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}cublas\_v2.h\PYZgt{}}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{42.0f}\PY{p}{;}
+\PY{+w}{    }\PY{k}{const}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{n}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{10}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{x}\PY{p}{[}\PY{n}{n}\PY{p}{]}\PY{p}{,}\PY{+w}{ }\PY{n}{y}\PY{p}{[}\PY{n}{n}\PY{p}{]}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Initialize arrays with dummy data}
+\PY{+w}{    }\PY{k}{for}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{n}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{o}{+}\PY{o}{+}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{        }\PY{n}{x}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{1.0f}\PY{p}{;}
+\PY{+w}{        }\PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{2.0f}\PY{p}{;}
+\PY{+w}{    }\PY{p}{\PYZcb{}}
+
+\PY{+w}{    }\PY{c+c1}{// Initialize the cuBLAS library context}
+\PY{+w}{    }\PY{n}{cublasHandle\_t}\PY{+w}{ }\PY{n}{handle}\PY{p}{;}
+\PY{+w}{    }\PY{n}{cublasCreate}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{handle}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{d\_x}\PY{p}{,}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{d\_y}\PY{p}{;}
+\PY{+w}{    }\PY{c+c1}{// Allocate memory exclusively on the GPU (Device memory)}
+\PY{+w}{    }\PY{n}{cudaMalloc}\PY{p}{(}\PY{p}{(}\PY{k+kt}{void}\PY{+w}{ }\PY{o}{*}\PY{o}{*}\PY{p}{)}\PY{o}{\PYZam{}}\PY{n}{d\_x}\PY{p}{,}\PY{+w}{ }\PY{n}{n}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{n}{x}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{cudaMalloc}\PY{p}{(}\PY{p}{(}\PY{k+kt}{void}\PY{+w}{ }\PY{o}{*}\PY{o}{*}\PY{p}{)}\PY{o}{\PYZam{}}\PY{n}{d\_y}\PY{p}{,}\PY{+w}{ }\PY{n}{n}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{n}{y}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Copy data from CPU (Host) to GPU (Device)}
+\PY{+w}{    }\PY{n}{cublasSetVector}\PY{p}{(}\PY{n}{n}\PY{p}{,}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{n}{x}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{,}\PY{+w}{ }\PY{n}{x}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{,}\PY{+w}{ }\PY{n}{d\_x}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{cublasSetVector}\PY{p}{(}\PY{n}{n}\PY{p}{,}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{n}{y}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{,}\PY{+w}{ }\PY{n}{y}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{,}\PY{+w}{ }\PY{n}{d\_y}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Execute the optimized SAXPY library function on GPU}
+\PY{+w}{    }\PY{n}{cublasSaxpy}\PY{p}{(}\PY{n}{handle}\PY{p}{,}\PY{+w}{ }\PY{n}{n}\PY{p}{,}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{n}{d\_x}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{,}\PY{+w}{ }\PY{n}{d\_y}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Copy the result back from GPU to CPU}
+\PY{+w}{    }\PY{n}{cublasGetVector}\PY{p}{(}\PY{n}{n}\PY{p}{,}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{n}{y}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{,}\PY{+w}{ }\PY{n}{d\_y}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{,}\PY{+w}{ }\PY{n}{y}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Clean up GPU memory and destroy cuBLAS context}
+\PY{+w}{    }\PY{n}{cudaFree}\PY{p}{(}\PY{n}{d\_x}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{cudaFree}\PY{p}{(}\PY{n}{d\_y}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{cublasDestroy}\PY{p}{(}\PY{n}{handle}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+\end{Verbatim}

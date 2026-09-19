@@ -1,0 +1,172 @@
+\section{OOP introduction: Special methods}
+
+\subsection{Special methods in practice}
+Suppose we want to create a class for managing 2D vectors. That's just for learning: there are already plenty of libraries for doing array operations, like \texttt{numpy}. Anyway, let's start coding some useful methods for it. Here is a naive implementation:
+
+\input{pygments/vector2d_naive}
+
+This kind of works but isn't that ugly? Look at the lines \texttt{v.info()} or \texttt{v.module()}. It would be far more readable to just do \texttt{print(v)} and \texttt{abs(v)}. And what about \texttt{t = v.add(z)}? Why not \texttt{t = v + z}?
+
+In Python there is a tool that allows you to do just that: \textbf{special methods}. In the last lesson, we saw that special methods (or dunder methods or magic methods) are methods like \texttt{\_\_init\_\_} and get special treatment by the Python interpreter. There are a few tens of special methods in Python. In the next sections we are going to see how they work. 
+
+\subsection{\texttt{\_\_abs\_\_} \texorpdfstring{$\xrightarrow{}$}{->} \texttt{abs()}}
+
+In the following example, the \texttt{\_\_abs\_\_} method was implemented for our class. Look at the code: note that every object that is an instance of a class with the \texttt{\_\_abs\_\_} method can be the argument of the \texttt{abs()} built-in function. That's exactly what is going to happen for many other special methods.
+
+\input{pygments/vector2d_2}
+
+\subsection{\texttt{\_\_str\_\_} and \texttt{\_\_repr\_\_} \texorpdfstring{$\xrightarrow{}$}{->} \texttt{str()}, \texttt{print()} and \texttt{repr()}}
+
+What about \texttt{print()}? There are actually two special methods used for that: \texttt{\_\_str\_\_} and \texttt{\_\_repr\_\_}. The \texttt{\_\_str\_\_} special method is meant to return a concise string for the user; it is called with \texttt{str()}. The \texttt{\_\_repr\_\_} special method is meant to return a richer output for debugging. It is called with \texttt{repr()}.
+
+\texttt{print()} automatically tries to get a string out of the object using \texttt{\_\_str\_\_}. If there isn't one, it searches for \texttt{\_\_repr\_\_}. A default \texttt{\_\_repr\_\_} is automatically generated for you, if you haven't defined one.
+
+Here is how you can implement these two methods:
+
+\input{pygments/vector2d_printable}
+
+\subsection{Mathematical operations using special methods}
+You can easily define mathematical operations by implementing the corresponding special methods, such as \texttt{\_\_add\_\_} or \texttt{\_\_mul\_\_}:
+
+\input{pygments/vector2d_math}
+
+\subsection{In place operations using special methods}
+Similarly, in place operations like \texttt{+=} can be implemented using methods such as \texttt{\_\_iadd\_\_}:
+
+\input{pygments/vector2d_inplace}
+
+\subsection{Comparisons using special methods}
+To allow comparisons between objects (e.g., using \texttt{==} or \texttt{!=}), you can define methods like \texttt{\_\_eq\_\_} and \texttt{\_\_ne\_\_}:
+
+\input{pygments/vector2d_comparable}
+\hrulefill
+
+Here is how you would test these comparison methods:
+
+\input{pygments/test_vector2d_comparable}
+
+\subsection{Creating a hashable object using special methods}
+Now let's try to make our \texttt{Vector2d} \textit{hashable}. Hashable objects can be put in \textit{sets} and used as keys for dictionaries.
+To make an object hashable we need to fulfill 3 requirements:
+\begin{itemize}
+    \item[-] It has to be immutable, otherwise you may not retrieve the correct hash;
+    \item[-] It needs to implement an \texttt{\_\_eq\_\_} function, so one can compare objects of this class;
+    \item[-] It needs a (reasonable) \texttt{\_\_hash\_\_} function.
+\end{itemize}
+As said in the previous sections, a good hash function must return the same value for objects that compare as equal, should rarely return the same value for different objects and should sample the result space uniformly. Here's how we can make \texttt{Vector2d} hashable:
+
+\input{pygments/vector2d_hashable}
+\hrulefill
+
+And this is the resulting behavior in practice:
+
+\input{pygments/vector2d_hashable_test}
+
+\subsection{List-style access using special methods}
+2D arrays are boring. Why not an N-d array? Of course we cannot store the components explicitly like before. We need a container for that and we will use \texttt{array} from the \texttt{array} library \footnote{\texttt{array} uses a typecode (a single character) for picking the type of data stored in the array. 'd' is the typecode for float numbers in double precision.}. This is an example of \textit{composition}.
+
+Here is a question for you: why not just use a list or a tuple?
+
+Let's create the new class utilizing the underlying array:
+
+\input{pygments/vector}
+
+Now that we have an arbitrary number of components, we cannot access them like \texttt{vector.x}, \texttt{vector.y}, etc\dots anymore. What we want is a syntax similar to that of lists: \texttt{vector[0]}, \texttt{vector[1]} and so on.
+
+There are two magic methods for that: \texttt{\_\_getitem\_\_} for access and \texttt{\_\_setitem\_\_} for modifying. While we are at it, we will also implement the \texttt{\_\_len\_\_} method, which allows us to call \texttt{len(vector)}. Here's how you do it:
+
+\input{pygments/vector_random_access}
+\hrulefill
+
+And here is how we can test the new random access functionality:
+
+\input{pygments/test_vector_random_access}
+
+\subsection{Making an object iterable using special methods}\label{sec:special_iterable}
+Now our vector behaves a bit like a native Python list. However, a list has a very powerful feature we miss: it's \textit{iterable}.
+
+An \textbf{iterable} in Python is something that has an \texttt{\_\_iter\_\_} method, which returns an \textbf{iterator}. Technically, an iterator is an object that implements the \texttt{\_\_next\_\_} special method, which is used to retrieve elements one at a time. We will not discuss iterators any further here. Instead, we will just exploit composition and borrow the \texttt{\_\_iter\_\_} method from the underlying array:
+
+\input{pygments/vector_iterable}
+\hrulefill
+
+You can verify its iterability as follows:
+
+\input{pygments/vector_iterable_test}
+
+\hrulefill
+
+\subsubsection{Note: Duck typing and polymorphism}
+The duck test: "\textit{If it looks like a duck and quacks like a duck, it must be a duck.}".
+
+When programming, Python usually doesn't care about the type of an object but only what the object \textit{can do} (i.e. its methods). That is the concept of \textbf{duck-typing}, shown in this classic example:
+
+\input{pygments/duck_typing}
+
+In statically typed languages\footnote{Statically typed languages: type-checking happens at compile-time. Dynamically typed languages: type-checking happens at runtime.} like Java, C or C++ this is typically done with inheritance, e.g. we make \texttt{Duck} and \texttt{Goose} inherit from a base class \texttt{QuackingBird()} or something like that. That is because functions from statically typed languages always require arguments of a specific type.
+
+Python (like JavaScript) is dynamically typed, so we can use duck typing for that. We just need to implement the \texttt{quack()} method for both \texttt{Duck()} and \texttt{Goose()} and we are done. In other words we obtain polymorphism (which is the act of using objects with different types for the same function) just by satisfying the required \textit{interface} (in this case the \texttt{quack()} function).
+
+\hrulefill
+
+Having an iterable \texttt{Vector} (thanks to the \texttt{\_\_iter\_\_} magic method) makes all the difference in the world. There are \emph{a lot} of built-in and library functions in Python accepting a generic iterable as input:
+\begin{itemize}
+    \item[-] \texttt{sum}: Sum all the elements
+    \item[-] \texttt{max}/\texttt{min}: Return the maximum/minimum
+    \item[-] \texttt{reversed}: Loop in the reversed order
+    \item[-] \texttt{all}: Return true if a given condition is true for all the elements
+    \item[-] \texttt{any}: Return true if a given condition is true for at least one element
+    \item[-] \texttt{functools.reduce}: Apply a function recursively to pairs of elements
+    \item[-] \texttt{enumerate}: Iterate with automatic counting of iterations
+    \item[-] \texttt{map}: Apply a function to the elements one by one
+    \item[-] \texttt{filter}: Iterate only on the elements passing a given condition
+    \item[-] \texttt{zip}: Iterate over pairs of elements (requires two iterables)
+\end{itemize}
+
+Countless others can be found in the \texttt{itertools} library:
+\begin{itemize}
+    \item[-] \texttt{islice}: Slice the loop with start, stop and step
+    \item[-] \texttt{takewhile}: Stop looping when a condition becomes false
+    \item[-] \texttt{accumulate}: Get the results of applying the function iteratively to pairs of elements
+    \item[-] \texttt{chain}: Loop through many sequences one after another
+    \item[-] \texttt{cycle}: Loop over the sequence repeatedly, indefinitely
+    \item[-] \texttt{permutations}: Get all the permutations of a given length
+    \item[-] \texttt{product}: Compute the cartesian product of iterables
+    \item[-] \texttt{groupby}: Group by value of some key (function)
+    \item[-] \dots
+\end{itemize}
+
+Thanks to duck typing, we can now use any of that for our \texttt{Vector} class.
+
+\input{pygments/vector_ducked}
+\hrulefill
+
+Here is a demonstration of our iterable vector interacting with Python's built-in functions:
+
+\input{pygments/test_vector_ducked}
+
+\subsection{Callables and functions: the \texttt{\_\_call\_\_} special method}
+Remember that in the past lessons you were told that functions are objects of the \texttt{function} class. How are they implemented? With a special method of course: \texttt{\_\_call\_\_}. Every object implementing a \texttt{\_\_call\_\_} method is called \textbf{callable}. In this example the object \texttt{line} is a callable, so we can write \texttt{line(2.)}, just like a normal function.
+
+\input{pygments/callable_line}
+
+Let's create for example a call counter, which is a class that counts how many times a function is called in your code. Then we implement a simple fit and count the function calls during the fitting operations.
+
+\input{pygments/callable}
+\hrulefill
+
+And here is how it behaves during a fitting procedure:
+
+\input{pygments/test_callable}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{fit_with_custom_callable.png}
+\end{figure}
+
+\subsubsection{Short summary 4: Special methods}
+\begin{itemize}
+    \item \textbf{Special methods} can be used to greatly enhance the readability of the code and get your classes to behave in an appropriate way.
+    \item There are tens of special methods in Python, covering logical operations, mathematical operations, array-style access, iterations, formatting and many other things.
+    \item By implementing the required interface in your classes, you will be able to reuse a lot of code written for the standard containers thanks to \textbf{duck typing}, which is the pythonic way to polymorphism.
+\end{itemize}

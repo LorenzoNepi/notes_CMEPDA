@@ -1,0 +1,219 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/MatrixMultiplication_shared.cu}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdlib.h\PYZgt{}}
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZdq{}MatrixMultiplication\_shared.h\PYZdq{}}
+
+\PY{c+c1}{// Matrix multiplication \PYZhy{} Host code (Shared Memory Version)}
+\PY{c+c1}{// Matrix dimensions are assumed to be multiples of BLOCK\_SIZE}
+\PY{k+kt}{void}\PY{+w}{ }\PY{n+nf}{MatMul}\PY{p}{(}\PY{k}{const}\PY{+w}{ }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{A}\PY{p}{,}\PY{+w}{ }\PY{k}{const}\PY{+w}{ }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{B}\PY{p}{,}\PY{+w}{ }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{C}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+
+\PY{+w}{  }\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} 1. ALLOCATE AND COPY MATRIX A TO DEVICE \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{+w}{  }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{d\_A}\PY{p}{;}
+\PY{+w}{  }\PY{n}{d\_A}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{d\_A}\PY{p}{.}\PY{n}{stride}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{width}\PY{p}{;}
+\PY{+w}{  }\PY{n}{d\_A}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{height}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Calculate the total size in bytes for Matrix A}
+\PY{+w}{  }\PY{k+kt}{size\_t}\PY{+w}{ }\PY{n}{size}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{k+kt}{float}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Allocate memory on the GPU (Device)}
+\PY{+w}{  }\PY{n}{cudaError\_t}\PY{+w}{ }\PY{n}{err}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{cudaMalloc}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{d\_A}\PY{p}{.}\PY{n}{elements}\PY{p}{,}\PY{+w}{ }\PY{n}{size}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{CUDA malloc A: \PYZpc{}s}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{cudaGetErrorString}\PY{p}{(}\PY{n}{err}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Copy data from Host (CPU) to Device (GPU)}
+\PY{+w}{  }\PY{n}{cudaMemcpy}\PY{p}{(}\PY{n}{d\_A}\PY{p}{.}\PY{n}{elements}\PY{p}{,}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{elements}\PY{p}{,}\PY{+w}{ }\PY{n}{size}\PY{p}{,}\PY{+w}{ }\PY{n}{cudaMemcpyHostToDevice}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} 2. ALLOCATE AND COPY MATRIX B TO DEVICE \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{+w}{  }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{d\_B}\PY{p}{;}
+\PY{+w}{  }\PY{n}{d\_B}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{d\_B}\PY{p}{.}\PY{n}{stride}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{B}\PY{p}{.}\PY{n}{width}\PY{p}{;}
+\PY{+w}{  }\PY{n}{d\_B}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{B}\PY{p}{.}\PY{n}{height}\PY{p}{;}
+\PY{+w}{  }\PY{n}{size}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{B}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{B}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{k+kt}{float}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{n}{err}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{cudaMalloc}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{d\_B}\PY{p}{.}\PY{n}{elements}\PY{p}{,}\PY{+w}{ }\PY{n}{size}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{CUDA malloc B: \PYZpc{}s}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{cudaGetErrorString}\PY{p}{(}\PY{n}{err}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaMemcpy}\PY{p}{(}\PY{n}{d\_B}\PY{p}{.}\PY{n}{elements}\PY{p}{,}\PY{+w}{ }\PY{n}{B}\PY{p}{.}\PY{n}{elements}\PY{p}{,}\PY{+w}{ }\PY{n}{size}\PY{p}{,}\PY{+w}{ }\PY{n}{cudaMemcpyHostToDevice}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} 3. ALLOCATE MATRIX C ON DEVICE \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{+w}{  }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{d\_C}\PY{p}{;}
+\PY{+w}{  }\PY{n}{d\_C}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{d\_C}\PY{p}{.}\PY{n}{stride}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{C}\PY{p}{.}\PY{n}{width}\PY{p}{;}
+\PY{+w}{  }\PY{n}{d\_C}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{C}\PY{p}{.}\PY{n}{height}\PY{p}{;}
+\PY{+w}{  }\PY{n}{size}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{C}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{C}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{k+kt}{float}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{n}{err}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{cudaMalloc}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{d\_C}\PY{p}{.}\PY{n}{elements}\PY{p}{,}\PY{+w}{ }\PY{n}{size}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{CUDA malloc C: \PYZpc{}s}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{cudaGetErrorString}\PY{p}{(}\PY{n}{err}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} 4. TIMING SETUP \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{+w}{  }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{time}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaEvent\_t}\PY{+w}{ }\PY{n}{start}\PY{p}{,}\PY{+w}{ }\PY{n}{stop}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaEventCreate}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{start}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaEventCreate}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{stop}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Start the timer}
+\PY{+w}{  }\PY{n}{cudaEventRecord}\PY{p}{(}\PY{n}{start}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} 5. GRID AND BLOCK CONFIGURATION \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{+w}{  }\PY{c+c1}{// Define the number of threads per block in 2D (BLOCK\_SIZE x BLOCK\_SIZE)}
+\PY{+w}{  }\PY{k+kt}{dim3}\PY{+w}{ }\PY{n}{dimBlock}\PY{p}{(}\PY{n}{BLOCK\_SIZE}\PY{p}{,}\PY{+w}{ }\PY{n}{BLOCK\_SIZE}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Calculate the number of blocks needed in the grid}
+\PY{+w}{  }\PY{k+kt}{dim3}\PY{+w}{ }\PY{n}{dimGrid}\PY{p}{(}\PY{n}{B}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{/}\PY{+w}{ }\PY{n}{dimBlock}\PY{p}{.}\PY{n}{x}\PY{p}{,}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{/}\PY{+w}{ }\PY{n}{dimBlock}\PY{p}{.}\PY{n}{y}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Launch the kernel}
+\PY{+w}{  }\PY{n}{MatMulKernel}\PY{o}{\PYZlt{}}\PY{o}{\PYZlt{}}\PY{o}{\PYZlt{}}\PY{n}{dimGrid}\PY{p}{,}\PY{+w}{ }\PY{n}{dimBlock}\PY{o}{\PYZgt{}}\PY{o}{\PYZgt{}}\PY{o}{\PYZgt{}}\PY{p}{(}\PY{n}{d\_A}\PY{p}{,}\PY{+w}{ }\PY{n}{d\_B}\PY{p}{,}\PY{+w}{ }\PY{n}{d\_C}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Wait for all threads to finish}
+\PY{+w}{  }\PY{n}{err}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{cudaDeviceSynchronize}\PY{p}{(}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} 6. STOP TIMER AND PRINT \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{+w}{  }\PY{n}{cudaEventRecord}\PY{p}{(}\PY{n}{stop}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaEventSynchronize}\PY{p}{(}\PY{n}{stop}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaEventElapsedTime}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{time}\PY{p}{,}\PY{+w}{ }\PY{n}{start}\PY{p}{,}\PY{+w}{ }\PY{n}{stop}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Run kernel: \PYZpc{}s}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{cudaGetErrorString}\PY{p}{(}\PY{n}{err}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Time: \PYZpc{}3.5f ms}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{time}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} 7. RETRIEVE RESULTS AND CLEANUP \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{+w}{  }\PY{c+c1}{// Copy the computed matrix C back to the Host}
+\PY{+w}{  }\PY{n}{err}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{cudaMemcpy}\PY{p}{(}\PY{n}{C}\PY{p}{.}\PY{n}{elements}\PY{p}{,}\PY{+w}{ }\PY{n}{d\_C}\PY{p}{.}\PY{n}{elements}\PY{p}{,}\PY{+w}{ }\PY{n}{size}\PY{p}{,}\PY{+w}{ }\PY{n}{cudaMemcpyDeviceToHost}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Copy C off of device: \PYZpc{}s}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{cudaGetErrorString}\PY{p}{(}\PY{n}{err}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Free the device memory to prevent memory leaks}
+\PY{+w}{  }\PY{n}{cudaFree}\PY{p}{(}\PY{n}{d\_A}\PY{p}{.}\PY{n}{elements}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaFree}\PY{p}{(}\PY{n}{d\_B}\PY{p}{.}\PY{n}{elements}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaFree}\PY{p}{(}\PY{n}{d\_C}\PY{p}{.}\PY{n}{elements}\PY{p}{)}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{// ===============================================================}
+\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} DEVICE HELPER FUNCTIONS \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{c+c1}{// ===============================================================}
+
+\PY{c+c1}{// Get a matrix element}
+\PY{k+kt}{\_\_device\_\_}\PY{+w}{ }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{GetElement}\PY{p}{(}\PY{k}{const}\PY{+w}{ }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{A}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{row}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{col}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{  }\PY{k}{return}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{elements}\PY{p}{[}\PY{n}{row}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{stride}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n}{col}\PY{p}{]}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{// Set a matrix element}
+\PY{k+kt}{\_\_device\_\_}\PY{+w}{ }\PY{k+kt}{void}\PY{+w}{ }\PY{n}{SetElement}\PY{p}{(}\PY{n}{Matrix}\PY{+w}{ }\PY{n}{A}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{row}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{col}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{value}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{  }\PY{n}{A}\PY{p}{.}\PY{n}{elements}\PY{p}{[}\PY{n}{row}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{stride}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n}{col}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{value}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{// Get the BLOCK\_SIZE x BLOCK\_SIZE sub\PYZhy{}matrix Asub of A that is}
+\PY{c+c1}{// located col sub\PYZhy{}matrices to the right and row sub\PYZhy{}matrices down}
+\PY{c+c1}{// from the upper\PYZhy{}left corner of A}
+\PY{k+kt}{\_\_device\_\_}\PY{+w}{ }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{GetSubMatrix}\PY{p}{(}\PY{n}{Matrix}\PY{+w}{ }\PY{n}{A}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{row}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{col}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{  }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{Asub}\PY{p}{;}
+\PY{+w}{  }\PY{n}{Asub}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{BLOCK\_SIZE}\PY{p}{;}
+\PY{+w}{  }\PY{n}{Asub}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{BLOCK\_SIZE}\PY{p}{;}
+\PY{+w}{  }\PY{n}{Asub}\PY{p}{.}\PY{n}{stride}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{stride}\PY{p}{;}
+\PY{+w}{  }\PY{n}{Asub}\PY{p}{.}\PY{n}{elements}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{n}{A}\PY{p}{.}\PY{n}{elements}\PY{p}{[}\PY{n}{A}\PY{p}{.}\PY{n}{stride}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{BLOCK\_SIZE}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{row}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n}{BLOCK\_SIZE}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{col}\PY{p}{]}\PY{p}{;}
+\PY{+w}{  }\PY{k}{return}\PY{+w}{ }\PY{n}{Asub}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{// ===============================================================}
+\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} KERNEL FUNCTION \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{c+c1}{// ===============================================================}
+
+\PY{c+c1}{// Matrix multiplication kernel called by MatMul()}
+\PY{k+kr}{\_\_global\_\_}\PY{+w}{ }\PY{k+kt}{void}\PY{+w}{ }\PY{n}{MatMulKernel}\PY{p}{(}\PY{n}{Matrix}\PY{+w}{ }\PY{n}{A}\PY{p}{,}\PY{+w}{ }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{B}\PY{p}{,}\PY{+w}{ }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{C}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+
+\PY{+w}{  }\PY{c+c1}{// Calculate the global block row and column index}
+\PY{+w}{  }\PY{c+c1}{// blockIdx: Which block we are in}
+\PY{+w}{  }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{blockRow}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n+nb}{blockIdx}\PY{p}{.}\PY{n}{y}\PY{p}{;}
+\PY{+w}{  }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{blockCol}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n+nb}{blockIdx}\PY{p}{.}\PY{n}{x}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Each thread block computes one sub\PYZhy{}matrix Csub of C}
+\PY{+w}{  }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{Csub}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{GetSubMatrix}\PY{p}{(}\PY{n}{C}\PY{p}{,}\PY{+w}{ }\PY{n}{blockRow}\PY{p}{,}\PY{+w}{ }\PY{n}{blockCol}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Variable to accumulate the dot product sum for this specific thread\PYZsq{}s element}
+\PY{+w}{  }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{Cvalue}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{0.0}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Thread row and column within Csub}
+\PY{+w}{  }\PY{c+c1}{// threadIdx: Which thread we are inside the block}
+\PY{+w}{  }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{row}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n+nb}{threadIdx}\PY{p}{.}\PY{n}{y}\PY{p}{;}
+\PY{+w}{  }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{col}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n+nb}{threadIdx}\PY{p}{.}\PY{n}{x}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Loop over all the sub\PYZhy{}matrices of A and B that are}
+\PY{+w}{  }\PY{c+c1}{// required to compute Csub}
+\PY{+w}{  }\PY{k}{for}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{m}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}\PY{+w}{ }\PY{n}{m}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{p}{(}\PY{n}{A}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{/}\PY{+w}{ }\PY{n}{BLOCK\_SIZE}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{o}{+}\PY{o}{+}\PY{n}{m}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+
+\PY{+w}{    }\PY{c+c1}{// Get sub\PYZhy{}matrix Asub of A and Bsub of B}
+\PY{+w}{    }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{Asub}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{GetSubMatrix}\PY{p}{(}\PY{n}{A}\PY{p}{,}\PY{+w}{ }\PY{n}{blockRow}\PY{p}{,}\PY{+w}{ }\PY{n}{m}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{Bsub}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{GetSubMatrix}\PY{p}{(}\PY{n}{B}\PY{p}{,}\PY{+w}{ }\PY{n}{m}\PY{p}{,}\PY{+w}{ }\PY{n}{blockCol}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Shared memory used to store Asub and Bsub respectively}
+\PY{+w}{    }\PY{k+kt}{\_\_shared\_\_}\PY{+w}{ }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{As}\PY{p}{[}\PY{n}{BLOCK\_SIZE}\PY{p}{]}\PY{p}{[}\PY{n}{BLOCK\_SIZE}\PY{p}{]}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{\_\_shared\_\_}\PY{+w}{ }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{Bs}\PY{p}{[}\PY{n}{BLOCK\_SIZE}\PY{p}{]}\PY{p}{[}\PY{n}{BLOCK\_SIZE}\PY{p}{]}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Load Asub and Bsub from device memory to shared memory}
+\PY{+w}{    }\PY{c+c1}{// Each thread loads one element of each sub\PYZhy{}matrix}
+\PY{+w}{    }\PY{n}{As}\PY{p}{[}\PY{n}{row}\PY{p}{]}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{GetElement}\PY{p}{(}\PY{n}{Asub}\PY{p}{,}\PY{+w}{ }\PY{n}{row}\PY{p}{,}\PY{+w}{ }\PY{n}{col}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{Bs}\PY{p}{[}\PY{n}{row}\PY{p}{]}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{GetElement}\PY{p}{(}\PY{n}{Bsub}\PY{p}{,}\PY{+w}{ }\PY{n}{row}\PY{p}{,}\PY{+w}{ }\PY{n}{col}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Synchronize to make sure the sub\PYZhy{}matrices are fully loaded}
+\PY{+w}{    }\PY{c+c1}{// before starting the computation}
+\PY{+w}{    }\PY{n+nf}{\_\_syncthreads}\PY{p}{(}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Multiply Asub and Bsub together and accumulate the results}
+\PY{+w}{    }\PY{k}{for}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{e}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}\PY{+w}{ }\PY{n}{e}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{BLOCK\_SIZE}\PY{p}{;}\PY{+w}{ }\PY{o}{+}\PY{o}{+}\PY{n}{e}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{      }\PY{n}{Cvalue}\PY{+w}{ }\PY{o}{+}\PY{o}{=}\PY{+w}{ }\PY{n}{As}\PY{p}{[}\PY{n}{row}\PY{p}{]}\PY{p}{[}\PY{n}{e}\PY{p}{]}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{Bs}\PY{p}{[}\PY{n}{e}\PY{p}{]}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{p}{;}
+\PY{+w}{    }\PY{p}{\PYZcb{}}
+
+\PY{+w}{    }\PY{c+c1}{// Synchronize to make sure that the preceding computation is done}
+\PY{+w}{    }\PY{c+c1}{// before loading two new sub\PYZhy{}matrices of A and B in the next iteration}
+\PY{+w}{    }\PY{n+nf}{\_\_syncthreads}\PY{p}{(}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{p}{\PYZcb{}}
+
+\PY{+w}{  }\PY{c+c1}{// Write the final accumulated value to the sub\PYZhy{}matrix Csub in device memory}
+\PY{+w}{  }\PY{n}{SetElement}\PY{p}{(}\PY{n}{Csub}\PY{p}{,}\PY{+w}{ }\PY{n}{row}\PY{p}{,}\PY{+w}{ }\PY{n}{col}\PY{p}{,}\PY{+w}{ }\PY{n}{Cvalue}\PY{p}{)}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{// Usage: .\PYZbs{}MatrixMultiplication\_shared a1 a2 b2}
+\PY{k+kt}{int}\PY{+w}{ }\PY{n}{main}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{argc}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{char}\PY{o}{*}\PY{+w}{ }\PY{n}{argv}\PY{p}{[}\PY{p}{]}\PY{p}{)}\PY{p}{\PYZob{}}
+\PY{+w}{  }\PY{n}{Matrix}\PY{+w}{ }\PY{n}{A}\PY{p}{,}\PY{+w}{ }\PY{n}{B}\PY{p}{,}\PY{+w}{ }\PY{n}{C}\PY{p}{;}
+\PY{+w}{  }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{a1}\PY{p}{,}\PY{+w}{ }\PY{n}{a2}\PY{p}{,}\PY{+w}{ }\PY{n}{b1}\PY{p}{,}\PY{+w}{ }\PY{n}{b2}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Read matrix dimensions from command line arguments}
+\PY{+w}{  }\PY{n}{a1}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{atoi}\PY{p}{(}\PY{n}{argv}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Height of A}
+\PY{+w}{  }\PY{n}{a2}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{atoi}\PY{p}{(}\PY{n}{argv}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Width of A}
+\PY{+w}{  }\PY{n}{b1}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{a2}\PY{p}{;}\PY{+w}{            }\PY{c+c1}{// Height of B (must equal Width of A for multiplication)}
+\PY{+w}{  }\PY{n}{b2}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{atoi}\PY{p}{(}\PY{n}{argv}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Width of B}
+
+\PY{+w}{  }\PY{c+c1}{// Set dimensions for Matrix A and allocate host memory}
+\PY{+w}{  }\PY{n}{A}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{a1}\PY{p}{;}
+\PY{+w}{  }\PY{n}{A}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{a2}\PY{p}{;}
+\PY{+w}{  }\PY{n}{A}\PY{p}{.}\PY{n}{elements}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{float}\PY{o}{*}\PY{p}{)}\PY{n}{malloc}\PY{p}{(}\PY{n}{A}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{k+kt}{float}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Set dimensions for Matrix B and allocate host memory}
+\PY{+w}{  }\PY{n}{B}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{b1}\PY{p}{;}
+\PY{+w}{  }\PY{n}{B}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{b2}\PY{p}{;}
+\PY{+w}{  }\PY{n}{B}\PY{p}{.}\PY{n}{elements}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{float}\PY{o}{*}\PY{p}{)}\PY{n}{malloc}\PY{p}{(}\PY{n}{B}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{B}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{k+kt}{float}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Set dimensions for Matrix C (Output) and allocate host memory}
+\PY{+w}{  }\PY{n}{C}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{height}\PY{p}{;}
+\PY{+w}{  }\PY{n}{C}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{B}\PY{p}{.}\PY{n}{width}\PY{p}{;}
+\PY{+w}{  }\PY{n}{C}\PY{p}{.}\PY{n}{elements}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{float}\PY{o}{*}\PY{p}{)}\PY{n}{malloc}\PY{p}{(}\PY{n}{C}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{C}\PY{p}{.}\PY{n}{height}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{k+kt}{float}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Populate Matrix A with random floats (0.0, 1.0, or 2.0)}
+\PY{+w}{  }\PY{k}{for}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{height}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{o}{+}\PY{o}{+}\PY{p}{)}
+\PY{+w}{    }\PY{k}{for}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{j}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}\PY{+w}{ }\PY{n}{j}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{A}\PY{p}{.}\PY{n}{width}\PY{p}{;}\PY{+w}{ }\PY{n}{j}\PY{o}{+}\PY{o}{+}\PY{p}{)}
+\PY{+w}{      }\PY{n}{A}\PY{p}{.}\PY{n}{elements}\PY{p}{[}\PY{n}{i}\PY{o}{*}\PY{n}{A}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n}{j}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{float}\PY{p}{)}\PY{p}{(}\PY{n}{rand}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{o}{\PYZpc{}}\PY{+w}{ }\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Populate Matrix B with random floats (0.0 or 1.0)}
+\PY{+w}{  }\PY{k}{for}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{B}\PY{p}{.}\PY{n}{height}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{o}{+}\PY{o}{+}\PY{p}{)}
+\PY{+w}{    }\PY{k}{for}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{j}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}\PY{+w}{ }\PY{n}{j}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{B}\PY{p}{.}\PY{n}{width}\PY{p}{;}\PY{+w}{ }\PY{n}{j}\PY{o}{+}\PY{o}{+}\PY{p}{)}
+\PY{+w}{      }\PY{n}{B}\PY{p}{.}\PY{n}{elements}\PY{p}{[}\PY{n}{i}\PY{o}{*}\PY{n}{B}\PY{p}{.}\PY{n}{width}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n}{j}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{float}\PY{p}{)}\PY{p}{(}\PY{n}{rand}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{o}{\PYZpc{}}\PY{+w}{ }\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// Call the host function to execute the multiplication on the GPU}
+\PY{+w}{  }\PY{n}{MatMul}\PY{p}{(}\PY{n}{A}\PY{p}{,}\PY{+w}{ }\PY{n}{B}\PY{p}{,}\PY{+w}{ }\PY{n}{C}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+> MatrixMultiplication_shared 1024 1024 1024
+CUDA malloc A: no error
+CUDA malloc B: no error
+CUDA malloc C: no error
+Run kernel: no error
+Time: 16.10918 ms
+Copy C off of device: no error
+\end{Verbatim}

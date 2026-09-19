@@ -1,0 +1,38 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/multiprocessing_manager.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{multiprocessing}
+
+\PY{k}{def} \PY{n+nf}{add\PYZus{}element}\PY{p}{(}\PY{n}{record}\PY{p}{,}\PY{n}{records}\PY{p}{)}\PY{p}{:}
+    \PY{n}{records}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{record}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{New element added to records list}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{k}{def} \PY{n+nf}{sum\PYZus{}elements}\PY{p}{(}\PY{n}{records}\PY{p}{)}\PY{p}{:}
+    \PY{n}{summ}\PY{o}{=}\PY{n+nb}{sum}\PY{p}{(}\PY{n}{records}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{New sum is: }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{summ}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\#MAIN}
+\PY{k}{if} \PY{n}{\PYZus{}\PYZus{}name\PYZus{}\PYZus{}} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}\PYZus{}main\PYZus{}\PYZus{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+    \PY{c+c1}{\# Defining the manager (or server process)}
+    \PY{k}{with} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Manager}\PY{p}{(}\PY{p}{)} \PY{k}{as} \PY{n}{manager}\PY{p}{:}
+        \PY{n}{list\PYZus{}elements}\PY{o}{=}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{]}
+        \PY{c+c1}{\# Here the list becomes \PYZdq{}usable\PYZdq{} for all the processes managed by the manager}
+        \PY{n}{records}\PY{o}{=}\PY{n}{manager}\PY{o}{.}\PY{n}{list}\PY{p}{(}\PY{n}{list\PYZus{}elements}\PY{p}{)}
+        \PY{n}{new\PYZus{}element}\PY{o}{=}\PY{l+m+mi}{5}
+
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Old sum is: }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n+nb}{sum}\PY{p}{(}\PY{n}{list\PYZus{}elements}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+        \PY{c+c1}{\# Creating new processes}
+        \PY{n}{p1} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{add\PYZus{}element}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{new\PYZus{}element}\PY{p}{,}\PY{n}{records}\PY{p}{)}\PY{p}{)}
+        \PY{n}{p2} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{sum\PYZus{}elements}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{records}\PY{p}{,}\PY{p}{)}\PY{p}{)}
+
+        \PY{c+c1}{\# Running process p1 to insert new element}
+        \PY{n}{p1}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+        \PY{n}{p1}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+
+        \PY{c+c1}{\# Running process p2 to sum list elements}
+        \PY{n}{p2}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+        \PY{n}{p2}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+
+[Output]
+Old sum is: 10
+New element added to records list
+New sum is: 15
+\end{Verbatim}

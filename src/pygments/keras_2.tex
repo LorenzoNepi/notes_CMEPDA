@@ -1,0 +1,64 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/functional_api_example.py}},commandchars=\\\{\}]
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{layers}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{Input}\PY{p}{,} \PY{n}{Dense}\PY{p}{,} \PY{n}{concatenate}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{models}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{Model}
+
+\PY{c+c1}{\PYZsh{} Defining the input tensor}
+\PY{n}{x} \PY{o}{=} \PY{n}{Input}\PY{p}{(}\PY{n}{shape}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Example 1: Simple stack structure, y = f3(f2(f1(x)))}
+
+\PY{n}{f1} \PY{o}{=} \PY{n}{Dense}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{relu}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+\PY{n}{f2} \PY{o}{=} \PY{n}{Dense}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{relu}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{(}\PY{n}{f1}\PY{p}{)}
+\PY{n}{y\PYZus{}simple} \PY{o}{=} \PY{n}{Dense}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sigmoid}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{(}\PY{n}{f2}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Creating the model linking input to output}
+\PY{n}{model\PYZus{}simple} \PY{o}{=} \PY{n}{Model}\PY{p}{(}\PY{n}{inputs}\PY{o}{=}\PY{n}{x}\PY{p}{,} \PY{n}{outputs}\PY{o}{=}\PY{n}{y\PYZus{}simple}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Example 2: Complex Structure with branches, y = f4( f2(f1(x)), f3(x) )}
+
+\PY{c+c1}{\PYZsh{} Branch 1: f2(f1(x))}
+\PY{n}{f1\PYZus{}x} \PY{o}{=} \PY{n}{Dense}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{relu}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+\PY{n}{f2\PYZus{}f1\PYZus{}x} \PY{o}{=} \PY{n}{Dense}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{relu}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{(}\PY{n}{f1\PYZus{}x}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Branch 2: f3(x)}
+\PY{n}{f3\PYZus{}x} \PY{o}{=} \PY{n}{Dense}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{relu}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Combine the two branches (passing them as a list)}
+\PY{n}{merged} \PY{o}{=} \PY{n}{concatenate}\PY{p}{(}\PY{p}{[}\PY{n}{f2\PYZus{}f1\PYZus{}x}\PY{p}{,} \PY{n}{f3\PYZus{}x}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Final layer: f4 applied to the merged tensors}
+\PY{n}{y\PYZus{}complex} \PY{o}{=} \PY{n}{Dense}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sigmoid}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{(}\PY{n}{merged}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Create the complex model}
+\PY{n}{model\PYZus{}complex} \PY{o}{=} \PY{n}{Model}\PY{p}{(}\PY{n}{inputs}\PY{o}{=}\PY{n}{x}\PY{p}{,} \PY{n}{outputs}\PY{o}{=}\PY{n}{y\PYZus{}complex}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print a summary to verify the architecture}
+\PY{n}{model\PYZus{}complex}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/functional_api_exampleb.py}},commandchars=\\\{\}]
+[Output]
+> python functional_api_example.py
+Model: "model_1"
+_____________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+=====================================================================================
+ input_1 (InputLayer)           [(None, 8)]          0           []                               
+                                                                                                  
+ dense_3 (Dense)                (None, 12)           108         ['input_1[0][0]']                
+                                                                                                  
+ dense_4 (Dense)                (None, 8)            104         ['dense_3[0][0]']                
+                                                                                                  
+ dense_5 (Dense)                (None, 8)            72          ['input_1[0][0]']                
+                                                                                                  
+ concatenate (Concatenate)      (None, 16)           0           ['dense_4[0][0]',                
+                                                                  'dense_5[0][0]']                
+                                                                                                  
+ dense_6 (Dense)                (None, 1)            17          ['concatenate[0][0]']            
+                                                                                                  
+=====================================================================================
+Total params: 301 (1.18 KB)
+Trainable params: 301 (1.18 KB)
+Non-trainable params: 0 (0.00 Byte)
+_____________________________________________________________________________________
+\end{Verbatim}

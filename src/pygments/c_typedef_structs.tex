@@ -1,0 +1,64 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/typedef_and_structs.c}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}string.h\PYZgt{}}
+
+\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} TYPEDEF ALIASES \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{k}{typedef}\PY{+w}{ }\PY{k+kt}{unsigned}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{uint}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// define a new type uint}
+\PY{k}{typedef}\PY{+w}{ }\PY{k+kt}{int}\PY{o}{*}\PY{+w}{ }\PY{n}{int\_ptr}\PY{p}{;}\PY{+w}{      }\PY{c+c1}{// define a custom type for pointers}
+\PY{k}{typedef}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{arr\_20}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]}\PY{p}{;}\PY{+w}{     }\PY{c+c1}{// alias for a specific array definition}
+
+\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} STRUCTURES WITH TYPEDEF \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{k}{typedef}\PY{+w}{ }\PY{k}{struct}\PY{+w}{ }\PY{n+nc}{Marks}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{k+kt}{char}\PY{+w}{ }\PY{n}{name}\PY{p}{[}\PY{l+m+mi}{50}\PY{p}{]}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{year}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{marks}\PY{p}{;}
+\PY{p}{\PYZcb{}}\PY{+w}{ }\PY{n}{Marks}\PY{p}{;}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{c+c1}{// Using simple typedefs}
+\PY{+w}{    }\PY{n}{uint}\PY{+w}{ }\PY{n}{myVariable\_1}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{100}\PY{p}{;}
+
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{x}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{50}\PY{p}{;}
+\PY{+w}{    }\PY{n}{int\_ptr}\PY{+w}{ }\PY{n}{a\_2}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{n}{x}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// a\_2 is a pointer}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{The value of the pointer is: \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{o}{*}\PY{n}{a\_2}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{n}{arr\_20}\PY{+w}{ }\PY{n}{myArray}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{p}{\PYZob{}}\PY{l+m+mi}{10}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{20}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{30}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{40}\PY{p}{\PYZcb{}}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// myArray is an array of 4 ints}
+
+\PY{+w}{    }\PY{c+c1}{// Using the Struct}
+\PY{+w}{    }\PY{n}{Marks}\PY{+w}{ }\PY{n}{student1}\PY{p}{;}
+\PY{+w}{    }\PY{n}{Marks}\PY{+w}{ }\PY{n}{student2}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Assigning values (strings require strcpy!)}
+\PY{+w}{    }\PY{n}{strcpy}\PY{p}{(}\PY{n}{student1}\PY{p}{.}\PY{n}{name}\PY{p}{,}\PY{+w}{ }\PY{l+s}{\PYZdq{}}\PY{l+s}{Giulia}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{student1}\PY{p}{.}\PY{n}{year}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{2023}\PY{p}{;}
+\PY{+w}{    }\PY{n}{student1}\PY{p}{.}\PY{n}{marks}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{9.5f}\PY{p}{;}
+
+\PY{+w}{    }\PY{n}{strcpy}\PY{p}{(}\PY{n}{student2}\PY{p}{.}\PY{n}{name}\PY{p}{,}\PY{+w}{ }\PY{l+s}{\PYZdq{}}\PY{l+s}{Federico}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{student2}\PY{p}{.}\PY{n}{year}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{2023}\PY{p}{;}
+\PY{+w}{    }\PY{n}{student2}\PY{p}{.}\PY{n}{marks}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{7.5f}\PY{p}{;}
+
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Student1: \PYZpc{}s, year: \PYZpc{}d, mark: \PYZpc{}.1f}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}
+\PY{+w}{           }\PY{n}{student1}\PY{p}{.}\PY{n}{name}\PY{p}{,}\PY{+w}{ }\PY{n}{student1}\PY{p}{.}\PY{n}{year}\PY{p}{,}\PY{+w}{ }\PY{n}{student1}\PY{p}{.}\PY{n}{marks}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Student2: \PYZpc{}s, year: \PYZpc{}d, mark: \PYZpc{}.1f}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}
+\PY{+w}{           }\PY{n}{student2}\PY{p}{.}\PY{n}{name}\PY{p}{,}\PY{+w}{ }\PY{n}{student2}\PY{p}{.}\PY{n}{year}\PY{p}{,}\PY{+w}{ }\PY{n}{student2}\PY{p}{.}\PY{n}{marks}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Array of structures}
+\PY{+w}{    }\PY{n}{Marks}\PY{+w}{ }\PY{n}{group}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{;}
+\PY{+w}{    }\PY{n}{group}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{student1}\PY{p}{;}
+\PY{+w}{    }\PY{n}{group}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{student2}\PY{p}{;}
+
+\PY{+w}{    }\PY{k}{for}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{l+m+mi}{2}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{o}{+}\PY{o}{+}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{        }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Student n.\PYZpc{}d in group, name=\PYZpc{}s}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{i}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{,}\PY{+w}{ }\PY{n}{group}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{.}\PY{n}{name}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{p}{\PYZcb{}}
+
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+The value of the pointer is: 50
+Student1: Giulia, year: 2023, mark: 9.5
+Student2: Federico, year: 2023, mark: 7.5
+
+Student n.1 in group, name=Giulia
+Student n.2 in group, name=Federico
+\end{Verbatim}

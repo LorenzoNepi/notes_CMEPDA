@@ -1,0 +1,189 @@
+\section{Algorithms and data structures}
+
+\subsection{What is an algorithm?}
+An \textbf{algorithm} is a sequence of instructions to perform a computation. 
+Algorithms can be expressed in several different ways such as flowcharts, pseudo-code, and working code snippets. The sequence of operations must be expressed unambiguously. Using the right algorithm sometimes makes all the difference between being able to attack a problem in a practical time or not.
+
+\subsubsection{Example: sequential vs. binary search}
+Let's consider a classic problem: finding an element in a sorted list. Let's try and solve it in the two most intuitive ways.
+
+The first method is the sequential search which utilizes a bit of brute force: you loop over the list until you find (or do not find) the target.
+    
+The second method is the Binary search, schematically represented below:
+\begin{itemize}
+    \item[-] Start from the middle (if that's the target you're done)
+    \item[-] If the target is smaller (larger) than the element in the center, bisect the half-list on the left (right)
+    \item[-] Iterate until you've found the target (or exhausted the list)
+\end{itemize}
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{binary_search}
+\end{center}
+As an exercise, try to determine which algorithm is more efficient. if you think about it, this problem is essentially similar to that of finding a person in the phone book.
+
+\subsection{Complexity of an algorithm}
+
+As an example, let's try to find the largest element in a list of length $n$ implementing this problem in Python:
+
+\input{pygments/find_max}
+
+How many fundamental instructions does this code execute? You should realize that this is an ill-posed question, since the answer depends on the structure of the list. Nonetheless, let's count:
+\begin{itemize}
+    \item[-] One assignment and one list lookup at the beginning: $2$
+    \item[-] One lookup, one assignment and one comparison for each iteration in the for loop: $3(n - 1)$
+    \item[-] A variable number of assignments: between $0$ and $(n - 1)$
+    \item[-] One final return instruction: 1
+\end{itemize}
+Answer: anything between $3n$ and $4n - 1$, depending on the input list.
+
+What does this example tell us?
+
+\underline{Message \#1:} \textit{The exact number of fundamental instructions that an algorithm performs is not determined a priori}. It depends on the input data, instead, and so does the running time.
+
+There are a few questions that you can legitimately ask, anyway:
+\begin{itemize}
+    \item[-] How many instructions in the \textit{worst case}?
+    \item[-] How many instructions in the \textit{best case}?
+    \item[-] How many instructions on \textit{average}?
+\end{itemize}
+
+\underline{Message \#2:} \textit{The exact number of operations doesn't really matter}, does it? Different machines have different executions speeds and different languages have different meanings of \textit{fundamental instruction}.
+
+\underline{Message \#3:} Still, \textit{the running time is related to the number of fundamental instructions}.
+
+With these messages in mind, how can we define how "fast" an algorithm is? The easiest way is to analyze its asymptotic behavior.
+
+\subsubsection{Asymptotic behavior and big-O notation}
+
+Say you have an algorithm operating on an input of length $n$ (e.g., a list with $n$ elements or a string with $n$ characters).
+How many fundamental instructions $N$ does it take for your algorithm to run? \footnote{As said before, this question is ambiguous. The correct one should be "How many fundamental instructions $N$ does it take for your algorithm to run \textit{in the worst case}?" (easiest to compute) or "\textit{in the average case}?".} When asking this question, you are trying to find a function $f$ such that:
+\begin{equation*}
+    N = f(n)    
+\end{equation*}
+Since the real problems in algorithm implementation come around when $n$ is really high, we are interested in the \textbf{asymptotic behaviour} of f: drop all the terms that grow slowly with $n$ and only keep the one that grows faster:
+\begin{equation*}
+    4n - 1 \approx 4n \quad\text{and}\quad 2n^2 + 6n + 3 \approx 2n^2 \quad \text{for} \quad n \xrightarrow{} +\infty
+\end{equation*}
+Let's go one step further, and say that we neglect the multiplicative factor in front of the leading term:
+\begin{equation*}
+    4n - 1 \approx n \quad\text{and}\quad 2n^2 + 6n + 3 \approx n^2    
+\end{equation*}
+That's the so-called \textbf{big-O notation}: the two algorithms in the example are $O(n)$ (the less complex one) and $O(n^2)$ (the more complex one). Your goal should be to write an algorithm with the lowest possible complexity. Take a look at the graph below: if $n = 10^6$ and you can beat down the complexity from $n^2$ to $n\log(n)$ you are cutting down the execution time by one million!
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{bigo}
+\end{center}
+
+Now, how can you measure the asymptotic behaviour of an algorithm?
+\begin{itemize}
+    \item[-] By brute force: implement the algorithm, run it on input data of different sizes and time the run (be careful: results may vary from run to run) and plot the running time vs. input size.
+    \item[-] By analysis: count the instructions and evaluate the best, worst and average case (this can be difficult for complex programs, and subject to the idiosyncrasies of the language).
+    \item[-] "By eye" (e.g. one loop: $O(n)$; two sequential loops: $O(n)$; two nested loops: $O(n^2)$)
+\end{itemize}
+Here's a fun article about the complexity of songs: \url{http://www.cs.bme.hu/~friedl/alg/knuth_song_complexity.pdf}
+
+\subsection{Data structures}
+During this course you will have to work on real-life data. In which "objects" can data be stored? How fast can you operate on such objects ($\equiv$ how complex are the algorithms that let you interact with such data)? Here are two examples of \textbf{data structures} that you should master while coding in Python: lists and hash tables (dictionaries).
+
+\subsubsection{Lists}
+
+The following table summarizes the time complexity of common operations on Python lists:
+
+\begin{center}
+\begin{tabular}{lll}
+    \hline
+    Operation & Average case & Worst case\\
+    \hline
+    \hline
+    Copy & O(n) & O(n)\\
+    Append & O(1) & O(1)\\
+    Insert & O(n) & O(n)\\
+    Get Item & O(1) & O(1)\\
+    Set Item & O(1) & O(1)\\
+    Delete Item & O(n) & O(n)\\
+    Iteration & O(n) & O(n)\\
+    min(s), max(s) & O(n) & \\
+    Get Length & O(1) & O(1)\\
+    \hline
+\end{tabular}
+\end{center}
+
+ Do you remember how to index a list? You should, but here is a simple figure:
+ 
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{python-list}
+\end{center}
+
+\subsubsection{Hash tables}
+A \textbf{hash table} is a data structure that implements an associative array, a structure that can map keys to values. It is designed to optimize data retrieval, allowing for extremely fast access to data regardless of the size of the dataset.
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{hash_table}
+\end{center}
+
+The efficiency of a hash table relies on a hashing function. When you insert a key-value pair (e.g., \texttt{\{'name': 'Alice'\}}), the system performs the following steps:
+\begin{enumerate}
+    \item[-] Hashing: The key ('name') is passed through a hash function, which converts it into a unique integer (the hash).
+    \item[-] Indexing: This integer is used to calculate an index (usually via the modulo operator) corresponding to a specific slot, or bucket, in an array.
+    \item[-] Storage: The value ('Alice') is stored in that specific bucket.
+\end{enumerate}
+
+When you want to retrieve the value, the system re-calculates the hash of the key, finds the index, and instantly retrieves the value without searching through the entire list.
+
+Why do I even bring this up? Because Python dictionaries are highly optimized hash tables. The performance of dictionary operations is summarized in the following table:
+
+%\begin{center}
+%    \includegraphics[width=0.5\textwidth]{python-dict}
+%\end{center}
+
+\begin{center}
+\begin{tabular}{lll}
+    \hline
+    Operation & Average case & Worst case\\
+    \hline
+    \hline
+    Copy & O(n) & O(n)\\
+    Get Item & O(1) & O(n)\\
+    Set Item & O(1) & O(n)\\
+    Delete Item & O(1) & O(n)\\
+    Iteration & O(n) & O(n)\\
+    \hline
+\end{tabular}
+\end{center}
+
+Since the array size is finite and the set of possible keys is infinite, a \textbf{collision} occurs when two distinct keys result in the same index. Python can solve this problem thanks to a method called \textit{open addressing} (for more info about open addressing visit \url{https://adamgold.github.io/posts/python-hash-tables-under-the-hood/}).
+
+Note that when a float corresponds to an integer, its hash is the same as that of the integer. The hash is used to map keys into indices, therefore $3$ and $3.$ are the same key to a dictionary. For example:
+
+\input{pygments/dict_hashing}
+
+\bigskip
+
+\subsection{A real-life example: sorting}
+
+Let's consider a naive implementation of a sorting algorithm:
+
+\input{pygments/sloppy_sort}
+
+Say you are asked to implement an algorithm to sort a list. Chances are that you would come up with two nested loops, O($n^2$). However, there is already a rich variety of sorting algorithms on the market, so you should focus on mastering them instead of creating one of your own.
+
+The following table summarizes the time and space complexity of several popular sorting algorithms:
+
+\begin{center}
+    \includegraphics[width=\textwidth]{sorting_algs}
+\end{center}
+
+The \texttt{.sort()} method for lists in Python uses a hybrid algorithm derived from merge sort and insertion sort called \textbf{timsort} \footnote{The name comes from Tim Peters.}. It works by finding subsequences of the data that are already ordered and using that knowledge to sort the remainder more efficiently (\textit{"Although practicality beats purity"}, The Zen of Python).
+
+Here is a quick example of how to use the built-in sorting method in Python:
+
+\input{pygments/timsort}
+
+\subsection{References}
+\begin{itemize}
+    \item[-] \url{https://en.wikipedia.org/wiki/Algorithm}
+    \item[-] \url{https://discrete.gr/complexity/}
+    \item[-] \url{https://wiki.python.org/moin/TimeComplexity}
+    \item[-] \url{https://en.wikipedia.org/wiki/Sorting_algorithm}
+    \item[-] \url{https://bugs.python.org/file4451/timsort.txt}
+    \item[-] \url{https://en.wikipedia.org/wiki/Timsort}
+\end{itemize}

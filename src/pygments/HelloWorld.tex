@@ -1,0 +1,17 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/hello_multiprocessing.py}},commandchars=\\\{\}]
+\PY{k}{from} \PY{n+nn}{multiprocessing} \PY{k}{import} \PY{n}{Process}
+
+\PY{c+c1}{\# Defining a simple function...}
+\PY{k}{def} \PY{n+nf}{f}\PY{p}{(}\PY{n}{name}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Hello }\PY{l+s+s1}{\PYZsq{}}\PY{o}{+}\PY{n}{name}\PY{p}{)}
+
+\PY{c+c1}{\# The function is execued in a child process,}
+\PY{c+c1}{\# different than the one that was created by the HelloWorld.py program.}
+\PY{k}{if} \PY{n}{\_\_name\_\_}\PY{o}{==}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\_\_main\_\_}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+    \PY{n}{p} \PY{o}{=} \PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{f}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{World}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{p}{)}\PY{p}{)}
+    \PY{n}{p}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+    \PY{n}{p}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+
+[Output]
+Hello World
+\end{Verbatim}

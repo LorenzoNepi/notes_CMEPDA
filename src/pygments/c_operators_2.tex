@@ -1,0 +1,34 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/bitwise_and_logical.c}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{10}\PY{p}{;}\PY{+w}{  }\PY{c+c1}{// in binary: 00001010}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{b}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{7}\PY{p}{;}\PY{+w}{   }\PY{c+c1}{// in binary: 00000111}
+
+\PY{+w}{    }\PY{c+c1}{// Logical operators}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a \PYZam{}\PYZam{} b =\PYZgt{} \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{o}{\PYZam{}}\PY{+w}{ }\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// a AND b =\PYZgt{} 1}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a || b =\PYZgt{} \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{|}\PY{o}{|}\PY{+w}{ }\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// a OR b  =\PYZgt{} 1}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{!a     =\PYZgt{} \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{o}{!}\PY{n}{a}\PY{p}{)}\PY{p}{;}\PY{+w}{     }\PY{c+c1}{// NOT a   =\PYZgt{} 0}
+
+\PY{+w}{    }\PY{c+c1}{// Bitwise operators}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a \PYZam{} b = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{+w}{ }\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{    }\PY{c+c1}{// 2    (00000010)}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a | b = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{|}\PY{+w}{ }\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{    }\PY{c+c1}{// 15   (00001111)}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a \PYZca{} b = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{\PYZca{}}\PY{+w}{ }\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{    }\PY{c+c1}{// 13   (00001101)}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{\PYZti{}a    = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{o}{\PYZti{}}\PY{n}{a}\PY{p}{)}\PY{p}{;}\PY{+w}{       }\PY{c+c1}{// \PYZhy{}11  (11111111111111111111111111110101)}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a \PYZlt{}\PYZlt{} b = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{b}\PY{p}{)}\PY{p}{;}\PY{+w}{  }\PY{c+c1}{// 1280 (10100000000)}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{a \PYZgt{}\PYZgt{} 1 = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{\PYZgt{}}\PY{o}{\PYZgt{}}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{;}\PY{+w}{  }\PY{c+c1}{// 5    (00000101)}
+
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+a && b => 1
+a || b => 1
+!a     => 0
+a & b = 2
+a | b = 15
+a ^ b = 13
+~a    = -11
+a << b = 1280
+a >> 1 = 5
+\end{Verbatim}
