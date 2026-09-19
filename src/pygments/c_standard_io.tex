@@ -1,0 +1,53 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/standard_io.c}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{c}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{char}\PY{+w}{ }\PY{n}{str}\PY{p}{[}\PY{l+m+mi}{100}\PY{p}{]}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{myInt}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// 1. Single Character I/O}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{\PYZhy{}\PYZhy{}\PYZhy{} getchar and putchar \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Enter a single character: }\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{c}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{getchar}\PY{p}{(}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Reads one character}
+
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{You entered: }\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{putchar}\PY{p}{(}\PY{n}{c}\PY{p}{)}\PY{p}{;}\PY{+w}{    }\PY{c+c1}{// Prints the character}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{The ASCII numerical code is: \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{c}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Clear the newline character left in the buffer by the previous input}
+\PY{+w}{    }\PY{k}{while}\PY{+w}{ }\PY{p}{(}\PY{p}{(}\PY{n}{getchar}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{+w}{ }\PY{o}{!}\PY{o}{=}\PY{+w}{ }\PY{l+s+sc}{\PYZsq{}}\PY{l+s+sc}{\PYZbs{}n}\PY{l+s+sc}{\PYZsq{}}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// 2. String I/O}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZhy{}\PYZhy{}\PYZhy{} fgets and puts \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Enter a full sentence: }\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{c+c1}{// Safely reads up to 100 chars from stdin}
+\PY{+w}{    }\PY{n}{fgets}\PY{p}{(}\PY{n}{str}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{100}\PY{p}{,}\PY{+w}{ }\PY{n}{stdin}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{You entered: }\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{puts}\PY{p}{(}\PY{n}{str}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Prints the string and automatically adds a newline}
+
+\PY{+w}{    }\PY{c+c1}{// 3. Formatted I/O}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZhy{}\PYZhy{}\PYZhy{} scanf and printf \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Enter a word and an integer (separated by space): }\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{c+c1}{// Notice the \PYZam{} before myInt! It needs the memory address to modify the variable.}
+\PY{+w}{    }\PY{c+c1}{// \PYZsq{}str\PYZsq{} doesn\PYZsq{}t need \PYZam{} because an array is already a pointer to its first element.}
+\PY{+w}{    }\PY{n}{scanf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{\PYZpc{}s \PYZpc{}d}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{str}\PY{p}{,}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{n}{myInt}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Word: \PYZpc{}s | Integer: \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{str}\PY{p}{,}\PY{+w}{ }\PY{n}{myInt}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+--- getchar and putchar ---
+Enter a single character: l
+You entered: l
+The ASCII numerical code is: 108
+
+--- fgets and puts ---
+Enter a full sentence: Bella a tutti ragazzi e benvenuti a questo nuovo video
+You entered: Bella a tutti ragazzi e benvenuti a questo nuovo video
+
+--- scanf and printf ---
+Enter a word and an integer (separated by space): Boiadeh 9
+Word: Boiadeh | Integer: 9
+\end{Verbatim}

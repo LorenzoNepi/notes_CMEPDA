@@ -1,0 +1,86 @@
+\section{Advanced concepts for GANs and Gradient Reversal Layers}
+
+\subsection{A brief recap on Generative Adversarial Networks}
+
+As we extensively discussed in Sec. \ref{sec:intro_GAN}, Generative Adversarial Networks (GANs) operate on a min-max game between two competing networks: a generator $G$ and a discriminator $D$. The generator tries to create realistic samples starting from random noise, while the discriminator acts as a binary classifier evaluating a mixture of real and fake samples, trying to distinguish between them. 
+
+A useful analogy to understand this dynamic is the forger and the police officer. Initially, the forger (generator) produces very crude fake dollars, but as the police officer (discriminator) learns to identify the fakes, the forger is forced to become more sophisticated. Both networks improve in tandem. However, it is crucial to remember that the discriminator is merely a training tool: its sole purpose is to provide a loss function and gradients for the generator. Once the training is complete, the discriminator is discarded.
+
+GANs made incredible progress over the last decade, moving from generating blurry "dogs with three heads" in 2014 to photorealistic human faces and even playable video games from simple videos of people actually playing them like PacMan or Grand Theft Auto. However, their training dynamics are notoriously unstable. 
+As we already mentioned, they suffer from two major issues:
+\begin{itemize}
+    \item[-] \textit{Mode Collapse}: The generator might discover that producing one specific type of output (e.g., a perfect $\$50$ bill) fools the discriminator consistently. It will then collapse and only generate that single sample, ignoring the rest of the target distribution.
+    \item[-] \textit{Vanishing Gradients}: If the discriminator becomes too perfect ($D(x_{\text{real}}) \to 1$ and $D(x_{\text{fake}}) \to 0$), the loss function plateaus. The generator receives no useful gradient updates and fundamentally does not know in which direction to adjust its weights to improve.
+\end{itemize}
+
+As we saw, the \textit{Wasserstein GAN (WGAN)} mathematically addresses this vanishing gradient issue by replacing the binary discriminator with a \textit{critic}. By computing the Earth Mover's distance between the real and fake distributions, the WGAN provides linear, non-vanishing gradients. However, this requires enforcing a Lipschitz continuous function, which is often non-trivial to implement in standard Deep Neural Networks.
+
+\subsection{GANs today and the legacy of the Adversarial concept}
+
+Today, Flow-based models and Diffusion models have largely superseded GANs in many pure generative tasks due to their superior stability and expressiveness. So, why should we still care about GANs?
+
+The primary reason is \textit{speed}. Diffusion models require an iterative denoising process, which is computationally expensive during inference. GANs, once trained, generate data in a single forward pass. Because of this, they are still widely adopted in fields where inference speed is more critical than absolute accuracy, such as real-time video filters, medical physics (for fast dataset augmentation), and hybrid/distilled models.
+
+More importantly, while the pure generative usage of GANs might be declining, the \textbf{"adversarial" concept itself is absolutely not dead}. It has evolved to solve a completely different class of problems: forcing a network to \textit{unlearn} specific features.
+
+\subsection{Adversarial Unlearning and Gradient Reversal Layers}
+
+Sometimes, your training sample contains information that you \textit{do not} want your network to use. We want to make the network more general and robust, ensuring it does not rely on nuisance information or dataset-specific biases. 
+
+Simply removing a column from your dataset is rarely enough, because the nuisance information is usually highly correlated with other features the network can still exploit. Let's look at three practical examples:
+\begin{enumerate}
+    \item \textit{Computer Vision}: You want to classify handwritten digits (MNIST) regardless of their color, but in your dataset, some numbers are always written in red and others in green. 
+    \item \textit{High Energy Physics}: You want to build a jet tagger to recognize if a particle jet comes from a top quark, a Higgs boson, or a W boson. The invariant mass of the jet is highly discriminating, but you explicitly \textit{do not} want the network to use it. If the network learns the mass, applying a cut on the network's output will artificially "sculpt the background", creating fake mass peaks that ruin subsequent physics analyses.
+    \item \textit{Medical Physics}: You have X-ray images from different hospital centers, each using different machines, resolutions, and contrast settings. You want to predict the biological age of patients, but you need the network to be "center-invariant" so it doesn't just learn to recognize which hospital the image came from.
+\end{enumerate}
+
+To solve this, we use \textbf{Adversarial Unlearning}. The idea is to add a dedicated \textit{Adversarial Head} to the early layers of our Deep Neural Network. While the main output head tries to solve the primary task (e.g., "which digit is it?"), the adversarial head tries to predict the nuisance variable (e.g., "what color is it?"), as shown in the following scheme.
+
+\begin{center}
+    \includegraphics[width=0.8\textwidth]{figuresML_adv/lesson_ml_adv_6_pag_13.png}
+\end{center}
+
+We could train this architecture using a multi-step GAN-like loop: training the main head, then training the adversarial head while freezing the feature extractor, and finally updating the feature extractor to fool the adversarial head. However, there is a much more elegant and compact way to achieve this simultaneously: the \textbf{Gradient Reversal Layer (GRL)}. Take a look at this figure:
+
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{figuresML_adv/lesson_ml_adv_6_pag_15.png}
+\end{center}
+
+The GRL is placed exactly between the feature extractor and the adversarial head. 
+\begin{itemize}
+    \item[-] During the \textbf{forward pass}, it acts as a simple identity function, doing absolutely nothing and letting the data flow to the adversarial head.
+    \item[-] During \textbf{backpropagation}, it takes the gradient coming from the adversarial head and multiplies it by a negative scalar ($-\lambda$ or $-\alpha$).
+\end{itemize}
+
+This simple mathematical trick is extremely powerful. The adversarial head learns how to predict the nuisance variable as best as it can. But because the gradient is inverted by the GRL, the feature extractor updates its weights in the \textit{exact opposite direction}. The feature extractor is actively penalized if it retains any information useful to the adversarial head, forcing it to completely \textbf{unlearn} the nuisance variable and become domain-invariant. The total loss is simply the sum of the losses of the two heads.
+
+\subsection{Practical implementation and hands-on examples}
+
+Implementing adversarial training requires stepping outside the comfort zone of standard sequential wrappers. 
+
+\textbf{GAN Training Loops in Keras} \\
+If you use Keras, you must write your own custom training loop as shown in the example below. You manually iterate over the epochs, prepare real and fake samples, and use \texttt{train\_on\_batch()}. 
+First, you train the discriminator on a mixture of real samples (label 1) and freshly generated fake samples (label 0). Then, to train the generator, you freeze the discriminator's weights, pass random noise through the combined generator-discriminator model, and set the target labels to 1. This forces the generator to update its weights to fool the frozen discriminator. 
+
+\input{pygments/keras_GAN}
+
+\textit{Caveat}: Depending on the specific TensorFlow/Keras version, the behavior of the \texttt{trainable = False} flag can be highly buggy and non-obvious. Recompiling models dynamically inside a loop often leads to silent failures where layers remain frozen forever or unfreeze unexpectedly. This is one of the main reasons researchers often prefer PyTorch for custom adversarial architectures.
+
+\textbf{Implementing the GRL in PyTorch} \\
+In PyTorch, creating a GRL is beautifully simple thanks to the \texttt{torch.autograd.Function} class, which allows us to explicitly define custom forward and backward behaviors.
+
+\input{pygments/pytorch_GRL}
+
+\subsubsection{Hands-on examples on GANs and GRLs}
+To solidify these concepts, we will jump into two practical exercises:
+\begin{itemize}
+    \item[-] \textbf{GAN Exercise}: We will create a target 2D distribution (e.g., points arranged in a circle or a ring) and build a GAN from scratch to reproduce it starting from random noise. 
+    \item[-] \textbf{GRL Exercise}: We will tackle a dataset containing two distinct features: a "Class" we want to predict, and a "Domain" we want to ignore (acting as a distractor). We will demonstrate how standard networks fail by implicitly learning the domain, and how introducing a GRL makes the transformed feature space fully domain-invariant, making the network robust even if the test dataset has a completely different domain mix.
+\end{itemize}
+
+%\includepdf[pages=-, pagecommand={\thispagestyle{plain}}]{lezioni/e_ML_adv_6Ahands_on.pdf}
+% ML_10a nel mio colab
+
+%\includepdf[pages=-, pagecommand={\thispagestyle{plain}}]{lezioni/e_ML_adv_6Bhands_on.pdf}
+
+% ML_10b nel mio colab

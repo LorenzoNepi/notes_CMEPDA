@@ -1,0 +1,46 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/gan_training.py}},commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} define the combined generator and discriminator model, for updating the generator}
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{define\_gan}\PY{p}{(}\PY{n}{generator}\PY{p}{,} \PY{n}{discriminator}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Step 1: freeze discriminator and compile the GAN}
+    \PY{n}{discriminator}\PY{o}{.}\PY{n}{trainable} \PY{o}{=} \PY{k+kc}{False}
+    \PY{n}{gan\_input} \PY{o}{=} \PY{n}{Input}\PY{p}{(}\PY{n}{shape}\PY{o}{=}\PY{p}{(}\PY{n}{generator}\PY{o}{.}\PY{n}{input\_shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}\PY{p}{)}\PY{p}{)}
+    \PY{n}{gan\_output} \PY{o}{=} \PY{n}{discriminator}\PY{p}{(}\PY{n}{generator}\PY{p}{(}\PY{n}{gan\_input}\PY{p}{)}\PY{p}{)}
+    \PY{n}{gan\_model} \PY{o}{=} \PY{n}{Model}\PY{p}{(}\PY{n}{gan\_input}\PY{p}{,} \PY{n}{gan\_output}\PY{p}{)}
+    
+    \PY{c+c1}{\PYZsh{} slightly higher LR for generator so it can catch up with discriminator}
+    \PY{n}{gan\_model}\PY{o}{.}\PY{n}{compile}\PY{p}{(}\PY{n}{loss}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{binary\_crossentropy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{optimizer}\PY{o}{=}\PY{n}{Adam}\PY{p}{(}\PY{l+m+mf}{3e\PYZhy{}4}\PY{p}{)}\PY{p}{)}
+    
+    \PY{c+c1}{\PYZsh{} Step 2: restore discriminator trainability for standalone training}
+    \PY{n}{discriminator}\PY{o}{.}\PY{n}{trainable} \PY{o}{=} \PY{k+kc}{True}
+    \PY{+w}{discriminator}\PY{o}{.}\PY{n}{compile}\PY{p}{(}\PY{n}{loss}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{binary\_crossentropy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{+w}{ }
+    \PY{+w}{                          }\PY{n}{optimizer}\PY{o}{=}\PY{n}{Adam}\PY{p}{(}\PY{l+m+mf}{1e\PYZhy{}4}\PY{p}{)}\PY{p}{,}\PY{+w}{ }\PY{n}{metrics}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{accuracy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+    
+    \PY{k}{return} \PY{n}{gan\_model}
+
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{train}\PY{p}{(}\PY{n}{g\_model}\PY{p}{,} \PY{n}{d\_model}\PY{p}{,} \PY{n}{gan\_model}\PY{p}{,} \PY{n}{latent\_dim}\PY{p}{,} \PY{n}{n\_epochs}\PY{p}{,} \PY{n}{n\_batch}\PY{p}{,} \PY{n}{n\_eval}\PY{p}{)}\PY{p}{:}
+    \PY{n}{half\_batch} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{n}{n\_batch} \PY{o}{/} \PY{l+m+mi}{2}\PY{p}{)}
+    
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n\_epochs}\PY{p}{)}\PY{p}{:}
+        \PY{c+c1}{\PYZsh{} prepare real samples}
+        \PY{n}{x\_real}\PY{p}{,} \PY{n}{y\_real} \PY{o}{=} \PY{n}{generate\_real\_samples}\PY{p}{(}\PY{n}{half\_batch}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} prepare fake examples}
+        \PY{n}{x\_fake}\PY{p}{,} \PY{n}{y\_fake} \PY{o}{=} \PY{n}{generate\_fake\_samples}\PY{p}{(}\PY{n}{g\_model}\PY{p}{,} \PY{n}{latent\_dim}\PY{p}{,} \PY{n}{half\_batch}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} update discriminator}
+        \PY{n}{d\_model}\PY{o}{.}\PY{n}{train\_on\_batch}\PY{p}{(}\PY{n}{x\_real}\PY{p}{,} \PY{n}{y\_real}\PY{p}{)}
+        \PY{n}{d\_model}\PY{o}{.}\PY{n}{train\_on\_batch}\PY{p}{(}\PY{n}{x\_fake}\PY{p}{,} \PY{n}{y\_fake}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} prepare points in latent space as input for the generator}
+        \PY{n}{x\_gan} \PY{o}{=} \PY{n}{generate\_latent\_points}\PY{p}{(}\PY{n}{latent\_dim}\PY{p}{,} \PY{n}{n\_batch}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} create inverted labels for the fake samples}
+        \PY{n}{y\_gan} \PY{o}{=} \PY{n}{ones}\PY{p}{(}\PY{p}{(}\PY{n}{n\_batch}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} update the generator via the discriminator\PYZsq{}s error}
+        \PY{n}{gan\_model}\PY{o}{.}\PY{n}{train\_on\_batch}\PY{p}{(}\PY{n}{x\_gan}\PY{p}{,} \PY{n}{y\_gan}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} evaluate the model every n\_eval epochs}
+        \PY{k}{if} \PY{p}{(}\PY{n}{i}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZpc{}} \PY{n}{n\_eval} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{:}
+            \PY{n}{summarize\_performance}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{g\_model}\PY{p}{,} \PY{n}{d\_model}\PY{p}{,} \PY{n}{latent\_dim}\PY{p}{)}
+\end{Verbatim}

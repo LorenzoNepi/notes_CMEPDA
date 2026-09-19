@@ -1,0 +1,46 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/threading_race_condition.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{threading}
+
+\PY{c+c1}{\# Global variable x}
+\PY{n}{x} \PY{o}{=} \PY{l+m+mi}{0}
+
+\PY{k}{def} \PY{n+nf}{increment}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{k}{global} \PY{n}{x}
+    \PY{n}{x} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+
+\PY{k}{def} \PY{n+nf}{thread\_task}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{k}{for} \PY{n}{\_} \PY{k}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{100000}\PY{p}{)}\PY{p}{:}
+        \PY{n}{increment}\PY{p}{(}\PY{p}{)}
+
+\PY{k}{def} \PY{n+nf}{main\_task}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{k}{global} \PY{n}{x}
+    \PY{c+c1}{\# Setting global variable x as 0}
+    \PY{n}{x} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{c+c1}{\# Creating threads}
+    \PY{n}{t1} \PY{o}{=} \PY{n}{threading}\PY{o}{.}\PY{n}{Thread}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{thread\_task}\PY{p}{)}
+    \PY{n}{t2} \PY{o}{=} \PY{n}{threading}\PY{o}{.}\PY{n}{Thread}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{thread\_task}\PY{p}{)}
+
+    \PY{c+c1}{\# Start threads}
+    \PY{n}{t1}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+    \PY{n}{t2}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+    \PY{c+c1}{\# Wait until threads finish their job}
+    \PY{n}{t1}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+    \PY{n}{t2}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\#MAIN}
+\PY{k}{for} \PY{n}{i} \PY{k}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{:}
+    \PY{n}{main\_task}\PY{p}{(}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Iteration }\PY{l+s+si}{\PYZob{}0\PYZcb{}}\PY{l+s+s2}{: x = }\PY{l+s+si}{\PYZob{}1\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{i}\PY{p}{,}\PY{n}{x}\PY{p}{)}\PY{p}{)}
+
+[Output]
+Iteration 0: x = 200000
+Iteration 1: x = 200000
+Iteration 2: x = 200000
+Iteration 3: x = 200000
+Iteration 4: x = 200000
+Iteration 5: x = 200000
+Iteration 6: x = 200000
+Iteration 7: x = 200000
+Iteration 8: x = 200000
+Iteration 9: x = 200000
+\end{Verbatim}

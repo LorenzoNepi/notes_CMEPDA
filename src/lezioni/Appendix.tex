@@ -1,0 +1,33 @@
+\appendix
+
+\chapter{Appendix}
+
+\section{Full example from Sec. \ref{sec:thread_process}}\label{app:final_example}
+
+\input{pygments/final_example}
+
+\section{C problems and exercises}\label{app:C_exercises}
+
+\section{Full example from Sec. \ref{sec:hands_on_cuda_1}}\label{app:matrix_example_cuda}
+
+File: \underline{MatrixMultiplication\_global.h}
+
+\input{pygments/Cuda_MatrixMultiplicationh}
+
+\hrulefill
+
+File: \underline{MatrixMultiplication\_global.cu}. \\ Note that when you run the corresponding executable you should specify
+\begin{itemize}
+    \item[-] the height of the first matrix;
+    \item[-] the length of the first matrix (which is set by default equal to the height of the second matrix);
+    \item[-] the length of the second matrix.
+\end{itemize}
+In our case we run \texttt{MatrixMultiplication\_global 1024 1024 1024}.
+
+\input{pygments/Cuda_MatrixMultiplication}
+
+\hrulefill
+
+File: \underline{MatrixMultiplication\_local.cu}
+
+\input{pygments/Cuda_MatrixMultiplication_local}

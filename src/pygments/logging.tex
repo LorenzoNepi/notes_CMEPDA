@@ -1,0 +1,34 @@
+\begin{Verbatim}[label=\makebox{\url{logging_config.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{logging}
+
+\PY{c+c1}{\PYZsh{} 1. Configure the logging settings}
+\PY{n}{logging}\PY{o}{.}\PY{n}{basicConfig}\PY{p}{(}
+    \PY{n}{level}\PY{o}{=}\PY{n}{logging}\PY{o}{.}\PY{n}{INFO}\PY{p}{,}
+    \PY{n}{format}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZpc{}(asctime)s - \PYZpc{}(levelname)s - \PYZpc{}(message)s}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{handlers}\PY{o}{=}\PY{p}{[}
+        \PY{n}{logging}\PY{o}{.}\PY{n}{FileHandler}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{program\PYZus{}logs.log}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,} \PY{c+c1}{\PYZsh{} Saves to a file}
+        \PY{n}{logging}\PY{o}{.}\PY{n}{StreamHandler}\PY{p}{(}\PY{p}{)}                 \PY{c+c1}{\PYZsh{} Prints to terminal}
+    \PY{p}{]}
+\PY{p}{)}
+
+\PY{k}{def} \PY{n+nf}{divide}\PY{p}{(}\PY{n}{a}\PY{p}{,} \PY{n}{b}\PY{p}{)}\PY{p}{:}
+    \PY{n}{logging}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{l+s+sf}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Attempting to divide }\PY{l+s+si}{\PYZob{}}\PY{n}{a}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ by }\PY{l+s+si}{\PYZob{}}\PY{n}{b}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{k}{try}\PY{p}{:}
+        \PY{n}{result} \PY{o}{=} \PY{n}{a} \PY{o}{/} \PY{n}{b}
+        \PY{n}{logging}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Division successful}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{k}{return} \PY{n}{result}
+    \PY{k}{except} \PY{n+ne}{ZeroDivisionError}\PY{p}{:}
+        \PY{n}{logging}\PY{o}{.}\PY{n}{error}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Attempted to divide by zero!}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{k}{return} \PY{k+kc}{None}
+
+\PY{c+c1}{\PYZsh{} Test the logger}
+\PY{n}{divide}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}
+\PY{n}{divide}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{)}
+
+[Output]
+/Università/Magistrale/Computing Methods/script.py"
+2026-01-30 11:40:02,178 - INFO - Attempting to divide 10 by 2
+2026-01-30 11:40:02,178 - INFO - Division successful
+2026-01-30 11:40:02,178 - INFO - Attempting to divide 10 by 0
+2026-01-30 11:40:02,178 - ERROR - Attempted to divide by zero!
+\end{Verbatim}

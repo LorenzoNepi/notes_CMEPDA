@@ -1,0 +1,27 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/openacc_saxpy.cpp}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}iostream\PYZgt{}}
+
+\PY{k+kt}{void}\PY{+w}{ }\PY{n+nf}{saxpy\_acc}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{n}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{float}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{x}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{float}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{y}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{c+c1}{// Instruct compiler to parallelize this loop on GPU}
+\PY{+w}{    }\PY{c+c1}{// and explicitly handle data copy from/to GPU memory}
+\PY{+w}{    }\PY{c+cp}{\#}\PY{c+cp}{pragma acc kernels copyin(x[0:n]) copy(y[0:n])}
+\PY{+w}{    }\PY{k}{for}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{n}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{o}{+}\PY{o}{+}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{        }\PY{c+c1}{// Parallelized SAXPY operation}
+\PY{+w}{        }\PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{x}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{;}
+\PY{+w}{    }\PY{p}{\PYZcb{}}
+\PY{p}{\PYZcb{}}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{42.0f}\PY{p}{;}
+\PY{+w}{    }\PY{k}{const}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{n}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{10}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{x}\PY{p}{[}\PY{n}{n}\PY{p}{]}\PY{p}{,}\PY{+w}{ }\PY{n}{y}\PY{p}{[}\PY{n}{n}\PY{p}{]}\PY{p}{;}
+\PY{+w}{    }\PY{c+c1}{// Initialize arrays with dummy data}
+\PY{+w}{    }\PY{k}{for}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{n}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{o}{+}\PY{o}{+}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{        }\PY{n}{x}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{1.0f}\PY{p}{;}
+\PY{+w}{        }\PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{2.0f}\PY{p}{;}
+\PY{+w}{    }\PY{p}{\PYZcb{}}
+\PY{+w}{    }\PY{c+c1}{// Launch the OpenACC parallelized function}
+\PY{+w}{    }\PY{n}{saxpy\_acc}\PY{p}{(}\PY{n}{n}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{n}{x}\PY{p}{,}\PY{+w}{ }\PY{n}{y}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+\end{Verbatim}

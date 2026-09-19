@@ -1,0 +1,19 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/booleans_in_c.c}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdbool.h\PYZgt{}}\PY{c+c1}{ // Lets you use \PYZsq{}bool\PYZsq{}, \PYZsq{}true\PYZsq{} and \PYZsq{}false\PYZsq{}}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{c+cm}{// Variable definition}
+\PY{+w}{    }\PY{k+kt}{bool}\PY{+w}{ }\PY{n}{first\_method}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n+nb}{true}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{char}\PY{+w}{ }\PY{n}{second\_method}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{;}
+
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{bool (\PYZlt{}stdbool.h\PYZgt{}): \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{first\_method}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{char (Plain C):     \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{second\_method}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+bool (<stdbool.h>): 1
+char (Plain C):     1
+\end{Verbatim}

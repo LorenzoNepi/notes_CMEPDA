@@ -1,0 +1,33 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/cuda_hello_world.cu}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}cuda.h\PYZgt{}}
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+
+\PY{c+c1}{// The word \PYZdq{}\_\_global\_\_\PYZdq{} is not C standard! You need \#include \PYZlt{}cuda.h\PYZgt{} !}
+
+\PY{c+c1}{// Part of the code running on the GPU: the kernel (with no arguments and no returns)}
+\PY{k+kr}{\_\_global\_\_}\PY{+w}{ }\PY{k+kt}{void}\PY{+w}{ }\PY{n}{mykernel}\PY{p}{(}\PY{k+kt}{void}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{  }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Hello World from GPU! (block: \PYZpc{}d thread: \PYZpc{}d)}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{n+nb}{blockIdx}\PY{p}{.}\PY{n}{x}\PY{p}{,}\PY{n+nb}{threadIdx}\PY{p}{.}\PY{n}{x}\PY{p}{)}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{// Part of the code running on the CPU}
+\PY{k+kt}{int}\PY{+w}{ }\PY{n}{main}\PY{p}{(}\PY{k+kt}{void}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{  }\PY{c+c1}{// I\PYZsq{}m using 5 blocks with 2 threads per block to run the kernel}
+\PY{+w}{  }\PY{n}{mykernel}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{o}{\PYZlt{}}\PY{o}{\PYZlt{}}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{2}\PY{o}{\PYZgt{}}\PY{o}{\PYZgt{}}\PY{o}{\PYZgt{}}\PY{p}{(}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{cudaDeviceSynchronize}\PY{p}{(}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Hello World from Host!}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{  }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+Hello World from GPU! (block: 3 thread: 0)                                                                      
+Hello World from GPU! (block: 3 thread: 1)
+Hello World from GPU! (block: 0 thread: 0)
+Hello World from GPU! (block: 0 thread: 1)
+Hello World from GPU! (block: 4 thread: 0)
+Hello World from GPU! (block: 4 thread: 1)
+Hello World from GPU! (block: 1 thread: 0)
+Hello World from GPU! (block: 1 thread: 1)
+Hello World from GPU! (block: 2 thread: 0)
+Hello World from GPU! (block: 2 thread: 1)
+Hello World from Host!
+\end{Verbatim}

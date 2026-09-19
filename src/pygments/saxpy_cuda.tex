@@ -1,0 +1,37 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/cuda_saxpy.cu}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}iostream\PYZgt{}}
+
+\PY{c+c1}{// Kernel function executed by the GPU}
+\PY{k+kr}{\_\_global\_\_}\PY{+w}{ }\PY{k+kt}{void}\PY{+w}{ }\PY{n}{saxpy\_cuda}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{n}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{float}\PY{+w}{ }\PY{o}{*}\PY{n}{x}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{float}\PY{+w}{ }\PY{o}{*}\PY{n}{y}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{c+c1}{// Calculate the unique global thread ID}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n+nb}{blockIdx}\PY{p}{.}\PY{n}{x}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n+nb}{blockDim}\PY{p}{.}\PY{n}{x}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n+nb}{threadIdx}\PY{p}{.}\PY{n}{x}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Ensure thread doesn\PYZsq{}t access out\_of\_bounds memory}
+\PY{+w}{    }\PY{k}{if}\PY{+w}{ }\PY{p}{(}\PY{n}{i}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{n}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{        }\PY{c+c1}{// Perform the SAXPY math operation}
+\PY{+w}{        }\PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{x}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{;}
+\PY{+w}{    }\PY{p}{\PYZcb{}}
+\PY{p}{\PYZcb{}}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{42.0f}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{n}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{10}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{o}{*}\PY{n}{x}\PY{p}{,}\PY{+w}{ }\PY{o}{*}\PY{n}{y}\PY{p}{;}
+\PY{+w}{    }\PY{c+c1}{// Allocate Unified Memory accessible by both CPU and GPU}
+\PY{+w}{    }\PY{n}{cudaMallocManaged}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{x}\PY{p}{,}\PY{+w}{ }\PY{n}{n}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{k+kt}{float}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{cudaMallocManaged}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{y}\PY{p}{,}\PY{+w}{ }\PY{n}{n}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{k}{sizeof}\PY{p}{(}\PY{k+kt}{float}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{c+c1}{// Initialize arrays with dummy data}
+\PY{+w}{    }\PY{k}{for}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{n}\PY{p}{;}\PY{+w}{ }\PY{n}{i}\PY{o}{+}\PY{o}{+}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{        }\PY{n}{x}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{1.0f}\PY{p}{;}
+\PY{+w}{        }\PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{2.0f}\PY{p}{;}
+\PY{+w}{    }\PY{p}{\PYZcb{}}
+\PY{+w}{    }\PY{c+c1}{// Launch kernel with 2 blocks of 5 threads each (10 threads total)}
+\PY{+w}{    }\PY{n}{saxpy\_cuda}\PY{o}{\PYZlt{}}\PY{o}{\PYZlt{}}\PY{o}{\PYZlt{}}\PY{l+m+mi}{2}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{5}\PY{o}{\PYZgt{}}\PY{o}{\PYZgt{}}\PY{o}{\PYZgt{}}\PY{p}{(}\PY{n}{n}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{n}{x}\PY{p}{,}\PY{+w}{ }\PY{n}{y}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{c+c1}{// CPU waits for GPU to finish execution}
+\PY{+w}{    }\PY{n}{cudaDeviceSynchronize}\PY{p}{(}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{c+c1}{// Free allocated memory to prevent memory leaks}
+\PY{+w}{    }\PY{n}{cudaFree}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{cudaFree}\PY{p}{(}\PY{n}{y}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+\end{Verbatim}

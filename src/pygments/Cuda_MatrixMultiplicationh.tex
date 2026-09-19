@@ -1,0 +1,16 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+
+\PY{c+c1}{// Matrices are stored in row\PYZhy{}major order:}
+\PY{c+c1}{// M(row, col) = *(M.elements + row * M.width + col)}
+\PY{k}{typedef}\PY{+w}{ }\PY{k}{struct}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{width}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{height}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{float}\PY{o}{*}\PY{+w}{ }\PY{n}{elements}\PY{p}{;}
+\PY{p}{\PYZcb{}}\PY{+w}{ }\PY{n}{Matrix}\PY{p}{;}
+
+\PY{c+c1}{// Thread block size}
+\PY{c+cp}{\#}\PY{c+cp}{define BLOCK\_SIZE 16}
+
+\PY{k+kr}{\_\_global\_\_}\PY{+w}{ }\PY{k+kt}{void}\PY{+w}{ }\PY{n}{MatMulKernel}\PY{p}{(}\PY{k}{const}\PY{+w}{ }\PY{n}{Matrix}\PY{p}{,}\PY{+w}{ }\PY{k}{const}\PY{+w}{ }\PY{n}{Matrix}\PY{p}{,}\PY{+w}{ }\PY{n}{Matrix}\PY{p}{)}\PY{p}{;}
+\end{Verbatim}

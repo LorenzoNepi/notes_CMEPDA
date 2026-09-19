@@ -1,0 +1,212 @@
+\section{Development workflow: the necessity of version control}
+
+\subsection{Introduction}
+Most of us would agree that research should be \textbf{correct} \emph{and} \textbf{reproducible} \footnote{"Reproducible": \emph{able to be shown, done, or made.} Source: the Cambridge Dictionary}.
+Reproducible research is, for example, data analysis that starts with the raw data and arrives at the same answers. Software plays a paramount role in modern experimental physics and therefore it is a crucial ingredient in reproducibility of research and it should be developed under controlled conditions, just like the experiments are performed. \textit{Oftentimes, physicists are better at correctness than reproducibility}. Scientists are famous for producing poor-quality software and the community is lagging behind on the best practices that are ubiquitous among professional software development (and there are many good reasons why that is the case). 
+
+Consider the last piece of analysis software you have written. Would somebody else be able to use it without your help? Would it run as is on somebody else's computer? Would you be able to adapt it for somebody else's computer? Would you be able to run it on your computer a year from now?
+Not to mention efficiency: could your software run significantly faster? And if so: would you care?
+
+And now take the last paper that you have read.  Would it be possible to re-do the analysis (obtaining the same results)? Have the raw data been preserved in a readable format? Is the analysis software still available? Is there still somebody around understanding what the software does? Are there machines around that can run the analysis software? Is the software even version-controlled?
+
+Standards sometimes help (e.g. the \href{https://fits.gsfc.nasa.gov/fits\_standard.html}{FITS} standard for astronomical data) however, they often hinder performance (e.g., compared to ROOT, FITS I/O is horrible by any reasonable metrics\footnote{This comment was on the lesson slides and, as a humble student, I reported it as is. However, I would like to peacefully disagree. For me ROOT enters by birthright in the realm of "complicazione affari semplici"}).
+
+Most modern experiments are run by large teams, like the LHC Collaborations which count thousands of members. How do you handle development in such an environment? How do you distribute the source code? How do you know which version any single person is running? How do hundreds of people develop the same code concurrently? How do you make sure that your last awesome change isn't breaking everybody else's code?
+
+And even if you work in a small team, how do you exchange code with your collaborators? How do you collect feedback? How do you distribute updates? And even if you are working by yourself, why is the thing giving a different answer with respect to the last time you ran it last week? And which is the correct answer?
+
+These questions are all fundamental in the research world, and you will be able to give a satisfying answer to most of them once you have mastered \textit{version control}. 
+
+\subsection{Version control}
+
+Here is a dictionary definition of \textbf{version control}: \emph{A component of software configuration management, version control, also known as revision control or source control, is the management of changes to documents, computer programs, large web sites, and other collections of information\footnote{Source: Wikipedia}.} In other words, you need to collect meta-data (how, when, where, by whom and why?) whenever the code is changed and freeze forever a specific configuration of the code-base. In doing so, it becomes a lot easier to find and fix bugs, develop the same code in collaboration with others and keep track of your progress. Keep in mind: \textbf{version control is a necessity in modern science}. 
+
+\subsection{Version Control Systems (VCS) and practices}
+Here is some basic terminology regarding version control:
+\begin{itemize}
+    \item[-] \textbf{Repository}: the place where files' current and historical data are stored.
+    \item[-] \textbf{Revision or version}: the state at a point in time of the entire tree in the repository.
+    \item[-] \textbf{Clone}: creating a repository containing the revisions from another repository.
+    \item[-] \textbf{Working copy}: a local copy of files from a repository at a specific revision.
+    \item[-] \textbf{Checkout}: create a local working copy from the repository.
+    \item[-] \textbf{Change or diff}: a specific modification to a set of files under version control.
+    \item[-] \textbf{Commit}: write the changes made in the working copy back to the repository.
+\end{itemize}
+Next, we will explore the fundamental architectures of different version control systems.
+
+\textbf{Local Version Control Systems (e.g., RCS)}
+\begin{figure}[H]
+\centering\includegraphics[width=0.35\textwidth]{vcs_local}
+\end{figure}
+Local systems operate by storing only the incremental differences between file revisions in a local database. This approach efficiently minimizes disk space usage while guaranteeing that any previous state of a file can be accurately reconstructed on demand.
+
+\textbf{Centralized Version Control Systems (e.g., CVS, Subversion)}
+\begin{figure}[H]
+\centering\includegraphics[width=0.35\textwidth]{vcs_centralized}
+\end{figure}
+Centralized architectures rely on a single, dedicated server that contains all versioned files, from which clients check out a specific working copy. Dominant throughout the 1990s, this model follows a straightforward workflow:
+\begin{itemize}
+    \item[-] Check out a local working copy from the remote server;
+    \item[-] Modify the working copy locally;
+    \item[-] Commit the changes directly back to the central repository.
+\end{itemize}
+
+\textbf{Distributed Version Control Systems (e.g., Git, Mercurial)}
+\begin{figure}[H]
+\centering\includegraphics[width=0.35\textwidth]{vcs_distributed}
+\end{figure}
+In a distributed system, clients do not just check out the latest snapshot; they fully mirror the entire repository along with its complete version history. This decentralized structure provides an inherent backup against server failures and enables a much richer, highly flexible variety of collaboration workflows.
+
+\hrulefill
+
+\subsection{Digression: hash functions}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{hash}
+\end{center}
+
+Ever heard of checksums? Or short versions of Doodle links? A \textbf{hash function} maps data of arbitrary size to fixed-size values, e.g., anything to an integer. Hash functions should be \textit{deterministic} (uniform in the image space, to minimize collisions), fast to calculate and, possibly, hard to invert.
+
+For example, every \emph{immutable} object is hashable in Python. Each type gets its own algorithm, as shown in the following example.
+
+\input{pygments/hashing}
+
+As said, in distributed VCS each commit gets its own hash. The following command returns the hash of the current commit in git (see below).
+
+\begin{verbatim}
+[lbaldini@nbbaldini slides]$ git rev-parse HEAD
+e0a170d789865179d99506c9f067f3875292524b
+\end{verbatim}
+
+\hrulefill
+
+\subsection{git}
+Today \textbf{git} is the standard for VCS all across the world. At the following link you will find a complete introduction on how to set up your first git repository using GitHub: \\ \url{https://lucabaldini.github.io/metarep/setup.html}.
+You will be able to fully understand the content at this URL after you have taken a look at the Advanced chapter.
+\\
+You will be introduced to git and GitHub during the in-person classes. Here we will just sum-up some of the basic concepts and commands.  
+
+Let's start with some more definitions:
+\begin{itemize}
+    \item[-] \textbf{Branches}: alternative paths where more copies of the same files develop in different ways independently.
+    \item[-] \textbf{Main}, or \textbf{master}, or \textbf{trunk}, or \textbf{tip}: the default primary branch of a repository.
+    \item[-] \textbf{Merge}: application of two sets of changes to a set of files.
+    \item[-] \textbf{Conflict}: changes to the same file by two or more developers that the system is unable to reconcile.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{vcs_workflow}
+\end{center}
+By typing \texttt{git -{}-help} in your terminal you will obtain the following list of commands: 
+\begin{verbatim}
+start a working area (see also: git help tutorial)
+   clone      Clone a repository into a new directory
+
+work on the current change (see also: git help everyday)
+   add        Add file contents to the index
+   mv         Move or rename a file, a directory, or a symlink
+   rm         Remove files from the working tree and from the index
+
+examine the history and state (see also: git help revisions)
+   log        Show commit logs
+   show       Show various types of objects
+   status     Show the working tree status
+
+grow, mark and tweak your common history
+   branch     List, create, or delete branches
+   checkout   Switch branches or restore working tree files
+   commit     Record changes to the repository
+   diff       Show changes between commits, commit and working tree, etc
+   merge      Join two or more development histories together
+   tag        Create, list, delete or verify a tag object signed with GPG
+
+collaborate (see also: git help workflows)
+   pull       Fetch from and integrate with another repository or a local branch
+   push       Update remote refs along with associated objects
+\end{verbatim}
+
+Here's an example of a simple but realistic work-flow you should be following while coding:
+\begin{enumerate}
+    \item Clone your repository
+    \item Create a new branch and check it out
+    \item Do all you have to do
+    \item Add the new files, commit your modified files
+    \item Create a pull request
+    \item Have your pull request reviewed
+    \item Merge the branch on the master
+    \item Tag the master
+\end{enumerate}
+
+You should always pick a sensible name for your branches. Try and express your \emph{intent}. \\ Examples of bad names: \verb|my_branch|, \verb|new_branch|, \verb|awesome_branch| \\ Examples of reasonable names: \verb|update_data_format|, \verb|fix_issue_2376|.
+
+Try and isolate related changes in the smallest possible subset. Attack one problem at a time. Do not mix unrelated issues in the same pull request: the smaller the pull request, the easier the review.
+
+\textbf{Don't try to do the work that the VCS is supposed to do}. Do not keep around multiple copies of the same file with a different suffix - the VCS is keeping track of the changes. Do not copy and paste a block of code, comment the original and edit the second - this will make diffs (differences) easier to understand.
+
+VCSs are good at handling text files. Do not commit large binary files (e.g., data sets) to your repository because they will stay there forever.
+
+\subsubsection{Typical layout of a Python package}
+Say you have a project called "sample". Here is how the repository layout should look like if you follow the right conventions:
+
+\begin{Verbatim}
+.
+|-- README.rst
+|-- LICENSE
+|-- setup.py
+|-- requirements.txt
+|-- sample/
+|   |-- __init__.py
+|   |-- core.py
+|   `-- helpers.py
+|-- docs/
+|   |-- conf.py
+|   `-- index.rst
+`-- tests/
+    |-- test_basic.py
+    `-- test_advanced.py
+\end{Verbatim}
+
+This directory tree reproduces the structure of your GitHub repository. You can find:
+
+\begin{itemize}
+    \item[-] a README.rst file
+    \item[-] a LICENSE (when in doubt use GPL v3)
+    \item[-] a requirements.txt file (dependencies, for pip)
+    \item[-] the sample directory (actual python code. Note: it's the same name as the project)
+    \item[-] docs (directory with documentation)
+    \item[-] tests (directory with unit tests)
+\end{itemize}
+We shall talk a lot about installation, documentation and unit tests in the advanced module.
+
+Now, this was a very brief introduction to version control and git. The best way to learn how to use these instruments is to work with them directly, so if you have the occasion, try to create your own repository on GitHub. To do that, follow the instructions in the first chapter ("Repository setup") of this document: \url{https://lucabaldini.github.io/metarep/setup.html}.
+
+\hrulefill
+
+{\footnotesize
+\underline{Conversations with Master Shifu, part 1:}
+
+\begin{itemize}
+    \item[-] "What is version control?" \textit{Welcome to this class!}
+    \item[-] "I heard about such thing, but I don't need it." \textit{If you really think so, you do need it but don't know yet!}
+    \item[-] "Every once in a while I create a copy of a file with a \texttt{\_vn} appended. Or I periodically create an archive and attach a version number to it." \textit{And how is that helpful when something goes wrong?}
+    \item[-] "I created my own custom-made system." \textit{Mhhh\ldots suspicious... git was written by Linus Torvalds}.
+    \item[-] I do use a professional tool for the job (e.g., git). \textit{Congratulations: you are a person of good taste!}
+    \item[-] "Which VCS should I use?" \textit{Everybody else is using git, these days---you might as well stick to that.}
+    \item[-] "Shall I set up a server myself or use a hosting service?" \textit{This is a no brainer: use a service (e.g., GitHub, GitLab, Bitbucket)}.
+    \item[-] "What shall I use version control for?" \textit{Your thesis. Your papers (or lab assignments). Your webpage (if you have one). The invitations for your wedding. Really: everything you care about!}
+    \item[-] "Shall I care about the license?" \textit{Definitely: make it easy for others to use and adapt your code (unless you have good reasons not to). GNU General Public License v3.0 is a good choice for code. Creative Commons Attribution-ShareAlike 4.0 is a good choice for documents.}
+\end{itemize} }
+
+\hrulefill
+
+\subsection{References}
+\begin{itemize}
+    \item[-] \url{https://en.wikipedia.org/wiki/Version_control}
+    \item[-] \url{https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control}
+    \item[-] \url{https://en.wikipedia.org/wiki/Hash_function}
+    \item[-] \url{https://git-scm.com/}
+    \item[-] \url{https://github.com/}
+    \item[-] \url{https://bitbucket.org/}
+    \item[-] \url{https://about.gitlab.com/}
+    \item[-] \url{https://pubs.acs.org/doi/10.1021/acs.orglett.9b03216}
+    \item[-] \url{https://www.nature.com/articles/s41586-020-2649-2}
+    \item[-] \url{http://www.jarrodmillman.com/publications/millman2014developing.pdf}
+\end{itemize}

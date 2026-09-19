@@ -1,0 +1,39 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/cuda_box_blur.cu}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{define BLUR\_SIZE 1}
+
+\PY{c+c1}{// GPU Kernel to apply a Box Blur filter to an image}
+\PY{k+kr}{\_\_global\_\_}
+\PY{k+kt}{void}\PY{+w}{ }\PY{n}{blurKernel}\PY{p}{(}\PY{k+kt}{unsigned}\PY{+w}{ }\PY{k+kt}{char}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{in}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{unsigned}\PY{+w}{ }\PY{k+kt}{char}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{out}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{w}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{h}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+
+\PY{+w}{    }\PY{c+c1}{// Determine the (X, Y) pixel coordinates for this thread}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{Col}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n+nb}{blockIdx}\PY{p}{.}\PY{n}{x}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n+nb}{blockDim}\PY{p}{.}\PY{n}{x}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n+nb}{threadIdx}\PY{p}{.}\PY{n}{x}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{Row}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n+nb}{blockIdx}\PY{p}{.}\PY{n}{y}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n+nb}{blockDim}\PY{p}{.}\PY{n}{y}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n+nb}{threadIdx}\PY{p}{.}\PY{n}{y}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Boundary check for the main pixel}
+\PY{+w}{    }\PY{k}{if}\PY{+w}{ }\PY{p}{(}\PY{n}{Col}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{w}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{o}{\PYZam{}}\PY{+w}{ }\PY{n}{Row}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{h}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{        }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{pixVal}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{+w}{        }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{pixels}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+
+\PY{+w}{        }\PY{c+c1}{// Loop over a local window/box centered around the current pixel}
+\PY{+w}{        }\PY{k}{for}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{blurRow}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{o}{\PYZhy{}}\PY{n}{BLUR\_SIZE}\PY{p}{;}\PY{+w}{ }\PY{n}{blurRow}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{BLUR\_SIZE}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{;}\PY{+w}{ }\PY{o}{+}\PY{o}{+}\PY{n}{blurRow}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{            }\PY{k}{for}\PY{p}{(}\PY{k+kt}{int}\PY{+w}{ }\PY{n}{blurCol}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{o}{\PYZhy{}}\PY{n}{BLUR\_SIZE}\PY{p}{;}\PY{+w}{ }\PY{n}{blurCol}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{BLUR\_SIZE}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{;}\PY{+w}{ }\PY{o}{+}\PY{o}{+}\PY{n}{blurCol}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+
+\PY{+w}{                }\PY{c+c1}{// Calculate coordinates of the neighbor pixel}
+\PY{+w}{                }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{curRow}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{Row}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n}{blurRow}\PY{p}{;}
+\PY{+w}{                }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{curCol}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{Col}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n}{blurCol}\PY{p}{;}
+
+\PY{+w}{                }\PY{c+c1}{// Check if the neighbor pixel is actually inside image boundaries}
+\PY{+w}{                }\PY{k}{if}\PY{p}{(}\PY{n}{curRow}\PY{+w}{ }\PY{o}{\PYZgt{}}\PY{+w}{ }\PY{l+m+mi}{\PYZhy{}1}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{o}{\PYZam{}}\PY{+w}{ }\PY{n}{curRow}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{h}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{o}{\PYZam{}}\PY{+w}{ }\PY{n}{curCol}\PY{+w}{ }\PY{o}{\PYZgt{}}\PY{+w}{ }\PY{l+m+mi}{\PYZhy{}1}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{o}{\PYZam{}}\PY{+w}{ }\PY{n}{curCol}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{n}{w}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+
+\PY{+w}{                    }\PY{c+c1}{// Accumulate neighbor pixel values}
+\PY{+w}{                    }\PY{n}{pixVal}\PY{+w}{ }\PY{o}{+}\PY{o}{=}\PY{+w}{ }\PY{n}{in}\PY{p}{[}\PY{n}{curRow}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{w}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n}{curCol}\PY{p}{]}\PY{p}{;}
+\PY{+w}{                    }\PY{c+c1}{// Count valid neighbors to compute the average later}
+\PY{+w}{                    }\PY{n}{pixels}\PY{o}{+}\PY{o}{+}\PY{p}{;}
+\PY{+w}{                }\PY{p}{\PYZcb{}}
+\PY{+w}{            }\PY{p}{\PYZcb{}}
+\PY{+w}{        }\PY{p}{\PYZcb{}}
+\PY{+w}{        }\PY{c+c1}{// Compute the average (blur) and write it to the output image array}
+\PY{+w}{        }\PY{n}{out}\PY{p}{[}\PY{n}{Row}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{w}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{n}{Col}\PY{p}{]}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{unsigned}\PY{+w}{ }\PY{k+kt}{char}\PY{p}{)}\PY{p}{(}\PY{n}{pixVal}\PY{+w}{ }\PY{o}{/}\PY{+w}{ }\PY{n}{pixels}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{p}{\PYZcb{}}
+\PY{p}{\PYZcb{}}
+\end{Verbatim}

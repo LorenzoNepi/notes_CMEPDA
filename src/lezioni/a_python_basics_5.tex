@@ -1,0 +1,235 @@
+\section{OOP introduction: Basics, inheritance and composition}
+
+\subsection{Smart variables}
+Working with containers like lists or dictionaries, you may have noticed that they can do many things besides holding the data. You can extend a list using \texttt{append()} or \texttt{insert()}. Trying to access a non-existent index in a list triggers a specific error (\texttt{IndexError}). You can iterate on a list using the handy for-loop Python syntax and so on. In other words, a list is a variable that, in addition to its data, shows some kind of specific \textit{behaviour}. How is that implemented?
+
+\subsection{Object Oriented Programming (OOP)}
+The so-called \textbf{Object Oriented Programming (OOP)} is a programming paradigm based on \textit{objects}. An \textbf{object} is a code entity that has:
+\begin{itemize}
+    \item[-] a \textbf{state} $\rightarrow$ data (usually called \textbf{member variables} or \textbf{attributes})
+    \item[-] a \textbf{behaviour} $\rightarrow$ functions (usually called \textbf{member functions} or \textbf{methods})
+\end{itemize}
+
+The idea is this: \textit{keep together the variables and the code that manipulates them}. 
+
+As the name suggests, OOP is often adopted for modelling systems that are naturally described in terms of objects such as:
+\begin{itemize}
+    \item[-] Physical simulations: Geant4 (C++), SimPy (Python) \ldots
+    \item[-] Graphics engines and game development: Unity (C\#), Unreal Engine (C++) \ldots
+    \item[-] Graphical User Interfaces (GUI): Qt / PySide (C++/Python), JavaFX (Java), .NET WinForms (C\#) \ldots
+\end{itemize}
+OOP is also used in enterprise applications, web frameworks, compilers, OS, robotics, embedded systems and so on.
+
+Object-oriented programming is one of the most widely used paradigms today. That does not necessarily mean it is the best one, nor the right tool for any job \footnote{See \url{https://en.wikipedia.org/wiki/Object-oriented_programming\#Criticism}}. There are a number of famous programmers who really dislike it (e.g. Linus Torvalds himself). Still, it is something you definitely want in your toolbox since there is a fairly good chance that you will have to interact with some OOP code in your life. Also, every popular language nowadays is object-oriented (look for example at the following figure from \url{https://www.tiobe.com/tiobe-index/}).
+
+\begin{center}
+    \includegraphics[width=0.55\textwidth]{tiobe2025.png}
+\end{center}
+
+
+\subsection{OOP: classes and objects in practice}
+Here are the two most fundamental definitions for OOP:
+\begin{itemize}
+    \item[-] A \textbf{class} is a blueprint for creating objects.
+    \item[-] An \textbf{object} is a concrete realization of a class.
+\end{itemize}
+
+You can imagine a class like a project, which is used to describe how objects are built and how they work. You can have multiple objects of the same class.
+
+The relationship is similar to the one between types and variables: a type is an abstract concept, describing how a variable is represented in memory. A variable is a concrete realization of it. You can have several variables of the same type (like several integers or several strings).
+Indeed, to some extent, a class is the generalization of the concept of type. It specifies not only how an object \textit{is made} but also how \textit{it behaves}.
+
+\begin{center}
+    \includegraphics[width=0.2\textwidth]{television.png}
+\end{center}
+
+\medskip
+
+Let's consider a familiar object, like a television. 
+
+It has a \textit{state}. Is it on or off (and possibly in standby)? What is the currently displayed channel? What is its volume, brightness, contrast, etc\ldots?
+
+It also has a \textit{behaviour}: pressing the `power' button will turn it ON/OFF, rotating the volume knob will increase/decrease the volume, using the buttons on the remote control will change the displayed channel, brightness, contrast etc\dots. 
+
+How would that be represented in the code? The state can be represented by some \textbf{attributes} (variables). For example, a boolean can represent the ON/OFF state. For the currently displayed channel you can use an integer. Volume, contrast, luminosity etc\dots will all get their own variable(s).
+
+The behaviour can be implemented through the \textbf{methods}. For example the \texttt{turn\_on()} and \texttt{turn\_off()} functions may change the value of the variable and also produce all the related changes (i.e. start/stop video and audio). You will probably have the \texttt{next\_channel()} and \texttt{previous\_channel()} functions for zapping and so on. Of course it can be much more complex than that.
+
+Attributes and methods are collectively called \textbf{members} of the class. Each object of a specific class is an \textbf{instance} of that class. The \texttt{type()} built-in function will tell you which class its argument is an instance of. 
+
+With all that in mind, let's create the \texttt{Television} class:
+
+\input{pygments/class_tv_basic}
+
+\hrulefill
+
+It is important to know that OOP is the base of Python and that means that in Python everything is an object of some class. Look at this example:
+\input{pygments/everything_is_a_class}
+
+\hrulefill
+
+As previously described, let's add some methods to our \texttt{Television} class so it can actually do something. Always remember that a class method must always have \textbf{\texttt{self}} as its first positional argument.
+
+\input{pygments/class_methods}
+
+Attributes are typically added via the class \textbf{constructor}. The constructor is a special method that is called automatically each time a class instance is created. A specificity of the constructor is that it cannot return anything. In Python the constructor is the \textbf{\texttt{\_\_init\_\_}} method\footnote{Actually the real constructor - the function responsible for creating the class instances - is the \texttt{\_\_new\_\_} operator, but 99\% of the time you don't need to define that, as all classes have a default one which does the job for you.}. Class methods like \texttt{\_\_init\_\_}, with the name surrounded by two underscores, are called \textbf{special} methods or \textbf{dunder} methods. \textbf{Good practice: always define all your class attributes inside the constructor}. Note how, while writing your class, you must access its members using the \texttt{self.} prefix.
+
+\input{pygments/class_constructor}
+
+\subsection{The importance of namespaces in OOP}
+\textit{"Namespaces are one honking great idea - let's do more of those!"}, The Zen of Python.
+
+A \textbf{namespace} in Python is essentially a dictionary of \emph{unique} names, each one associated with an object (which can be anything: a variable, a function, a class etc\dots).
+
+\begin{center}
+    \includegraphics[width=0.4\textwidth]{types_namespace.png}
+\end{center}
+
+Python creates separate namespaces for many things: for example, each time a function is called, a namespace for local variables is created. You can access objects in the local namespace (and those above -- see picture) just with their names; for others you need the \texttt{.} (dot) operator. As the ones who are used to programming in C certainly know, the space of visibility of a variable is called its \textbf{scope}. Look at the following example.
+
+\input{pygments/namespace_ex}
+
+\subsubsection{Instance attributes vs. class attributes}
+Each class has a namespace. Plus, each instance of the class gets its own additional namespace. The class namespace is automatically visible from each instance namespace, but not the opposite. An attribute in an instance namespace is an \textbf{instance attribute}, and cannot be seen or modified by other instances of the class. An attribute in the class namespace is a \textbf{class attribute} and is shared among all the instances. Since class attributes are not related to a specific instance, they can be accessed without creating one. That also means that \textit{changing a class attribute in the class namespace will change it for every instance}. Class attributes are useful to set class constants, or default values, or share data among instances. Look at the following example for clarity.
+
+\input{pygments/class_attributes_3}
+
+\subsubsection{Short summary 1: OOP basics}
+\begin{itemize}
+  \item \textbf{Object-Oriented Programming (OOP)} is a widely used paradigm, supported by most modern languages (including Python).
+  \item An \textbf{object} has:
+    \begin{itemize}
+      \item \textbf{State} $\rightarrow$ stored in attributes (variables).
+      \item \textbf{Behavior} $\rightarrow$ defined by methods (functions).
+    \end{itemize}
+  \item A \textbf{class} is a blueprint for creating objects; each object is an \textbf{instance} of a class.
+  \item In Python:
+    \begin{itemize}
+      \item Define with \texttt{class} and instantiate with \texttt{()}.
+      \item Access members with the dot \texttt{.} operator.
+      \item Methods always take the instance as the first argument (\texttt{self}).
+    \end{itemize}
+  \item Define attributes inside the \textbf{constructor} (\texttt{\_\_init\_\_}).
+  \item \begin{itemize}
+      \item \textbf{Instance attributes} $\rightarrow$ unique to each object
+      \item \textbf{Class attributes} $\rightarrow$ shared across all instances.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Encapsulation: hidden state and interfaces}
+Look back at the TV example. Note that part of the state is hidden from the user e.g. internal switches, transistors, etc\dots You do not need to know what's going on inside the case to operate a TV. All you need to know is how to use the \textit{interface} (the remote control, the knobs, the power button, the plug\dots). The \textit{implementation} details are hidden: only the TV producer cares about them, not the user.
+
+This leads us to the concept of \textbf{encapsulation}: \textit{the state of an object should only be accessed and altered through its publicly exposed interface}. That way it is easier to find bugs: you know that, if something is wrong with an object, the problem lies inside the class code. That way you can also \textit{enforce behaviour}: for example you can prevent the user from changing the channel if the TV is off, as in the following example:
+
+\input{pygments/class_tv_zapping}
+
+At this point you may be wondering: "I can read and modify any class attribute from outside the class using the \texttt{.} (dot) operator. Doesn't that break encapsulation?". Yes, it does, but there are ways to fix it.
+
+In languages like C++ you can explicitly declare that some class attributes (and methods) are \textit{private}. In Python there is no concept of \textit{enforced} private attributes. However, there exists a convention that \textit{any attribute/method name prepended by one or two underscore(s) should be considered "private"}. It's like a warning for the class user: you should never access that directly. In the case of two underscores Python will actually do a subtle thing to help keep the data private: it will prepend \texttt{\_classname} to the actual attribute name (see next example). However, not everyone in the Python community loves that. "Never, ever use two leading underscores. This is annoyingly private!" (cit. Ian Bicking, creator of pip, virtualenv, and many others).
+
+\input{pygments/class_tv_private}
+
+The possibility of making variables "private" (enforced or not) is not enough of course, because sometimes we still want to let the user read or even modify the value of the attribute. The "old" solution for that is providing access functions (the infamous getters/setters), but the awesome solution is using \textbf{properties} (since Python 2.2). Properties look similar to getters and setters, but with a twist: you keep accessing the attribute with the dot operator. In order to understand why this makes a \textit{huge} difference, let's start with an example: suppose you have a class for 2D vectors:
+
+\input{pygments/vector2d_xy}
+
+Suppose you later realize that you use your \texttt{Vector2d} a lot for performing rotations. It would be much faster to store the angle and the module, instead of x and y, as the rotation would reduce to a simple addition of the angles. You may think of rewriting your class in this way:
+
+\input{pygments/vector2d_rtheta}
+
+Now, however, you have a big problem: your old code is broken. In every place where your were calling \texttt{v.x} or \texttt{v.module()} now you get an error that needs to be fixed. If other people use your code that is even worse, because you are breaking \textit{their} code. Without properties the solution would have been to design the class from the start with private attributes and access functions.
+
+Here is an example of how encapsulation was enforced in older versions of Python to solve this problem. \underline{You should never do this!}
+\input{pygments/vector2d_old_enc}
+
+The class data are now "encapsulated", but that is still not ideal:
+\begin{enumerate}
+    \item You have written a lot of code just to provide access to a bunch of variables.
+    \item You will have to write even more methods if you want to let the user modify those variables as well (e.g. \texttt{set\_x()}, \texttt{set\_y()} and so on).
+    \item You have to write all this code right from the start, even if you never need it, otherwise you run the risk of getting screwed later.
+\end{enumerate}
+\textbf{Properties} solve the problem by \textit{emulating attributes}. In Python they are implemented using the \texttt{@property} decorator just like this:
+
+\input{pygments/vector2d_property}
+
+To modify the value of the property, you now need a \textbf{property setter}, which is a function that must have the same name as the property and is identified by the decorator \texttt{@property\_name.setter}. In our example, whenever you modify \texttt{v.module} or \texttt{v.angle} you also update the value of \texttt{v.x}:
+
+\input{pygments/vector2d_property_setter}
+
+With that said, how do you make an attribute private? You just write the setter in a way that the attribute can't be modified, just like this:
+
+\input{pygments/class_tv_encapsulation_properties}
+
+Bottom line: when writing a class, you don't need to make attributes private right from the start. You can start with public attributes, and use properties later to enforce access/modification rules. That way you only write the code that you really need.
+
+\subsubsection{Interface vs implementation mindset}
+
+A physicist thinks:
+\textit{"I have this super-cool algorithm to solve the problem I am working on: I will code it carefully, then put quickly together some basic interface to pass data to it and write results to the screen / a file. I need the results quickly for my paper; I can always improve the interface later, right?"}
+
+A programmer thinks:
+\textit{"I will create a nice interface for the user to handle input/output in different formats and I will try to keep it as stable as possible in the future. I will start with no algorithm at all -- I will just use random numbers to test the interface. I can always implement the actual algorithm later, right?"}
+
+You don't need to think like a programmer - doing physics is your goal - but remember that \textbf{interfaces are important}. The concept of interface does not just apply to the program as a whole: every significant portion of code (function, class) has its interface. The interface of a class in Python is made by all its "public" members (methods and attributes). Changing the interface may break every other piece of code that uses it. You want to do that \textit{as little as possible}, so while programming try to create an interface that is functional and efficient right from the start.
+
+\subsubsection{Short summary 2: Encapsulation and interfaces}
+\begin{itemize}
+    \item \textbf{Encapsulation} is the technique of hiding part or all the class state to the user; the user can only access and modify that through the class methods
+    \item Advantages:
+    \begin{itemize}
+        \item Helps debugging by limiting the number of places in the code that can mutate the state of an object
+        \item Can be useful to enforce behaviour
+    \end{itemize}
+    \item Encapsulation in Python is not enforced by the language, but rather relies on conventions: class members with an underscore at the beginning of their name are considered 'private' and should not be accessed directly outside the class
+    \item You can use \textbf{properties} to encapsulate your data at any moment in time - never use 'getters' and 'setters'
+    \item Interfaces should not change frequently.
+\end{itemize}
+
+\subsection{Inheritance}
+Suppose for a moment that you are coding the Monte Carlo for a physics experiment. You want to simulate interactions of charged particles in some detector using the OOP paradigm. You may have a class \texttt{Detector} and a class for each particle that you need to simulate. Let's say you have a class \texttt{Electron}, a class \texttt{Positron}, a class \texttt{Proton} and a class \texttt{Alpha}. If you think about it, these classes will have a lot of code in common. For example they all need to store their mass, charge, position, velocity (or momentum), possibly spin etc\dots They may also have similar behaviour, though that is less obvious. We know that duplicate code is evil (DRY): how do we avoid that?
+
+Many languages, including Python, offer a fairly simple solution: \textbf{inheritance}. A class can inherit from another one, automatically obtaining all its functionalities (attributes and methods) and then extending or specializing them. The class which we inherit from is called \textbf{base} class, \textbf{parent} class or (in Python) \textbf{superclass}. The class inheriting is called \textbf{derived} class or \textbf{child} class. In our problem we can imagine having a base class \texttt{Particle} and many specialized classes inheriting from it. Inheritance is transitive: if class C inherits from class B, and class B inherits from class A, then class C is also a child of class A (and possesses all its functionalities). 
+
+Here you can find 3 examples of the inheritance process. First, look at the behaviour of the derived classes, their attributes and methods in this basic inheritance scenario:
+
+\input{pygments/inheritance}
+
+\hrulefill
+
+The next example demonstrates method overloading (or overriding), where a derived class provides its own implementation of a base class method:
+
+\input{pygments/overload}
+
+\hrulefill
+
+Finally, Python supports multiple inheritance, allowing a class to inherit from more than one base class:
+
+\input{pygments/multiple_inheritance}
+
+A little advice: don't abuse inheritance. Though bringing order to the World may look appealing the result may be more complicated than you expect.
+Here's an example of the "inheritance" tree for the Python package Tkinter \footnote{Source: \url{https://wiki.python.org/moin/TkInter}}.
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{tk-widgets.png}
+\end{center}
+
+\subsection{Composition}
+\textbf{Composition} is a different technique for reusing functionalities. The concept is simple: just use an object of some class as a member of a different one. For example we can create the classes \texttt{Engine} and \texttt{Wheel} and then the class \texttt{Car} will have a member of type \texttt{Engine} and 4 members of type \texttt{Wheel}. A class like \texttt{Car} in the example is sometimes called an \textbf{aggregate} class. Here is how you might implement this composition in Python:
+
+\input{pygments/composition}
+
+\subsubsection{Composition vs Inheritance}
+Composition models a \textbf{'has-a'} relation in the real world: a \texttt{Car} \emph{has} an \texttt{Engine}. Inheritance models a \textbf{'is-a'} relation in the real world: an \texttt{Electron} \emph{is} a \texttt{Particle}. It may not always be obvious which one to use in your specific case, so choose wisely.
+
+Just remember that inheritance is a wild beast. There are entire libraries written about how and when (not) to use it. Question for you: should a \texttt{Square} inherit from a \texttt{Rectangle}? Seems legit: a \texttt{Square} \emph{is} a specialized \texttt{Rectangle}. But what happens if the \texttt{Rectangle class} has a \texttt{changeHeight()} method?
+
+Always keep in mind the so-called \textbf{Liskov substitution principle}: you should always be able to use a derived class instead of a base class in your code. In other words: \textit{a derived class should always extend or specialize the functionalities of the base class, never restrict them.}
+
+\subsubsection{Short summary 3: Inheritance and composition}
+\begin{itemize}
+    \item A class can inherit functionalities from one or more other classes (\textbf{Inheritance})
+    \item The class that inherits is called \textbf{derived} (or \textbf{child}) class, while the inherited one is the \textbf{base} (or \textbf{parent}) class
+    \item Inheritance models an \emph{is-a} relationship
+    \item Inheritance is tricky: use it with care and follow the \textbf{Liskov substitution principle}.
+    \item Classes can also incorporate other objects as class members (\textbf{Composition})
+    \item Composition models a \emph{has-a} relationship
+\end{itemize}

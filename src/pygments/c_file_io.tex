@@ -1,0 +1,71 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/file_io.c}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{k+kt}{FILE}\PY{+w}{ }\PY{o}{*}\PY{n}{fp}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{char}\PY{+w}{ }\PY{n}{buff}\PY{p}{[}\PY{l+m+mi}{255}\PY{p}{]}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{n}{b}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{line\_num}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} WRITING TO A FILE \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{+w}{    }\PY{n}{fp}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{fopen}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{test.txt}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{l+s}{\PYZdq{}}\PY{l+s}{w}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Open for writing}
+\PY{+w}{    }\PY{k}{if}\PY{+w}{ }\PY{p}{(}\PY{n}{fp}\PY{+w}{ }\PY{o}{=}\PY{o}{=}\PY{+w}{ }\PY{n+nb}{NULL}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{        }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Error opening file!}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{        }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{;}
+\PY{+w}{    }\PY{p}{\PYZcb{}}
+
+\PY{+w}{    }\PY{c+c1}{// Write formatted string}
+\PY{+w}{    }\PY{n}{fprintf}\PY{p}{(}\PY{n}{fp}\PY{p}{,}\PY{+w}{ }\PY{l+s}{\PYZdq{}}\PY{l+s}{This is line number \PYZpc{}d written with fprintf}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{line\_num}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{c+c1}{// Write unformatted string}
+\PY{+w}{    }\PY{n}{fputs}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{This is the second line written with fputs}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{fp}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{c+c1}{// Write some integers for testing fscanf later}
+\PY{+w}{    }\PY{n}{fprintf}\PY{p}{(}\PY{n}{fp}\PY{p}{,}\PY{+w}{ }\PY{l+s}{\PYZdq{}}\PY{l+s}{10 20}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{30 40}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{n}{fclose}\PY{p}{(}\PY{n}{fp}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Always close the file!}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Data written to test.txt successfully.}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{} READING FROM A FILE \PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{+w}{    }\PY{n}{fp}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{fopen}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{test.txt}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{l+s}{\PYZdq{}}\PY{l+s}{r}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Open for reading}
+\PY{+w}{    }\PY{k}{if}\PY{+w}{ }\PY{p}{(}\PY{n}{fp}\PY{+w}{ }\PY{o}{=}\PY{o}{=}\PY{+w}{ }\PY{n+nb}{NULL}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{        }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Error opening file!}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{        }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{;}
+\PY{+w}{    }\PY{p}{\PYZcb{}}
+
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{\PYZhy{}\PYZhy{}\PYZhy{} Reading File Contents \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Read the first word (stops at the first space)}
+\PY{+w}{    }\PY{n}{fscanf}\PY{p}{(}\PY{n}{fp}\PY{p}{,}\PY{+w}{ }\PY{l+s}{\PYZdq{}}\PY{l+s}{\PYZpc{}s}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{buff}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{First word (fscanf): \PYZpc{}s}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{buff}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Read the rest of the first line}
+\PY{+w}{    }\PY{n}{fgets}\PY{p}{(}\PY{n}{buff}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{255}\PY{p}{,}\PY{+w}{ }\PY{n}{fp}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Rest of first line (fgets): \PYZpc{}s}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{buff}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Read the second line}
+\PY{+w}{    }\PY{n}{fgets}\PY{p}{(}\PY{n}{buff}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{255}\PY{p}{,}\PY{+w}{ }\PY{n}{fp}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Second line (fgets): \PYZpc{}s}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{buff}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Read integers using a loop and feof()}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Reading integers:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{k}{for}\PY{+w}{ }\PY{p}{(}\PY{p}{;}\PY{p}{;}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{        }\PY{n}{fscanf}\PY{p}{(}\PY{n}{fp}\PY{p}{,}\PY{+w}{ }\PY{l+s}{\PYZdq{}}\PY{l+s}{\PYZpc{}d \PYZpc{}d}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{o}{\PYZam{}}\PY{n}{b}\PY{p}{)}\PY{p}{;}
+\PY{+w}{        }\PY{k}{if}\PY{+w}{ }\PY{p}{(}\PY{n}{feof}\PY{p}{(}\PY{n}{fp}\PY{p}{)}\PY{p}{)}\PY{+w}{ }\PY{k}{break}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Break the loop if End Of File is reached}
+\PY{+w}{        }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Read numbers: \PYZpc{}d and \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{n}{b}\PY{p}{)}\PY{p}{;}
+\PY{+w}{    }\PY{p}{\PYZcb{}}
+
+\PY{+w}{    }\PY{n}{fclose}\PY{p}{(}\PY{n}{fp}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+Data written to test.txt successfully.
+
+--- Reading File Contents ---
+First word (fscanf): This
+Rest of first line (fgets):  is line number 1 written with fprintf
+Second line (fgets): This is the second line written with fputs
+Reading integers:
+Read numbers: 10 and 20
+Read numbers: 30 and 40
+\end{Verbatim}

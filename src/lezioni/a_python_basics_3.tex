@@ -1,0 +1,118 @@
+\section{Python Basics (2/2)}
+
+\subsection{The Python standard library}
+
+The Python ecosystem is structured into a three-level hierarchy:
+\begin{itemize}
+    \item[-] \textbf{Python core language} (includes all the built-in functions and types available immediately upon starting the interpreter);
+    \item[-] \textbf{Python Standard Library} (provides a vast array of modules, such as math or os, that come pre-installed but must be explicitly imported);
+    \item[-] \textbf{Third-party packages} (e.g. numpy, pandas) which can be installed via package managers to extend Python's capabilities for specialized tasks.
+\end{itemize}
+The standard library is included in every Python distribution and it is (slowly) evolving over time. With third-party packages you are on your own, although Anaconda solves many of the issues. If you are using GNU-Linux your package manager is probably taking care of everything for you. Of course you can write your own modules, too.
+
+Anything that is outside the core is loaded into memory via an \texttt{import} statement.
+
+\subsubsection{The import system}
+This example sums up the basics and best practices of the import system:
+
+\begin{verbatim}
+from math import *
+[...]
+# Terrible: where the hell is sqrt coming from?
+x = sqrt(2.)
+
+from math import sqrt
+[...]
+# Better: if you haven't redefined sqrt this is from the math library
+x = sqrt(2.)
+
+import math
+[...]
+# Best: five more characters, but at least it is clear where sqrt is coming from
+x = math.sqrt(2.)
+\end{verbatim}
+
+The \texttt{\$PYTHONPATH} environment variable is your friend to control where you want to import modules from (you will need to tweak it when you start writing your own packages). You will need suitable \texttt{\_\_init\_\_.py} files to navigate directories (see \url{https://lucabaldini.github.io/metarep/setup.html}).
+
+The import system is fairly flexible, so take advantage of it but don't abuse it. For example, this is ok\ldots
+
+\medskip
+\input{pygments/import1}
+
+\ldots but this is a catastrophe!
+
+\medskip
+\input{pygments/import2}
+
+\subsection{Brief overview of the standard library}
+\subsubsection{- \texttt{time}, \texttt{datetime} and \texttt{calendar}}
+
+The modules \texttt{time}, \texttt{datetime} and \texttt{calendar} are a collection of facilities related to date and time that can be used to measure the execution time of your scripts, convert from time to date and vice-versa and so on. This is anything but trivial! Ever heard of UNIX time? And UTC? And time zones?
+
+\subsubsection{- \texttt{math}}
+\begin{verbatim}
+Python 3.7.4 (default, Jul  9 2019, 16:32:37)
+[GCC 9.1.1 20190503 (Red Hat 9.1.1-1)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import math
+>>> dir(math)
+['__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__',
+'acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh', 'ceil', 'copysign',
+'cos', 'cosh', 'degrees', 'e', 'erf', 'erfc', 'exp', 'expm1', 'fabs',
+'factorial', 'floor', 'fmod', 'frexp', 'fsum', 'gamma', 'gcd', 'hypot', 'inf',
+'isclose', 'isfinite', 'isinf', 'isnan', 'ldexp', 'lgamma', 'log', 'log10',
+'log1p', 'log2', 'modf', 'nan', 'pi', 'pow', 'radians', 'remainder', 'sin',
+'sinh', 'sqrt', 'tan', 'tanh', 'tau', 'trunc']
+>>>
+\end{verbatim}
+
+\medskip
+
+Note: If you work a lot with arrays you will end up using mostly \texttt{numpy}.
+
+\subsubsection{- \texttt{random}}
+\begin{verbatim}
+Python 3.7.4 (default, Jul  9 2019, 16:32:37)
+[GCC 9.1.1 20190503 (Red Hat 9.1.1-1)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import random
+>>> print(dir(random))
+['BPF', 'LOG4', 'NV_MAGICCONST', 'RECIP_BPF', 'Random', 'SG_MAGICCONST',
+'SystemRandom', 'TWOPI', '_BuiltinMethodType', '_MethodType', '_Sequence',
+'_Set', '__all__', '__builtins__', '__cached__', '__doc__', '__file__',
+'__loader__', '__name__', '__package__', '__spec__', '_acos', '_bisect', '_ceil',
+'_cos', '_e', '_exp', '_inst', '_itertools', '_log', '_os', '_pi', '_random',
+'_sha512', '_sin', '_sqrt', '_test', '_test_generator', '_urandom', '_warn',
+'betavariate', 'choice', 'choices', 'expovariate', 'gammavariate', 'gauss',
+'getrandbits', 'getstate', 'lognormvariate', 'normalvariate', 'paretovariate',
+'randint', 'random', 'randrange', 'sample', 'seed', 'setstate', 'shuffle',
+'triangular', 'uniform', 'vonmisesvariate', 'weibullvariate']
+>>>
+\end{verbatim}
+
+\medskip
+
+\subsubsection{- \texttt{os}, \texttt{os.path}, \texttt{glob}, \texttt{shutil} and \texttt{pathlib}}
+The modules \texttt{os}, \texttt{os.path}, \texttt{glob}, \texttt{shutil} and \texttt{pathlib} let you interact with the underlying operating system. You can for example access the filesystem (access, create and copy files and directories), list directory content, access environment variables, absolute and relative paths and execute OS commands. All of this in a \textit{cross-platform} fashion.
+
+\subsubsection{- \texttt{argparse}}
+\texttt{argparse} is a parser for command-line options. What does this mean?
+Ever found yourself modifying the source code and running your program with different parameters? This is a terrible practice and git will complain about modified files! Instead, you can do something like this:
+
+\input{pygments/argparse}
+
+\subsubsection{- \texttt{logging}}
+Ever found yourself inserting debug \texttt{print()} statements in the code when needed? This is another terrible practice and git will complain about modified files! Imagine if there was a thing that allowed you to label messages with different levels of severity (e.g. debug, info, warning, error) and dynamically set a global filter on the severity level (e.g. do not print debug messages). This thing exists and is called \texttt{logging}. \textbf{Always prefer \texttt{logging} over \texttt{print}}. Here's an example:
+
+\input{pygments/logging}
+
+\texttt{loguru} is another third-party package that can be useful for the same purpose. 
+
+\subsection{References}
+\begin{itemize}
+    \item[-] \url{https://docs.python.org/3/library/}
+    \item[-] \url{https://pypi.org/}
+    \item[-] \url{https://docs.python.org/3/reference/import.html}
+    \item[-] \url{https://docs.python-guide.org/}
+    \item[-] \url{https://docs.quantifiedcode.com/python-anti-patterns/}
+\end{itemize}

@@ -1,0 +1,30 @@
+name: Build and Release PDF (SemVer)
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # It activates only when pushing a tag (ex. v1.0.0)
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          # latexmk_use_lualatex: true # Uncomment if necessary
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          # github.ref_name automatically contains the tag
+          name: Release ${{ github.ref_name }}
+          files: main.pdf
+          body: "Release of version ${{ github.ref_name }} of the notes."

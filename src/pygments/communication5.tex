@@ -1,0 +1,50 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/multiprocessing_pipe.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{multiprocessing}
+\PY{k}{import} \PY{n+nn}{time}
+
+\PY{k}{def} \PY{n+nf}{sender}\PY{p}{(}\PY{n}{conn}\PY{p}{,} \PY{n}{msgs}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\# Function for the sender}
+    \PY{k}{for} \PY{n}{msg} \PY{k}{in} \PY{n}{msgs}\PY{p}{:}
+        \PY{n}{time}\PY{o}{.}\PY{n}{sleep}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{)}
+        \PY{n}{conn}\PY{o}{.}\PY{n}{send}\PY{p}{(}\PY{n}{msg}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sent the message: }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{msg}\PY{p}{)}\PY{p}{)}
+
+    \PY{n}{conn}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+
+\PY{k}{def} \PY{n+nf}{receiver}\PY{p}{(}\PY{n}{conn}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\# Function for the receiver}
+    \PY{n}{time}\PY{o}{.}\PY{n}{sleep}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{)}
+    \PY{k}{while} \PY{l+m+mi}{1}\PY{p}{:}
+        \PY{n}{msg} \PY{o}{=} \PY{n}{conn}\PY{o}{.}\PY{n}{recv}\PY{p}{(}\PY{p}{)}
+
+        \PY{k}{if} \PY{n}{msg} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{END}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+            \PY{k}{break}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Received the message: }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{msg}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\#MAIN}
+\PY{k}{if} \PY{n}{\_\_name\_\_}\PY{o}{==}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\_\_main\_\_}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+    \PY{c+c1}{\# Messages to be sent}
+    \PY{n}{msgs} \PY{o}{=} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{hello,}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{how}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{are you?}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{END}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+    \PY{c+c1}{\# Creating a pipe}
+    \PY{n}{parent\PYZus{}conn}\PY{p}{,} \PY{n}{child\PYZus{}conn} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Pipe}\PY{p}{(}\PY{p}{)}
+
+    \PY{c+c1}{\# Creating new processes}
+    \PY{n}{p1} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{sender}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{parent\PYZus{}conn}\PY{p}{,}\PY{n}{msgs}\PY{p}{)}\PY{p}{)}
+    \PY{n}{p2} \PY{o}{=} \PY{n}{multiprocessing}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{receiver}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{child\PYZus{}conn}\PY{p}{,}\PY{p}{)}\PY{p}{)}
+
+    \PY{c+c1}{\# Running processes}
+    \PY{n}{p1}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+    \PY{n}{p2}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+    \PY{c+c1}{\# Wait until processes finish}
+    \PY{n}{p1}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+    \PY{n}{p2}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+
+[Output]
+Sent the message: hello,
+Sent the message: how
+Received the message: hello,
+Received the message: how
+Sent the message: are you?
+Received the message: are you?
+Sent the message: END
+\end{Verbatim}

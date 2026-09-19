@@ -1,0 +1,196 @@
+\section{Python Basics (1/2)}
+
+\subsection{Coding conventions and the Zen of Python}
+
+\emph{Coding conventions} are guidelines about how to write code that vary across different languages. You are encouraged to stick to them, but your code will happily run even if you don't. \\
+So, why should you care? \textit{Code is read much more often than it is written.}
+
+In the Python ecosystem, this philosophy of readability and elegance is beautifully encapsulated in the ``Zen of Python'' (PEP 20, \url{https://www.python.org/dev/peps/pep-0020/}). It is a collection of 19 guiding principles that dictate the design of the language itself and help developers write clean, ``Pythonic'' code. You can reveal these aphorisms at any time directly from the interpreter:
+
+\begin{verbatim}
+[lbaldini@nbbaldini slides]$ python
+Python 3.7.4 (default, Jul  9 2019, 16:32:37)
+[GCC 9.1.1 20190503 (Red Hat 9.1.1-1)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import this
+The Zen of Python, by Tim Peters
+
+Beautiful is better than ugly.
+Explicit is better than implicit.
+Simple is better than complex.
+Complex is better than complicated.
+Flat is better than nested.
+Sparse is better than dense.
+Readability counts.
+Special cases aren't special enough to break the rules.
+Although practicality beats purity.
+Errors should never pass silently.
+Unless explicitly silenced.
+In the face of ambiguity, refuse the temptation to guess.
+There should be one-- and preferably only one --obvious way to do it.
+Although that way may not be obvious at first unless you're Dutch.
+Now is better than never.
+Although never is often better than *right* now.
+If the implementation is hard to explain, it's a bad idea.
+If the implementation is easy to explain, it may be a good idea.
+Namespaces are one honking great idea -- let's do more of those!
+\end{verbatim}
+
+As the Zen explicitly reminds us: \textit{readability counts}. Therefore, a good one-line summary for coding conventions is: \textbf{think about following them, but don't be obsessed by them}.
+
+The bible of coding conventions for Python is the \textbf{PEP 8 Style Guide for Python Code}, which you can find at the following link: \url{https://www.python.org/dev/peps/pep-0008/}. There are automatic tools out there to help you:
+\begin{itemize}
+    \item[-] pylint: \url{https://www.pylint.org/}
+    \item[-] Pyflakes: \url{https://pypi.org/project/pyflakes/}
+    \item[-] mypy: \url{http://mypy-lang.org/}
+    \item[-] pycodestyle: \url{https://github.com/PyCQA/pycodestyle}
+\end{itemize}
+
+The following section contains an introduction to some basic Python coding. Of course, being able to code a little is a prerequisite of the course, but you may not be familiar with some of these concepts and conventions. So read the code, understand what it does and see if you remember everything you need for this course.
+
+\subsection{Python basics (through code)}
+\subsubsection{- Variables and basic types}
+\input{pygments/basic_types}
+
+\subsubsection{- Digression: string formatting}
+\input{pygments/string_formatting}
+
+Here are some string formatting tips in a nutshell:
+\begin{itemize}
+    \item[-] Never add strings.
+    \item[-] Try to avoid using the \texttt{\%} operator.
+    \item[-] \texttt{format()} is ok, although a little bit on the verbose side.
+    \item[-] Use f-strings whenever you can (need Python 3.6+).
+\end{itemize}
+
+\subsubsection{- Defining functions}
+\textit{DRY (Don't Repeat Yourself) is better than WET (Write Every Time)}.
+The \textbf{DRY} principle is stated as "Every piece of knowledge must have a single, unambiguous, authoritative representation within a system" \footnote{Source: \url{https://en.wikipedia.org/wiki/Don\%27t_repeat_yourself}}. Keep this law in mind while naming your functions.
+
+\input{pygments/func1}
+
+\subsubsection{- Variadic functions}
+\textbf{Variadic functions} accept a variable number of arguments, which is more elegant than passing a list or a tuple of arguments. How is that implemented?
+
+- \underline{Example 1}: \texttt{os.path.join} accepts multiple arguments, while \texttt{sum} can accept lists of different length. How can you create a function like \texttt{os.path.join} yourself?
+
+\input{pygments/func_variadic1}
+
+\bigskip
+
+- \underline{Example 2}: Arbitrary positional arguments list using \texttt{*args}:
+
+\input{pygments/func_variadic2}
+
+Remember the difference between keyword arguments and positional arguments! You can easily find it online, for example here: \\ \url{https://www.geeksforgeeks.org/python/keyword-and-positional-argument-in-python/}.
+
+\bigskip
+
+- \underline{Example 3}: Arbitrary keyword arguments list using \texttt{**kwargs}:
+
+\input{pygments/func_kwargs}
+
+\bigskip
+
+- \underline{A real life example}:
+
+\input{pygments/func_variadic_fit}
+
+\subsubsection{- \texttt{if} conditional, \texttt{for} and \texttt{while} loops}
+\input{pygments/control_flow}
+
+\subsubsection{- Advanced iteration}
+\input{pygments/iteration}
+
+\subsection{Floating point representation}
+Take a look at this example:
+\begin{verbatim}
+[lbaldini@nbbaldini slides]$ python
+Python 3.7.4 (default, Jul  9 2019, 16:32:37)
+[GCC 9.1.1 20190503 (Red Hat 9.1.1-1)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 0.1 + 0.2 == 0.3
+False
+>>> 0.2 + 0.2 == 0.4
+True
+\end{verbatim}
+Why is the first relation false? To understand that, we need to introduce the \textbf{IEEE 754 standard} for \textbf{floating point} number representation, schematically shown in the following figures (for 32 bits and 64 bits formats respectively):
+
+\begin{figure}[H]
+\centering\includegraphics[width=0.7\textwidth]{float_representation}
+\end{figure}
+
+From left to right we find:
+\begin{itemize}
+    \item[-] the \textbf{sign} ($s$): 1 bit, $0 \rightarrow +$, $1 \rightarrow -$
+    \item[-] the \textbf{exponent} ($e$): 8 or 11 bits
+    \item[-] the \textbf{significand} or \textbf{mantissa} ($m$): 23 or 52 bits
+\end{itemize}
+
+The exponent does not have a sign and an exponent bias $b$ is subtracted from it (127 or 1023) in order to represent both negative and positive exponents, allowing for very large and very small numbers.
+An implicit leading bit of 1 is assumed for the significand, unless the exponent is 0. In short, Python basically represents numbers like this:
+\begin{equation}
+  x = (-1)^s \times m \times 2^{e - b}
+\end{equation}
+However, Python cannot represent every number \textit{precisely}, since not every value can be decomposed into this form. This slight inevitable error is the reason why in the first example \texttt{0.1 + 0.2 == 0.3} returns \texttt{False}. 
+
+In the following example \footnote{Source: \url{https://babbage.cs.qc.cuny.edu/IEEE-754/index.xhtml}} we take a floating-point number with an exact binary representation:
+\begin{equation*}
+  0.75_{10} = 0.11_{2} = 0 \times 2 + 1 \times 2^{-1} + 1 \times 2^{-2} =
+  \frac{1}{2} + \frac{1}{4} = 1.5 \times 2^{-1}
+\end{equation*}
+
+\begin{verbatim}
+0.75 -> 0x3F400000 = 0b|0|01111110|10000000000000000000000
+sign = 0b0 = 0 -> +
+exponent = 0b01111110 = 126 -> 126 - 127 = -1
+significand = 0b(1)10000000000000000000000 = 12582912 -> 0b1.1 = 1.5
+\end{verbatim}
+
+The representation of any floating point number is equivalent to the ratio of two integers, where the denominator is a power of 2.
+\begin{equation*}
+  x = \frac{m}{2^{23 - e}} = \frac{12582912}{2^{24}} = \frac{3}{4} = 0.75
+\end{equation*}
+
+Here's an example in Python:
+
+\input{pygments/float}
+
+\texttt{as\_integer\_ratio()} returns the internal representation of a float. Mind this is not guaranteed to be the closest rational approximation.
+
+Some of the most useful properties of the floating point representation in the IEEE 754 standard are:
+\begin{itemize}
+    \item[-] numbers at wildly different magnitudes can be easily represented;
+    \item[-] the representations have the same relative accuracy at all magnitudes;
+    \item[-] it allows calculations across magnitudes.
+\end{itemize}
+The maximum and minimum positive magnitudes are dictated by the number $n_e$ of bits in the exponent, and can be approximated as $N_{\max} \approx 2^{2^{n_e - 1}}$ and $N_{\min} \approx 2^{-2^{n_e - 1}}$. The \textbf{dynamic range} is defined as the ratio between these two limits ($N_{\max} / N_{\min}$), resulting in approximately $2^{2^{n_e}}$. The \textbf{precision} (which determines the number of exact significant digits) is dictated by the number $n_s$ of bits in the significand, yielding approximately $\log_{10}(2^{n_s + 1})$ significant decimal digits.
+
+\bigskip
+
+\begin{center}
+\begin{tabular}{llllll}
+  \hline
+  Precision & Bits & $N_{\min}$ & $N_{\max}$ & Dyn. Range & Digits \\
+  \hline
+  \hline
+  Single & $1 + 8 + 23 = 32$ & $\approx 2^{-128} \ (10^{-38})$ & $\approx 2^{128} \ (10^{38})$ & $\approx 2^{256} \ (10^{76})$ & 7 \\
+  Double & $1 + 11 + 52 = 64$ & $\approx 2^{-1024} \ (10^{-308})$ & $\approx 2^{1024} \ (10^{308})$ & $\approx 2^{2048} \ (10^{616})$ & 15 \\
+  \hline
+\end{tabular}
+\end{center}
+
+\subsection{References}
+\begin{itemize}
+    \item[-] \url{https://scipy-lectures.org/}
+    \item[-] \url{https://docs.quantifiedcode.com/python-anti-patterns/}
+    \item[-] \url{https://sebastianraschka.com/Articles/2014_python_2_3_key_diff.html}
+    \item[-] \url{https://www.python.org/dev/peps/pep-0020/}
+    \item[-] \url{https://www.python.org/dev/peps/pep-0008/}
+    \item[-] \url{https://docs.python-guide.org/writing/style/}
+    \item[-] \url{https://docs.python.org/3/library/stdtypes.html}
+    \item[-] \url{https://docs.python.org/3/tutorial/controlflow.html\#defining-functions}
+    \item[-] \url{https://docs.python.org/3/tutorial/floatingpoint.html}
+    \item[-] \url{https://floating-point-gui.de/}
+    \item[-] \url{https://www.itu.dk/~sestoft/bachelor/IEEE754_article.pdf}
+\end{itemize}

@@ -1,0 +1,29 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/multiprocessing_queue.py}},commandchars=\\\{\}]
+\PY{k}{import} \PY{n+nn}{multiprocessing} \PY{k}{as} \PY{n+nn}{mp}
+
+\PY{c+c1}{\# Define an example function}
+\PY{k}{def} \PY{n+nf}{Hello}\PY{p}{(}\PY{n}{pos}\PY{p}{,}\PY{n}{name}\PY{p}{)}\PY{p}{:}
+    \PY{n}{msg}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Hello }\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n}{name}
+    \PY{n}{output}\PY{o}{.}\PY{n}{put}\PY{p}{(}\PY{p}{(}\PY{n}{pos}\PY{p}{,} \PY{n}{msg}\PY{p}{)}\PY{p}{)}
+
+\PY{k}{if} \PY{n}{\_\_name\_\_}\PY{o}{==}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\_\_main\_\_}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+    \PY{c+c1}{\# Define an output queue}
+    \PY{n}{output} \PY{o}{=} \PY{n}{mp}\PY{o}{.}\PY{n}{Queue}\PY{p}{(}\PY{p}{)}
+    \PY{c+c1}{\# Setup a list of processes that we want to run}
+    \PY{n}{processes} \PY{o}{=} \PY{p}{[}\PY{n}{mp}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{n}{target}\PY{o}{=}\PY{n}{Hello}\PY{p}{,} \PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Gianluca}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{)} \PY{k}{for} \PY{n}{x} \PY{k}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}\PY{p}{]}
+    
+    \PY{c+c1}{\# Run processes}
+    \PY{k}{for} \PY{n}{p} \PY{k}{in} \PY{n}{processes}\PY{p}{:}
+        \PY{n}{p}\PY{o}{.}\PY{n}{start}\PY{p}{(}\PY{p}{)}
+
+    \PY{c+c1}{\# Exit the completed processes}
+    \PY{k}{for} \PY{n}{p} \PY{k}{in} \PY{n}{processes}\PY{p}{:}
+        \PY{n}{p}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{)}
+            
+    \PY{c+c1}{\# Get process results from the output queue}
+    \PY{n}{results} \PY{o}{=} \PY{p}{[}\PY{n}{output}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)} \PY{k}{for} \PY{n}{p} \PY{k}{in} \PY{n}{processes}\PY{p}{]}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{results}\PY{p}{)}
+
+[Output]
+[(0, 'Hello Gianluca'), (1, 'Hello Gianluca'), (2, 'Hello Gianluca'), (3, 'Hello Gianluca')]
+\end{Verbatim}

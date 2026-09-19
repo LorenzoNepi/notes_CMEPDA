@@ -1,0 +1,33 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/casting.c}},commandchars=\\\{\}]
+\PY{c+cp}{\#}\PY{c+cp}{include}\PY{+w}{ }\PY{c+cpf}{\PYZlt{}stdio.h\PYZgt{}}
+
+\PY{k+kt}{int}\PY{+w}{ }\PY{n+nf}{main}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{p}{\PYZob{}}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{b}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{2}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Integer division trap}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{c}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{o}{/}\PY{+w}{ }\PY{n}{b}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// Explicit casting fixes the issue}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{d}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{float}\PY{p}{)}\PY{n}{a}\PY{+w}{ }\PY{o}{/}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{float}\PY{p}{)}\PY{n}{b}\PY{p}{;}
+
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Without casting \PYZpc{}d divided by \PYZpc{}d is \PYZpc{}f}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{n}{b}\PY{p}{,}\PY{+w}{ }\PY{n}{c}\PY{p}{)}\PY{p}{;}\PY{+w}{ }\PY{c+c1}{// Prints 0.000000}
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{After casting \PYZpc{}d divided by \PYZpc{}d is \PYZpc{}f}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{a}\PY{p}{,}\PY{+w}{ }\PY{n}{b}\PY{p}{,}\PY{+w}{ }\PY{n}{d}\PY{p}{)}\PY{p}{;}\PY{+w}{   }\PY{c+c1}{// Prints 0.500000}
+
+\PY{+w}{    }\PY{c+c1}{// Automatic (implicit) casting}
+\PY{+w}{    }\PY{k+kt}{int}\PY{+w}{ }\PY{n}{aa}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{;}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{bb}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{l+m+mf}{2.0f}\PY{p}{;}
+
+\PY{+w}{    }\PY{c+c1}{// \PYZsq{}aa\PYZsq{} is automatically promoted to float before division}
+\PY{+w}{    }\PY{k+kt}{float}\PY{+w}{ }\PY{n}{cc}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{aa}\PY{+w}{ }\PY{o}{/}\PY{+w}{ }\PY{n}{bb}\PY{p}{;}
+
+\PY{+w}{    }\PY{n}{printf}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{With auto casting \PYZpc{}d divided by \PYZpc{}f is \PYZpc{}f}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{aa}\PY{p}{,}\PY{+w}{ }\PY{n}{bb}\PY{p}{,}\PY{+w}{ }\PY{n}{cc}\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{    }\PY{k}{return}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+[Output]
+Without casting 1 divided by 2 is 0.000000
+After casting 1 divided by 2 is 0.500000
+With auto casting 1 divided by 2.000000 is 0.500000
+\end{Verbatim}

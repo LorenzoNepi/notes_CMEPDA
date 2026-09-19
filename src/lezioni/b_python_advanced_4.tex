@@ -1,0 +1,32 @@
+\section{Basic optimization}
+
+\subsection{The correct workflow for optimization}
+\textbf{Optimization} is the process of making your code more performant. \textbf{Profiling} is the study of the resource cost of your code (CPU, RAM, Hard Disk, network, etc $\dots$) possibly as a function of time / input / execution status.
+
+Always remember this: \textbf{Premature optimization is the root of all evil!}
+
+You must always follow this workflow:
+\begin{enumerate}
+    \item Write correct, readable, debugged, tested, documented code \underline{ignoring performance at all}.
+    \item If the performance is good: great, you are done!
+    \item If the performance is not good: \textit{profile} to find the bottlenecks.
+    \item Start \textit{optimization} from the problematic lines. Everything else is a waste of time.
+    \item Keep testing whenever you have a new version!
+\end{enumerate}
+
+\subsection{Basic computer structure}
+Data are processed by CPUs (or GPU). CPUs have a small memory called \textit{cache} (or more of them: L1, L2, etc\dots) of a few KB from which it gets the data. Generally, L1 is on the processor and L2 or L3 are shared among different processors, but this scheme may vary. The connection between the CPU and the cache is called \textit{bus backside} and is very fast. Your data needs to be transferred from the RAM to the cache, which happens through the \textit{frontside bus}, slower than the backend bus. Sometimes you need to retrieve data from the hard disk or the network: in that case the time required to retrieve the data is even (much) larger. This is of course a very naive description of the structure of a pc, but you should keep it in mind while you try to optimize your code.
+
+\subsection{General optimization goals}
+As obvious as it is, the what usually matters the most for optimization is doing less operations! Use an optimal algorithm for your job. Reduce as much as possible the slow operations involving hard drives and networks.
+
+Also, make sure that the next data required by the CPU are already in the cache, and need not to be retrieved from the RAM through the slower frontside bus. 
+
+If possible use \textit{vectorization}, that is let the CPU do multiple operations at once. If the system has more than one processor, as most computers do nowadays, try to \textit{parallelize} the work on more of them (this will be covered in the next lessons). 
+
+Python is a high level language and generally does not allow a direct control over the memory usage, or the cache. However there are ways to improve the speed of the code, as we will see!
+
+\subsection{What slows down your code?}
+The CPU uses algorithms of \emph{branch prediction} and \emph{pipelining} in order to try to load the next instructions (and the required data) while processing the current one. Whenever that fails you will get \emph{branch misses} and/or \emph{cache misses}, plus usually a number of \emph{stalled cycle} on the frontside or backside bus. Using data structures that keep data contiguously in memory is better, as sparse data are more difficult to move into the cache with a single transfer. That's why a list is worse than an array or a \texttt{numpy} array for numerical operations. 
+
+\emph{Context switches} and \emph{CPU migrations} are managed by the OS, so there is not much you can do about that. Memory allocations are also expensive, as the program is paused and waits for the OS to find a free memory location. This, together with I/O operations, is a typical case where a context switch may happen.

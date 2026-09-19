@@ -1,0 +1,15 @@
+\begin{Verbatim}[label=\makebox{\url{https://github.com/lucabaldini/cmepda/tree/master/slides/latex/snippets/gradient_reversal.py}},commandchars=\\\{\}]
+\PY{k}{class}\PY{+w}{ }\PY{n+nc}{GradientReversalLayer}\PY{p}{(}\PY{n}{torch}\PY{o}{.}\PY{n}{autograd}\PY{o}{.}\PY{n}{Function}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{n+nd}{@staticmethod}
+\PY{+w}{    }\PY{k}{def}\PY{+w}{ }\PY{n+nf}{forward}\PY{p}{(}\PY{n}{ctx}\PY{p}{,}\PY{+w}{ }\PY{n}{x}\PY{p}{,}\PY{+w}{ }\PY{n}{alpha}\PY{p}{)}\PY{p}{:}
+\PY{+w}{        }\PY{c+c1}{\PYZsh{} Store alpha for the backward pass}
+\PY{+w}{        }\PY{n}{ctx}\PY{o}{.}\PY{n}{alpha}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{alpha}
+\PY{+w}{        }\PY{c+c1}{\PYZsh{} Forward pass: act as an identity function}
+\PY{+w}{        }\PY{k}{return}\PY{+w}{ }\PY{n}{x}\PY{o}{.}\PY{n}{view\_as}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+
+\PY{+w}{    }\PY{n+nd}{@staticmethod}
+\PY{+w}{    }\PY{k}{def}\PY{+w}{ }\PY{n+nf}{backward}\PY{p}{(}\PY{n}{ctx}\PY{p}{,}\PY{+w}{ }\PY{n}{grad\_output}\PY{p}{)}\PY{p}{:}
+\PY{+w}{        }\PY{c+c1}{\PYZsh{} Backward pass: multiply the gradient by \PYZhy{}alpha}
+\PY{+w}{        }\PY{n}{output}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{grad\_output}\PY{o}{.}\PY{n}{neg}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{ctx}\PY{o}{.}\PY{n}{alpha}
+\PY{+w}{        }\PY{k}{return}\PY{+w}{ }\PY{n}{output}\PY{p}{,}\PY{+w}{ }\PY{k+kc}{None}
+\end{Verbatim}
