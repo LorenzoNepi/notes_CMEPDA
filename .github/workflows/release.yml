@@ -18,6 +18,7 @@ jobs:
       - name: Compile LaTeX
         uses: xu-cheng/latex-action@v3
         with:
+          working_directory: src
           root_file: main.tex
           # latexmk_use_lualatex: true # Uncomment if necessary
 
@@ -26,5 +27,5 @@ jobs:
         with:
           # github.ref_name automatically contains the tag
           name: Release ${{ github.ref_name }}
-          files: main.pdf
+          files: src/main.pdf
           body: "Release of version ${{ github.ref_name }} of the notes."

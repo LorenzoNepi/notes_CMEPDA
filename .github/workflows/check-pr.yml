@@ -1,0 +1,19 @@
+name: Check LaTeX Compilation
+
+on:
+  pull_request:
+    branches:
+      - main # It activates when a pull request is opened to the main
+
+jobs:
+  test_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: src
+          root_file: main.tex
