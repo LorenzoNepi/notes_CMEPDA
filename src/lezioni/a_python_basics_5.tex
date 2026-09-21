@@ -139,7 +139,7 @@ Suppose you later realize that you use your \texttt{Vector2d} a lot for performi
 
 Now, however, you have a big problem: your old code is broken. In every place where your were calling \texttt{v.x} or \texttt{v.module()} now you get an error that needs to be fixed. If other people use your code that is even worse, because you are breaking \textit{their} code. Without properties the solution would have been to design the class from the start with private attributes and access functions.
 
-Here is an example of how encapsulation was enforced in older versions of Python to solve this problem. \underline{You should never do this!}
+Here is an example of how encapsulation was enforced in older versions of Python to solve this problem. \underline{You should never do this.}
 \input{pygments/vector2d_old_enc}
 
 The class data are now "encapsulated", but that is still not ideal:

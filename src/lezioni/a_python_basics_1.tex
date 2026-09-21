@@ -35,15 +35,15 @@ Here is some basic terminology regarding version control:
 Next, we will explore the fundamental architectures of different version control systems.
 
 \textbf{Local Version Control Systems (e.g., RCS)}
-\begin{figure}[H]
-\centering\includegraphics[width=0.35\textwidth]{vcs_local}
-\end{figure}
+\begin{center}
+    \includegraphics[width=0.35\textwidth]{vcs_local}
+\end{center}
 Local systems operate by storing only the incremental differences between file revisions in a local database. This approach efficiently minimizes disk space usage while guaranteeing that any previous state of a file can be accurately reconstructed on demand.
 
 \textbf{Centralized Version Control Systems (e.g., CVS, Subversion)}
-\begin{figure}[H]
-\centering\includegraphics[width=0.35\textwidth]{vcs_centralized}
-\end{figure}
+\begin{center}
+    \includegraphics[width=0.35\textwidth]{vcs_centralized}
+\end{center}
 Centralized architectures rely on a single, dedicated server that contains all versioned files, from which clients check out a specific working copy. Dominant throughout the 1990s, this model follows a straightforward workflow:
 \begin{itemize}
     \item[-] Check out a local working copy from the remote server;
@@ -52,9 +52,9 @@ Centralized architectures rely on a single, dedicated server that contains all v
 \end{itemize}
 
 \textbf{Distributed Version Control Systems (e.g., Git, Mercurial)}
-\begin{figure}[H]
-\centering\includegraphics[width=0.35\textwidth]{vcs_distributed}
-\end{figure}
+\begin{center}
+    \includegraphics[width=0.35\textwidth]{vcs_distributed}
+\end{center}
 In a distributed system, clients do not just check out the latest snapshot; they fully mirror the entire repository along with its complete version history. This decentralized structure provides an inherent backup against server failures and enables a much richer, highly flexible variety of collaboration workflows.
 
 \hrulefill

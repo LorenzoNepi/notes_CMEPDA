@@ -6,7 +6,8 @@ The fundamental question of this section is: \textbf{How do we actually implemen
 
 Before answering, here's an important consideration.
 
-The term \textit{program} might sometimes be used in an improper way\footnote{By that I mean that I've surely used it improperly as a synonym of process and I will probably continue to do so in the next sections.}. Technically a program is a \textit{passive} entity, typically a file stored on disk, e.g. your \texttt{.py} files. It contains the instructions but does not consume CPU resources until executed. \\
+The term \textit{program} might sometimes be used in an improper way\footnote{By that I mean that I've surely used it improperly as a synonym of process and I will probably continue to do so in the next sections.}. Technically a program is a \textit{passive} entity, typically a file stored on disk, e.g. your \texttt{.py} files. It contains the instructions but does not consume CPU resources until executed. 
+
 Also, do not mix up the definition of a thread and that of a process: a process is an independent instance of a program that is executed by the operating system. \textit{Each process runs in its own memory space and has its own resources}, which means it does not share memory directly with other processes. Instead, threads share the same memory space and you can think of them as (the smallest) parts of the same process! 
 
 \begin{center}
@@ -15,29 +16,29 @@ Also, do not mix up the definition of a thread and that of a process: a process 
 
 Threads and processes are the fundamental blocks used to implement parallel programming in Python. 
 
-A process could open another process during its execution (for example, if you run a Python program your code might launch an image editor) and the OS will have to assign resources and memory space to it accordingly. These processes don't "talk" to each other (unless you explicitly make them), which means for example that they don't share the same variables and functions. That makes them relatively less prone to some of the problems listed below. They run independently and you can parallelize them with a multiprocessor. 
+A process could open another process during its execution (for example, if you run a Python program your code might launch an image editor) and the OS will have to assign resources and memory space to it accordingly. These processes don't "talk" to each other (unless you explicitly make them), which means for example that they don't share the same variables and functions. That makes them relatively less prone to some of the problems that we will soon talk about. They run independently and you can parallelize them with a multiprocessor. 
 
-Threads are different. Parallelism happens when your code is written in a way that different operations can be completed simultaneously within the same memory space. That is riskier, but also much faster and lighter form the OS prospective, since it doesn't have to reassign anything. The term \textbf{Multithreading} refers to the simultaneous execution of different threads. 
+Threads are different. Parallelism happens when your code is written in a way that different operations can be completed simultaneously within the same memory space. That is riskier, but also much faster and lighter from the OS perspective, since it doesn't have to reassign anything. The term \textbf{Multithreading} refers to the simultaneous execution of different threads. 
 
 \subsection{What not to do and how not to do it}
 Parallel or concurrent execution (not only in Python) is very vulnerable to the following problems:
 \begin{itemize}
-    \item \textbf{Starvation}: A task is constantly denied the necessary resources, so it can never finish ($\equiv$ it starves).
-    \item \textbf{Deadlock}: Two or more tasks wait cyclically for each other, causing a stall. 
+    \item[-] \textbf{Starvation}: A task is constantly denied the necessary resources, so it can never finish ($\equiv$ it starves).
+    \item[-] \textbf{Deadlock}: Two or more tasks wait cyclically for each other, causing a stall. 
     \begin{center}
         \includegraphics[width=0.35\textwidth]{figuresP/lesson_parallel_2A_pag_4.png}
     \end{center}
-    \item \textbf{Race condition}: A task that depends on the order of execution of the various threads or processes can produce wrongful results if such order is not respected. This is relevant for concurrency.
-    \item \textbf{Data corruption}: If two or more tasks try and work on the same memory location at the same time, the data you're working on can become corrupted during execution.
+    \item[-] \textbf{Race condition}: A task that depends on the order of execution of the various threads or processes can produce wrongful results if such order is not respected. This is relevant for concurrency.
+    \item[-] \textbf{Data corruption}: If two or more tasks try to work on the same memory location at the same time, the data you're working on can become corrupted during execution.
 \end{itemize}
 You need your program to be \textbf{thread-safe}, which means that it can be safely executed in a multithreaded environment without causing unexpected behaviour or errors, even when accessed by multiple threads simultaneously. Of course, that's going to take some careful programming, but fortunately there are some mechanisms that can help you avoid thread conflict.
 
-For the most part, these are OS features that reserve the use of resources through synchronization primitives. For example, the \textbf{Mutex} is a locking mechanism: the first thread to require access to a certain memory location will be assigned a mutex token, it will access the memory and lock it so no other thread can interfere. Then the token passes onto the next thread and so on. The \textbf{Semaphore} system is a signalling mechanism that is just a generalization of the Mutex. A manager issues the ISR (Interrupt Signal Routing) and activates specific threads to avoid any conflict. \footnote{These mechanism act on \textit{atomic operations}, at the lower lever of the computer "brain".}
+For the most part, these are OS features that reserve the use of resources through synchronization primitives. For example, the \textbf{Mutex} is a locking mechanism: the first thread to require access to a certain memory location will be assigned a mutex token, it will access the memory and lock it so no other thread can interfere. Then the token passes onto the next thread and so on. The \textbf{Semaphore} system is a signalling mechanism that is just a generalization of the Mutex. A manager issues the ISR (Interrupt Signal Routing) and activates specific threads to avoid any conflict. \footnote{These mechanisms act on \textit{atomic operations}, at the lower level of the computer "brain".}
 
 \subsection{The Global Interpreter Lock (GIL)}
-Python implements a very simple thread-safe mechanism: the \textbf{Global Interpreter Lock (GIL)}. In order to prevent conflicts only one statement in one thread is executed at a time (single-threading). In other words, the GIL seems to prevent multithreading, but don't worry: it can be deactivated. In the present day (Feb. 2026) the GIL is still present in Python interpreters and many are pushing for its removal.
+Python implements a very simple thread-safe mechanism: the \textbf{Global Interpreter Lock (GIL)}. In order to prevent conflicts, only one statement in one thread is executed at a time (single-threading). In other words, the GIL seems to prevent multithreading, but don't worry: it can be deactivated. As of recent developments (e.g. Python 3.13+), there are ongoing efforts to make the GIL optional, but it remains a fundamental hurdle in standard environments.
 
-Look at the following figure: there is a global lock that the current thread holds to safely access Python objects. Because only one thread can acquire Python Objects/C API, the interpreter regularly releases and reacquires the lock every 100 bytecode of instructions. The frequency at which the interpreter checks for thread switching is controlled by the \texttt{sys.setcheckinterval()} function.
+Look at the following figure: there is a global lock that the current thread holds to safely access Python objects. Because only one thread can acquire Python Objects/C API, the interpreter regularly releases and reacquires the lock every 100 bytecodes of instructions. The frequency at which the interpreter checks for thread switching is controlled by the \texttt{sys.setcheckinterval()} function.
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{figuresP/lesson_parallel_2A_pag_9.png}
@@ -49,42 +50,42 @@ There is only one exception to the global lock timing interval: the lock is rele
     \includegraphics[width=0.6\textwidth]{figuresP/lesson_parallel_2A_pag_10.png}
 \end{center}
 
-It is important to note that, because of the GIL, the CPU-bound applications won't be helped by threads. In Python, it is recommended to either use processes, or create a mixture of processes and threads. For this reason, \textit{Python is not the best language to use for parallelism}. So, what can we do? Python offers many libraries that provide wrappers for C functions. In other words, their classes and functions "steal" from the C language in order to let you work with parallelism.
+It is important to note that, because of the GIL, CPU-bound applications won't be helped by threads. In Python, it is recommended to either use processes, or create a mixture of processes and threads. For this reason, \textit{Python is not the best language to use for parallelism}. So, what can we do? Python offers many libraries that provide wrappers for C functions. In other words, their classes and functions "steal" from the C language in order to let you work with parallelism.
 
 Here's a short recap:
 
 Pros and cons of processes:
 \begin{itemize}
-    \item Can execute code simultaneously in the same Python program
-    \item Have separated memory space $\rightarrow$ less risky but difficult to communicate between them
-    \item Take advantage of multiple cores and CPUs
-    \item Avoid GIL limitations
-    \item Have relatively high overhead (opening and closing processes takes more time)
-    \item Child processes are killable
-    \item Model not adaptable to parallelism, better for concurrency
+    \item[-] Can execute code simultaneously in the same Python program
+    \item[-] Have separated memory space $\rightarrow$ less risky but difficult to communicate between them
+    \item[-] Take advantage of multiple cores and CPUs
+    \item[-] Avoid GIL limitations
+    \item[-] Have relatively high overhead (opening and closing processes takes more time)
+    \item[-] Child processes are killable
+    \item[-] Model not adaptable to parallelism, better for concurrency
 \end{itemize}
 
 Pros and cons of threads:
 \begin{itemize}
-    \item Use a shared memory $\rightarrow$ more risky (not in Python due to the GIL) but easier communication
-    \item Lightweight
-    \item Have very small overhead
-    \item Great option for I/O bound application
-    \item Subject to GIL (although there are workarounds)
-    \item Not killable
-    \item Perfect for parallelism
+    \item[-] Use a shared memory $\rightarrow$ more risky (not in Python due to the GIL) but easier communication
+    \item[-] Lightweight
+    \item[-] Have very small overhead
+    \item[-] Great option for I/O bound applications
+    \item[-] Subject to GIL (although there are workarounds)
+    \item[-] Not killable
+    \item[-] Perfect for parallelism
 \end{itemize}
 So you should use\dots
 \begin{itemize}
-    \item \dots\textit{processes} to speed up Python operations that are CPU intensive because they benefit from multiple cores and avoid the GIL.
-    \item \dots \textit{threads} for IO tasks or tasks involving external systems because threads can combine their work more efficiently.
+    \item[-] \dots\textit{processes} to speed up Python operations that are CPU intensive because they benefit from multiple cores and avoid the GIL.
+    \item[-] \dots\textit{threads} for I/O tasks or tasks involving external systems because threads can combine their work more efficiently.
 \end{itemize}
 
 In the next sections we will (finally!) face some hands-on examples of parallel and concurrent computing in Python. You must learn how to use threads and processes, so we suggest you play along and write your own code. Also, during the in-person classes, these examples might have been analysed and explained a little more thoroughly than here, but if you've come this far you should have all the basics to understand what these new functions and classes do.
 
 \subsection{Basics of multiprocessing in Python}
 
-First of all, the basic modules needed to work with this mechanisms are \texttt{multiprocessing} and \texttt{threading}, so be sure you have them installed (they should already have been installed with your version of Python). The module \texttt{concurrent} (Python > 3.2) is an abstraction of multiprocessing and multithreading to simplify some functions.
+First of all, the basic modules needed to work with these mechanisms are \texttt{multiprocessing} and \texttt{threading}, so be sure you have them installed (they should already have been installed with your version of Python). The module \texttt{concurrent} (Python > 3.2) is an abstraction of multiprocessing and multithreading to simplify some functions.
 
 Start by running \texttt{ps} on your Linux terminal. That will show all of your active processes:
 \begin{verbatim}
@@ -96,13 +97,13 @@ lorenzo02@LAPTOP-AE9I3LPP:~/lezioni_computing_methods/parallel_python$ ps
 With \texttt{ps -aux} you will be shown even the "hidden" processes (see documentation for more). 
 
 \subsubsection{- First simple example: \texttt{Process}, \texttt{.start()}, \texttt{.join()}}
-Take a look at the code below. The \texttt{Process} class from the \texttt{multiprocessing} module lets you easily manage processes in your code. The \texttt{.start()} method starts the execution of the child process (this is when the OS allocates memory space and resources for \texttt{p}). The \texttt{.join()} tells the main process to wait for \texttt{p} to finish before continuing with its execution.
+Take a look at the code below. The \texttt{Process} class from the \texttt{multiprocessing} module lets you easily manage processes in your code. The \texttt{.start()} method starts the execution of the child process (this is when the OS allocates memory space and resources for \texttt{p}). The \texttt{.join()} method tells the main process to wait for \texttt{p} to finish before continuing with its execution.
 
 \input{pygments/HelloWorld}
 
 \subsubsection{- Father and Sons}
 
-If you run \texttt{ps} in your terminal, you will find that each process has a unique number called PID. In Python \texttt{os.getpid()} returns the PID of the current process, while \texttt{os.getppid()} executed in a secondary process (the child) returns the PID of the main one (the father). Pay attention to the PID numbers in the following example which generates a tree of processes just like the one in the figure (PID numbers may vary):
+If you run \texttt{ps} in your terminal, you will find that each process has a unique number called PID. In Python \texttt{os.getpid()} returns the PID of the current process, while \texttt{os.getppid()} executed in a secondary process (the child) returns the PID of the main one (the father). Pay attention to the PID numbers in the following example, which generates a tree of processes just like the one in the figure (PID numbers may vary):
 
 \input{pygments/FatherAndSons}
 
@@ -114,8 +115,9 @@ Note: You might not be familiar with the \texttt{if \_\_name\_\_ == "\_\_main\_\
 
 \subsubsection{- Function on 4 processes: the \texttt{Queue}}
 
-What if you wanted to run the same function on 4 different processes? You need to use a \texttt{Queue}.\\
-The \texttt{Queue} class lets you create and manage a queue of processes, and its the "letterbox" that lets such processes send variables to the main one: \texttt{Queue.put()} inserts an object in the queue while \texttt{Queue.get()} extracts an object from it. Here's how to use them:
+What if you wanted to run the same function on 4 different processes? You need to use a \texttt{Queue}.
+
+The \texttt{Queue} class lets you create and manage a queue of processes, and it's the "letterbox" that lets such processes send variables to the main one: \texttt{Queue.put()} inserts an object in the queue while \texttt{Queue.get()} extracts an object from it. Here's how to use them:
 
 \input{pygments/FourProcesses}
 
@@ -123,38 +125,44 @@ The \texttt{Queue} class lets you create and manage a queue of processes, and it
 
 Using the \texttt{Pool} class, you can define a certain number of processes that will run on different cores (if your computer has more than one). Take a look at the code below:
 \begin{itemize}
-    \item \texttt{Pool.map()} stops the execution of the main program and runs your processes (\textit{synchronous run});
-    \item \texttt{Pool.map\_async()} runs your processes without stopping the main one. That's why in the second example you need a \texttt{timeout} before retrieving the results: you have to make sure that your processes are done (\textit{asynchronous run}). 
+    \item[-] \texttt{Pool.map()} stops the execution of the main program and runs your processes (\textit{synchronous run});
+    \item[-] \texttt{Pool.map\_async()} runs your processes without stopping the main one. That's why in the second example you need a \texttt{timeout} before retrieving the results: you have to make sure that your processes are done (\textit{asynchronous run}). 
 \end{itemize}
 Pay attention to the PID numbers: can you tell in what order and by which process the 6 operations were executed? 
 
-See also the documentation for the \texttt{Pool.apply()} and \texttt{Pool.apply\_async()}, which have similar effects. 
+See also the documentation for  \texttt{Pool.apply()} and \texttt{Pool.apply\_async()}, which have similar effects. 
+
+Here is an example demonstrating the synchronous \texttt{Pool.map()}:
 
 \input{pygments/PoolExample}
 \bigskip
 \hrulefill
 \bigskip
+
+And here is the asynchronous equivalent using \texttt{Pool.map\_async()}:
+
 \input{pygments/PoolExampleA}
 
-Let's create a function with a "sleep" time using the \texttt{time} module to simulate a longer execution. Take a look at the two versions of the code. In the synchronous example, the time needed to execute the main process is about 6 seconds (since it has to wait for the child processes, 3 + 3 seconds) while in the asynchronous one the \texttt{elapsed\_time} is less then a second. Of course, the latter didn't actually run faster, but we closed the main process before the others had ended (in fact, the output seems truncated). In this case our function doesn't return anything, otherwise our \texttt{timeout} would have slowed the main down. 
+Let's create a function with a "sleep" time using the \texttt{time} module to simulate a longer execution. Take a look at the two versions of the code. In the synchronous example, the time needed to execute the main process is about 6 seconds (since it has to wait for the child processes, 3 + 3 seconds) while in the asynchronous one the \texttt{elapsed\_time} is less than a second. Of course, the latter didn't actually run faster, but we closed the main process before the others had ended (in fact, the output seems truncated). In this case our function doesn't return anything, otherwise our \texttt{timeout} would have slowed the main process down. 
 
 \input{pygments/PoolExample2}
 \bigskip
 \hrulefill
 \bigskip
+
 \input{pygments/PoolExample2A}
 
 \subsection{Communicating processes in Python}
 
 \subsubsection{- Shared memory}
 
-In the following code a dangerous mechanism is shown: the main process and the child one seems to share a global variable, but the result is a disaster!
+In the following code a dangerous mechanism is shown: the main process and the child one seem to share a global variable, but the result is a disaster!
 
 \input{pygments/communication1}
 
-Always remember: different processes have different memory spaces, so the \texttt{result} variable is not modified in the main. 
+Always remember: different processes have different memory spaces, so the \texttt{result} variable is not modified in the main process. 
 
-In order to correctly work out this task, you can create a shared memory space between the two processes. Here this is done using the \texttt{Array} and the \texttt{Value} class, which respectively create a "location" (we will see that the correct term is \textit{pointer}) in the shared memory for an array and for a value. In this example, we fill these locations with the results of our processes. 
+In order to correctly work out this task, you can create a shared memory space between the two processes. Here this is done using the \texttt{Array} and the \texttt{Value} classes, which respectively create a "location" (we will see that the correct term is \textit{pointer}) in the shared memory for an array and for a value. In this example, we fill these locations with the results of our processes. 
 
 \begin{center}
 \includegraphics[width=0.4\textwidth]{figuresP/lesson_parallel_2B_pag_12}
@@ -162,11 +170,9 @@ In order to correctly work out this task, you can create a shared memory space b
 
 \input{pygments/communication2}
 
-% Lezione 28 Ottobre 2025, timestamp: 30:09
-
 \subsubsection{- Server process}
 
-A so called \textbf{server process} is used in the following example. Whenever a new process is started, the parent process connects to the server and requests it to fork a new process. A server process can hold any type of Python objects and allows other processes to manipulate them as if they were shared amongst them. The \texttt{multiprocessing} module provides a \texttt{Manager} class which controls a server process. Note that thanks to the server process you can manage as many processes as you want, unlike with shared memory.
+A so-called \textbf{server process} is used in the following example. Whenever a new process is started, the parent process connects to the server and requests it to fork a new process. A server process can hold any type of Python objects and allows other processes to manipulate them as if they were shared amongst them. The \texttt{multiprocessing} module provides a \texttt{Manager} class which controls a server process. Note that thanks to the server process you can manage as many processes as you want, unlike with shared memory.
 
 \begin{center}
 \includegraphics[width=0.45\textwidth]{figuresP/lesson_parallel_2B_pag_13}
@@ -186,7 +192,7 @@ A simple way to communicate between processes with \texttt{multiprocessing} is t
 
 \subsubsection{- Pipe}
 
-A faster way to do practically the same thing is using a \textbf{pipe}. A pipe can have only two endpoints, hence it is preferred over queue when only two-way communication is required. Queue is slower and it’s built on top of pipe. The \texttt{multiprocessing} module provides \texttt{multiprocessing.Pipe()} class, which returns a pair of connection objects connected by a pipe (the two ends of the pipe itself). Each connection object has \texttt{send()} and \texttt{recv()} methods (among others), as shown in the following example.
+A faster way to do practically the same thing is using a \textbf{pipe}. A pipe can have only two endpoints, hence it is preferred over a queue when only two-way communication is required. A queue is slower and it is built on top of a pipe. The \texttt{multiprocessing} module provides the \texttt{multiprocessing.Pipe()} class, which returns a pair of connection objects connected by a pipe (the two ends of the pipe itself). Each connection object has \texttt{send()} and \texttt{recv()} methods (among others), as shown in the following example.
 
 \begin{center}
 \includegraphics[width=0.4\textwidth]{figuresP/lesson_parallel_2B_pag_15}
@@ -202,13 +208,13 @@ Take a look at the following example. Here synchronization is not implemented an
 
 \input{pygments/synchro1}
 
-The \texttt{multiprocessing} module provides a \texttt{Lock} class to deal with the race conditions, which is implemented using a Semaphore object provided by the OS, as shown below. As said, a semaphore is a synchronization object that controls access by multiple processes to a common resource in a parallel programming environment. It is simply a value in a designated place in operating system (or kernel) storage that each process can check and then change. Depending on the value that is found, the process can use the resource or will find that it is already in use and must wait for some time before trying again.  
+The \texttt{multiprocessing} module provides a \texttt{Lock} class to deal with the race conditions, which is implemented using a Semaphore object provided by the OS, as shown below. As said, a semaphore is a synchronization object that controls access by multiple processes to a common resource in a parallel programming environment. It is simply a value in a designated place in the operating system (or kernel) storage that each process can check and then change. Depending on the value that is found, the process can use the resource or will find that it is already in use and must wait for some time before trying again.  
 
 \input{pygments/synchro2}
 
 \subsection{Threading in Python}
 
-As said, multiple treads (which share the same global variables stored in heap) can exist within one process, and each one of them contains its own register set and local variables (stored in stack). 
+As said, multiple threads (which share the same global variables stored in the heap) can exist within one process, and each one of them contains its own register set and local variables (stored in the stack). 
 
 \begin{center}
 \includegraphics[width=0.4\textwidth]{figuresP/lesson_parallel_2B_pag_18}
@@ -216,7 +222,7 @@ As said, multiple treads (which share the same global variables stored in heap) 
 
 \subsubsection{- The \texttt{threading} module}
 
-Here's a simple example on how to define multiple threads using the \texttt{Thread} object in the \texttt{threading} module. Note that the syntax is very much similar to the \texttt{multiprocessing} module. First of all note that the PID of the process is the same for both threads, as expected. The following piece of code, gives the impression that the threads \texttt{t1} and \texttt{t2} are running in parallel, but due to the GIL that's not the case. 
+Here's a simple example on how to define multiple threads using the \texttt{Thread} object in the \texttt{threading} module. Note that the syntax is very much similar to the \texttt{multiprocessing} module. First of all note that the PID of the process is the same for both threads, as expected. The following piece of code gives the impression that the threads \texttt{t1} and \texttt{t2} are running in parallel, but due to the GIL that's not the case. 
 
 \input{pygments/thread1}
 
@@ -224,7 +230,11 @@ The following example shows how the GIL intervenes during code execution. Even t
 
 \input{pygments/thread2}
 
-However, it can be useful to implement a locking mechanism while using threading too. \\ The GIL solves the problem of race conditions, but there may be some instances when you need a certain thread to run instead of another, even though they are acting on different data (e.g. one thread modifies an image, the other saves it in a folder: you need the first thread to finish before the second one does his job). \\ Here's how you can implement synchronization using the \texttt{threading} module (the syntax is exactly the same as before):
+However, it can be useful to implement a locking mechanism while using threading too. 
+
+The GIL solves the problem of race conditions, but there may be some instances when you need a certain thread to run instead of another, even though they are acting on different data (e.g. one thread modifies an image, the other saves it in a folder: you need the first thread to finish before the second one does its job). 
+
+Here's how you can implement synchronization using the \texttt{threading} module (the syntax is exactly the same as before):
 
 \input{pygments/thread2b}
 
@@ -233,9 +243,9 @@ For further information on the \texttt{multiprocessing} and \texttt{threading} m
 
 \subsection{Comparison between threads and processes in Python}\label{sec:thread_process}
 
-Lastly, using an example we want to show the fundamental differences between a code that utilizes threads and one that uses processes using a more complex example.
+Lastly, we want to show the fundamental differences between code that utilizes threads and code that uses processes using a more complex example.
 
-We want to write a program to factorize a list of 300 odd numbers between 1'000'000'001 and 1'000'000'597 and we want to factorize the time needed to finish this operation using a serial code, then 2, 4 or 8 threads and lastly 2, 4 or 8 processes. You can find the full code in Appendix \ref{app:final_example} and you can try and write it yourself. \\
+We want to write a program to factorize a list of 300 odd numbers between 1'000'000'001 and 1'000'000'597 and we want to measure the time needed to finish this operation using serial code, then 2, 4 or 8 threads and lastly 2, 4 or 8 processes. You can find the full code in Appendix \ref{app:final_example} and you can try to write it yourself. \\
 Here's a graph with the result:
 
 \begin{center}
@@ -244,7 +254,7 @@ Here's a graph with the result:
 
 As you can see, the elapsed time with threads is always higher than the one obtained with serial execution. That is due to the GIL. With 2 processes we get a good speed-up, even though the elapsed time is not exactly halved due to the time needed by the OS to "organize" the execution. Moreover, note that with 4 processes we have already reached a saturation point due to Amdahl's law.
 
-With that in mind, an important question is raised: why should I use threads? First of all, in case of I/O operations GIL releases the lock (as previously said), so if your program needs to rapidly exchange big amounts of data threads might be the way to go. More importantly (at least for calculus applications), if some of your functions are written in external C code the GIL mechanism is bypassed and your threads will really be executed in parallel.
+With that in mind, an important question is raised: why should I use threads? First of all, in case of I/O operations the GIL releases the lock (as previously said), so if your program needs to rapidly exchange large amounts of data, threads might be the way to go. More importantly (at least for calculus applications), if some of your functions are written in external C code, the GIL mechanism is bypassed and your threads will really be executed in parallel.
 
 Here's another short recap:
 
@@ -252,6 +262,6 @@ Here's another short recap:
 \includegraphics[width=0.7\textwidth]{figuresP/lesson_parallel_2B_pag_27}
 \end{center}
 
-A final thought for you: Python is really easy to use and understand, but these last sections should show have showed you that it is not very efficient for parallelism. Fortran, C, C++ are better suited for that.
+A final thought for you: Python is really easy to use and understand, but these last sections should have shown you that it is not very efficient for parallelism. Fortran, C, C++ are better suited for that.
 
-\underline{Final assignment}: Calculate for each number in a list, the sum of all primes which are smaller than the given number. It should output the pairs [\texttt{n}, \texttt{sum\_primes(n)}] sorted by \texttt{n}. Example: The first number is \texttt{n}, the second number is the sum of all primes $<$ \texttt{n}. Your task is to calculate \texttt{range(100000, 2500000, 100000)}. Please use the \texttt{multiprocessing} module and compare the result (in term of execution time) with the serial version of your code. Try to do the same with the \texttt{threading} module.
+\underline{Final assignment}: Calculate for each number in a list the sum of all primes which are smaller than the given number. It should output the pairs [\texttt{n}, \texttt{sum\_primes(n)}] sorted by \texttt{n}. Example: If the input list is [10, 20], the expected output should be [[10, 17], [20, 77]]. Please use the \texttt{multiprocessing} module and compare the result (in terms of execution time) with the serial version of your code. Try to do the same with the \texttt{threading} module. Use big numbers like 2.5 million.

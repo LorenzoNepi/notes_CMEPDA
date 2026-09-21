@@ -39,7 +39,7 @@ The import system is fairly flexible, so take advantage of it but don't abuse it
 \medskip
 \input{pygments/import1}
 
-\ldots but this is a catastrophe!
+\ldots but this is a catastrophe.
 
 \medskip
 \input{pygments/import2}
@@ -47,7 +47,7 @@ The import system is fairly flexible, so take advantage of it but don't abuse it
 \subsection{Brief overview of the standard library}
 \subsubsection{- \texttt{time}, \texttt{datetime} and \texttt{calendar}}
 
-The modules \texttt{time}, \texttt{datetime} and \texttt{calendar} are a collection of facilities related to date and time that can be used to measure the execution time of your scripts, convert from time to date and vice-versa and so on. This is anything but trivial! Ever heard of UNIX time? And UTC? And time zones?
+The modules \texttt{time}, \texttt{datetime} and \texttt{calendar} are a collection of facilities related to date and time that can be used to measure the execution time of your scripts, convert from time to date and vice-versa and so on. This is anything but trivial. Ever heard of UNIX time? And UTC? And time zones?
 
 \subsubsection{- \texttt{math}}
 \begin{verbatim}
@@ -97,12 +97,12 @@ The modules \texttt{os}, \texttt{os.path}, \texttt{glob}, \texttt{shutil} and \t
 
 \subsubsection{- \texttt{argparse}}
 \texttt{argparse} is a parser for command-line options. What does this mean?
-Ever found yourself modifying the source code and running your program with different parameters? This is a terrible practice and git will complain about modified files! Instead, you can do something like this:
+Ever found yourself modifying the source code and running your program with different parameters? This is a terrible practice and git will complain about modified files. Instead, you can do something like this:
 
 \input{pygments/argparse}
 
 \subsubsection{- \texttt{logging}}
-Ever found yourself inserting debug \texttt{print()} statements in the code when needed? This is another terrible practice and git will complain about modified files! Imagine if there was a thing that allowed you to label messages with different levels of severity (e.g. debug, info, warning, error) and dynamically set a global filter on the severity level (e.g. do not print debug messages). This thing exists and is called \texttt{logging}. \textbf{Always prefer \texttt{logging} over \texttt{print}}. Here's an example:
+Ever found yourself inserting debug \texttt{print()} statements in the code when needed? This is another terrible practice and git will complain about modified files. Imagine if there was a thing that allowed you to label messages with different levels of severity (e.g. debug, info, warning, error) and dynamically set a global filter on the severity level (e.g. do not print debug messages). This thing exists and is called \texttt{logging}. \textbf{Always prefer \texttt{logging} over \texttt{print}}. Here's an example:
 
 \input{pygments/logging}
 
