@@ -2,7 +2,7 @@
 
 \subsection{Convolutional Autoencoders (CAEs)}
 As said, a Convolutional Neural Network processes structured grid data (like images) using a convolution operation defined by a kernel or filter. By sliding these filters across the image, CNNs naturally extract hierarchical features while drastically reducing the number of parameters compared to dense networks. \\
-We can view a standard CNN as a powerful information compressor or encoder. In a classification task, a CNN processes an input image through successive convolutional and pooling layers until the spatial dimensions are severely compressed, finally feeding the extracted feature maps into a neural network (usually a MLP) to output class probabilities. If we remove the final NN classifier, we are left with a purely convolutional feature extractor. What if we try to decode this compressed representation back into the original image space? By attaching a \textit{convolutional decoder} to our \textit{convolutional encoder}, we create a \textbf{Convolutional Autoencoder (CAE)}. 
+We can view a standard CNN as a powerful information compressor or encoder. In a classification task, a CNN processes an input image through successive convolutional and pooling layers until the spatial dimensions are severely compressed, finally feeding the extracted feature maps into a neural network (usually an MLP) to output class probabilities. If we remove the final NN classifier, we are left with a purely convolutional feature extractor. What if we try to decode this compressed representation back into the original image space? By attaching a \textit{convolutional decoder} to our \textit{convolutional encoder}, we create a \textbf{Convolutional Autoencoder (CAE)}. 
 
 \begin{center}
     \includegraphics[width=0.75\textwidth]{figuresML_adv/lesson_ml_adv_2_pag_21.png}
@@ -26,12 +26,12 @@ In the encoder half of a CAE, pooling operations and strided convolutions are us
     \end{minipage}
 \end{figure}
 \vspace{-7.5mm}
-With that said, it should be clear that CAEs are incredibly effective for unsupervised feature extraction. For example, take a look at the following study: \url{https://ieeexplore.ieee.org/document/7412749}. Here, Convolutional Sparse Autoencoders (CSAE) (a kind of CAE that introduces a sparsity penalty to force the most neurons to remain inactive for every given input) have been successfully used in medical imaging to extract features for breast density segmentation and mammographic risk scoring. The unsupervised CSAE isolates dense tissue structures without requiring pixel-perfect manual annotations, providing a foundation for subsequent supervised classifiers.
+With that said, it should be clear that CAEs are incredibly effective for unsupervised feature extraction. For example, take a look at the following study: \url{https://ieeexplore.ieee.org/document/7412749}. Here, Convolutional Sparse Autoencoders (CSAEs) (a kind of CAE that introduces a sparsity penalty to force  most neurons to remain inactive for every given input) have been successfully used in medical imaging to extract features for breast density segmentation and mammographic risk scoring. The unsupervised CSAE isolates dense tissue structures without requiring pixel-perfect manual annotations, providing a foundation for subsequent supervised classifiers.
 
 \subsection{Regularization in CNNs: spatial dropout}
 Like any deep neural network, if a CAE has an excessively high capacity, it risks overfitting the training data. We must apply regularization techniques such as modifying the cost function with penalties, utilizing data augmentation, or applying batch normalization. 
 
-A common regularization technique for MLPs is dropout, where random neurons are deactivated during training. However, applying standard dropout to CNN makes very little sense: in an image, adjacent pixels are highly correlated, so if you drop a single random pixel, the network can easily bypass the dropout by simply relying on the neighboring pixels, meaning the feature extractors can easily adapt to the change. To properly regularize a CNN, we use \textbf{spatial dropout}, a technique schematically reported in figure: instead of dropping individual random pixels, spatial dropout drops \textit{entire feature maps (channels) at random}. By completely zeroing out an entire filter's output for a given iteration, the network is forced to learn independent, robust feature representations rather than relying on a specific combination of parallel filters.
+A common regularization technique for MLPs is dropout, where random neurons are deactivated during training. However, applying standard dropout to a CNN makes very little sense: in an image, adjacent pixels are highly correlated, so if you drop a single random pixel, the network can easily bypass the dropout by simply relying on the neighboring pixels, meaning the feature extractors can easily adapt to the change. To properly regularize a CNN, we use \textbf{spatial dropout}, a technique schematically reported in figure: instead of dropping individual random pixels, spatial dropout drops \textit{entire feature maps (channels) at random}. By completely zeroing out an entire filter's output for a given iteration, the network is forced to learn independent, robust feature representations rather than relying on a specific combination of parallel filters.
 
 \begin{center}
     \includegraphics[width=0.85\textwidth]{figuresML_adv/lesson_ml_adv_2_pag_37.png}
@@ -40,7 +40,7 @@ A common regularization technique for MLPs is dropout, where random neurons are 
 \subsection{The U-Net architecture and skip connections}
 Standard Convolutional Autoencoders suffer from a critical flaw when applied to highly detailed tasks like segmentation: the bottleneck compresses the image so severely that fine-grained spatial details (exact edges, boundaries, and microscopic structures) are permanently lost. The decoder struggles to reconstruct these sharp details from the low-resolution latent space alone.
 
-To solve this, the \textbf{U-Net} architecture was introduced. U-Net is a fully convolutional neural network (which means it contains zero dense layers) featuring an encoder-decoder structure. It was implemented in 2015 for biomedical image segmentation of various organs, and it can still today be considered the state of the art architecture in its field. Its defining innovation is the use of the so called \textit{long skip connections}. Take a look at its structure in the following figure: as illustrated by the "U" shape of the architecture, the high-resolution feature maps from the early layers of the encoder are passed directly across the network and \textit{concatenated} with the upsampled feature maps in the decoder. 
+To solve this, the \textbf{U-Net} architecture was introduced. U-Net is a fully convolutional neural network (which means it contains no dense layers) featuring an encoder-decoder structure. It was implemented in 2015 for biomedical image segmentation of various organs, and it can still today be considered the state of the art architecture in its field. Its defining innovation is the use of the so-called \textit{long skip connections}. Take a look at its structure in the following figure: as illustrated by the "U" shape of the architecture, the high-resolution feature maps from the early layers of the encoder are passed directly across the network and \textit{concatenated} with the upsampled feature maps in the decoder. 
 
 \begin{center}
     \includegraphics[width=0.85\textwidth]{figuresML_adv/lesson_ml_adv_2_pag_30.png}
@@ -48,15 +48,15 @@ To solve this, the \textbf{U-Net} architecture was introduced. U-Net is a fully 
 
 We talked about skip connections in Sec. \ref{sec:skip_connections} regarding the ResNet algorithm and its functioning principle. Now let's take it a step further and distinguish between two different types of skip connections:
 \begin{itemize}
-    \item \textbf{Short Skip Connections} (e.g., ResNet, black lines in the figure above): Use element-wise \textit{addition} between closely grouped layers. Their primary purpose is to preserve information across depth and mitigate the vanishing gradient problem.
-    \item \textbf{Long Skip Connections} (e.g., U-Net, orange lines in the figure above): Use \textit{concatenation} between the encoder and decoder. While they also reduce the vanishing gradient, their primary goal is to preserve high-resolution, fine-grained spatial features from the very first layers directly to the final reconstruction layers, bypassing the destructive compression of the bottleneck.
+    \item[-] \textbf{Short Skip Connections} (e.g., ResNet, black lines in the figure above): Use element-wise \textit{addition} between closely grouped layers. Their primary purpose is to preserve information across depth and mitigate the vanishing gradient problem.
+    \item[-] \textbf{Long Skip Connections} (e.g., U-Net, orange lines in the figure above): Use \textit{concatenation} between the encoder and decoder. While they also reduce the vanishing gradient, their primary goal is to preserve high-resolution, fine-grained spatial features from the very first layers directly to the final reconstruction layers, bypassing the destructive compression of the bottleneck.
 \end{itemize}
 
 \subsection{Real life application: U-Net to assess COVID-19 pulmonary damage}
 
-To fully grasp the importance and the mechanics of fully convolutional networks like the U-Net, it is extremely useful to look at a real-world application in the medical field. Medical images present unique challenges compared to standard natural image datasets (such as ImageNet). First, they are typically acquired at very high resolutions (e.g., a digital mammogram can be $4000 \times 4000$ pixels), and the diagnostic details we need to identify are often microscopic compared to the overall image size. Furthermore, a single 3D medical sample (like a computed tomography scan) can be massive, sometimes reaching several gigabytes in size. This completely prevents the standard approach of loading an entire dataset into a single array (e.g. in \texttt{NumPy}), as it would instantly exceed the memory limits of both the system RAM and the GPU.
+To fully grasp the importance and the mechanics of fully convolutional networks like the U-Net, it is extremely useful to look at a real-world application in the medical field. Medical images present unique challenges compared to standard natural image datasets (such as ImageNet). First, they are typically acquired at very high resolutions (e.g., a digital mammogram can be $4000 \times 4000$ pixels), and the diagnostic details we need to identify are often microscopic compared to the overall image size. Furthermore, a single 3D medical sample (like a computed tomography scan) can be massive, sometimes reaching several gigabytes in size. This completely precludes the standard approach of loading an entire dataset into a single array (e.g. in \texttt{NumPy}), as it would instantly exceed the memory limits of both the system RAM and the GPU.
 
-A prominent example of overcoming these challenges is the development of automated software for the segmentation and quantification of COVID-19 lesions in CT scans, which was a critical necessity at the beginning of the pandemic. In COVID-19 pneumonia, there are two primary types of lung lesions: \textit{ground-glass} opacities (which are typically reversible) and \textit{consolidations} (which represent more severe and irreversible damage). Physicians needed a reliable way to quantify these lesions to assess the patient prognosis but a manual quantification on 3D CT scans is highly subjective and prone to severe inter-reader variability, especially for severely noisy images.
+A prominent example of overcoming these challenges is the development of automated software for the segmentation and quantification of COVID-19 lesions in CT scans, which was a critical necessity at the beginning of the pandemic. In COVID-19 pneumonia, there are two primary types of lung lesions: \textit{ground-glass} opacities (which are typically reversible) and \textit{consolidations} (which represent more severe and irreversible damage). Physicians needed a reliable way to quantify these lesions to assess the patient prognosis, but a manual quantification on 3D CT scans is highly subjective and prone to severe inter-reader variability, especially for severely noisy images.
 
 To solve this, researchers developed \textbf{LungQuant2.0}, a complex software architecture relying on a cascade of neural networks to provide reproducible, automated measurements. You can find the corresponding paper here: \url{https://arxiv.org/abs/2105.02566}. The pipeline (schematically represented below) operates as follows:
 \begin{enumerate}
@@ -77,14 +77,14 @@ Working with real-world medical data highlights why aggressive segmentation (lik
 
 In an initial phase of the study, researchers attempted to train a multi-input CNN to predict patient prognosis (severe vs. not severe) by feeding it raw, unsegmented chest X-Rays combined with clinical features (handling missing clinical data via k-nearest neighbors and mean imputation). The model achieved a seemingly excellent accuracy of around 75\%. 
     
-However, when the \textit{Grad-CAM} (Gradient-weighted Class Activation Mapping) explainability algorithm was applied to visualize what the network was actually focusing on, the results were alarming. The network was completely ignoring the lungs. Because the dataset was highly biased by the emergency acquisition settings, the "smart" algorithm had learned to achieve high accuracy by looking at the background artifacts, such as the presence of ICU cables or the specific posture of a bedridden patient rather than analyzing the actual pulmonary pathology. 
+However, when the \textit{Grad-CAM} (Gradient-weighted Class Activation Mapping) explainability algorithm was applied to visualize what the network was actually focusing on, the results were alarming. The network was completely ignoring the lungs. Because the dataset was highly biased by the emergency acquisition settings, the "smart" algorithm had learned to achieve high accuracy by looking at the background artifacts, such as the presence of ICU cables or the specific posture of a bedridden patient, rather than analyzing the actual pulmonary pathology. 
 
-This post-hoc explainability analysis perfectly demonstrated that without prior semantic segmentation, a CNN can easily "cheat" by learning confounding variables. By using a U-Net to strictly isolate the lungs and delete the irrelevant background, we force the subsequent classifier to base its predictions solely on genuine anatomical and pathological features.
+This post-hoc explainability analysis perfectly demonstrated that without prior semantic segmentation, a CNN can easily "cheat" by learning confounding variables. By using a U-Net to strictly isolate the lungs and remove the irrelevant background, we force the subsequent classifier to base its predictions solely on genuine anatomical and pathological features.
 
 %\begin{figure}[H]
-%    \centering
-%    \includegraphics[width=0.85\linewidth]{figuresML/image_5fedfc.png}
-%    \caption{U-Net architecture details, dataset aggregation, and resulting case study correlations.}
+%   \centering
+%   \includegraphics[width=0.85\linewidth]{figuresML/image_5fedfc.png}
+%   \caption{U-Net architecture details, dataset aggregation, and resulting case study correlations.}
 %\end{figure}
 
 \textbf{Practical implementation and training strategies}
@@ -95,19 +95,19 @@ Furthermore, the generator is responsible for applying \textbf{real-time data au
 
 Finally, to train the U-Net for medical segmentation, standard loss functions like MSE are often inadequate. Instead, custom differentiable loss functions must be explicitly programmed. A standard choice is the \textit{dice loss} (often combined with a weighted cross-entropy loss), which directly optimizes the volumetric overlap (volumetric Dice Similarity Coefficient, vDSC) between the predicted segmentation mask and the ground truth.
 
-\subsection{Hands-on example on U-Nets}
+\section{Hands-on example on U-Nets}
 To put these concepts into practice, the accompanying exercise involves building a U-Net of our own for lung segmentation. Due to the high memory requirements of processing large medical images, standard in-memory batching is insufficient. 
 \begin{itemize}
     \item[-] We will implement a data generator to load batches of data dynamically and apply real-time data augmentation.
     \item[-] We will manually write the decoder path and the residual blocks of the U-Net, and implement the differentiable dice loss mathematically from scratch. 
 \end{itemize}
-Here is a general scheme of the project.
+Here is a general scheme of the project, which you can find here in full: \url{https://colab.research.google.com/drive/1iPq8FnB_XvkirySFTQbIynOEhNcjXNFg?usp=sharing}
 
 \begin{center}
     \includegraphics[width=0.6\linewidth]{figuresML_adv/lesson_ml_adv_2_pag_56.png}
 \end{center}
 
-Since I have to start a new page in order to input the Notebook in my LaTeX file, here is a photo of McEnroe and Borg taken before the 1980 Wimbledon final to occupy the rest of the page.
+Since I have to start a new page in order to input the Notebook in my LaTeX file, here is a photo of McEnroe and Borg before the 1980 Wimbledon final to occupy the rest of the page.
 
 \begin{center}
     \includegraphics[width=0.4\textwidth]{figuresML_adv/borg_mcenroe_1980.png}

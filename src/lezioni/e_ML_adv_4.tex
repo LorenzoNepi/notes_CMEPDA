@@ -14,7 +14,7 @@ As we have extensively discussed in the previous sections, CNNs are exceptionall
 \end{figure}
 \vspace{-7.5mm}
 
-A typical example in experimental physics would be a set of particles in a detector, each carrying information about its 4-momentum vector, tracking hits, calorimeter deposits, and particle identification. We might want to pre-process them one by one identically before feeding them into a higher-level task but this reasoning quickly hits a wall when dealing with data that do not have a fixed dimension.
+A typical example in experimental physics would be a set of particles in a detector, each carrying information about its 4-momentum vector, tracking hits, calorimeter deposits, and particle identification. We might want to pre-process them one by one identically before feeding them into a higher-level task, but this reasoning quickly hits a wall when dealing with data that do not have a fixed dimension.
 
 \subsection{Recurrent Neural Networks (RNNs)}
 
@@ -43,7 +43,7 @@ While the concept of an RNN is elegant, training it is notoriously difficult. Wh
 This leads to a critical bottleneck known as the \textbf{vanishing or exploding gradient problem}. Since the same weights are used at every step, computing the gradient for the earliest elements in a sequence requires repeatedly multiplying those weights. If the sequence is long, this repeated multiplication causes the gradient to either shrink to zero (vanishing) or grow out of control (exploding), unless the weights are perfectly around the order of 1.
 
 { \small
-\underline{Proof:}
+\underline{Proof:} \\
 Let $\mathcal{E}$ be the total error of the network, and $\theta$ the shared weights. The total gradient is the sum of the gradients evaluated at each individual time step $t$:
 \begin{equation}
     \frac{\partial \mathcal{E}}{\partial \theta} = \sum_{1 \le t \le T} \frac{\partial \mathcal{E}_t}{\partial \theta}
@@ -56,7 +56,7 @@ Because the state $x_i$ is computed using the recurrent weights $W_{rec}$ and an
 \begin{equation}
     \prod_{i=k+1}^t \frac{\partial x_i}{\partial x_{i-1}} = \prod_{i=k+1}^t W_{rec} \text{diag}(\sigma'(x_{i-1}))
 \end{equation}
-We are multiplying the same matrix $W_{rec}$ by itself (t-k) times. If the singular values of $W_{rec}$ are strictly less than 1, this product will exponentially decay to 0, resulting in a \textbf{vanishing gradient}. Consequently, the network completely fails to learn long-term dependencies because the earlier inputs receive no gradient updates. Conversely, if the values are strictly greater than 1, the product grows exponentially, leading to an \textbf{exploding gradient} and numerical instability.
+We are multiplying the same matrix $W_{rec}$ by itself $(t-k)$ times. If the singular values of $W_{rec}$ are strictly less than 1, this product will exponentially decay to 0, resulting in a \textbf{vanishing gradient}. Consequently, the network completely fails to learn long-term dependencies because the earlier inputs receive no gradient updates. Conversely, if the values are strictly greater than 1, the product grows exponentially, leading to an \textbf{exploding gradient} and numerical instability.
 }
 
 As a direct result of this mathematical flaw, standard RNNs are highly inefficient to train on long sequences, as they completely lose track of information that appeared too far in the past. To solve this, we must redesign the internal mechanics of the recurrent cell.
@@ -76,7 +76,7 @@ We are therefore facing two distinct but related problems:
     \item The inability to drop useless past information.
 \end{enumerate}
 
-To solve the gradient problem, we must avoid multiplications during backpropagation. The most logical solution is to create a new, separate memory pathway called the \textbf{cell state} ($C_t$), completely distinct from the standard output hidden state ($h_t$). In this network the network modifies the cell state primarily via \textit{sums} rather than matrix multiplications, and since the derivative of a sum is simply 1, gradients can flow backward through time without vanishing. \\
+To solve the gradient problem, we must avoid multiplications during backpropagation. The most logical solution is to create a new, separate memory pathway called the \textbf{cell state} ($C_t$), completely distinct from the standard output hidden state ($h_t$). In this architecture the network modifies the cell state primarily via \textit{sums} rather than matrix multiplications, and since the derivative of a sum is simply 1, gradients can flow backward through time without vanishing. \\
 However, this solution immediately creates a new issue. If we only \textit{add} information to the cell state at each step, the far past remains exactly as important as the recent past. We have solved the gradient problem, but we have completely destroyed any focus on locality!
 
 To regain control over what is kept and what is discarded, we introduce \textbf{gates}. These are point-wise multiplication operations that use a sigmoid activation function to output a value strictly between 0 and 1. They act as trainable valves: if a gate outputs 0, the information is completely blocked (resetting the state); if it outputs 1, the information is left unchanged. These gates can be applied directly to the cell state (to forget past info) or to the input/output of the network.
@@ -90,7 +90,7 @@ The \textbf{Long Short-Term Memory (LSTM)} network is the very first architectur
 Looking at the anatomy of an LSTM cell in the figure above, we can easily identify the mathematical implementation of our logical steps:
 \begin{itemize}
     \item[-] \textbf{Forget gate ($F_t$)}: A sigmoid layer that looks at $H_{t-1}$ and $X_t$, outputting a number between 0 and 1 for each number in the cell state $C_{t-1}$. This is the network deciding what to forget.
-    \item \textbf{Input gate ($I_t$)} and \textbf{Candidate memory ($\tilde{C}_t$)}: Another sigmoid gate ($I_t$) decides which values we will update. Simultaneously, a $\tanh$ layer creates a vector of new candidate values ($\tilde{C}_t$) that could be added to the state.
+    \item[-] \textbf{Input gate ($I_t$)} and \textbf{Candidate memory ($\tilde{C}_t$)}: Another sigmoid gate ($I_t$) decides which values we will update. Simultaneously, a $\tanh$ layer creates a vector of new candidate values ($\tilde{C}_t$) that could be added to the state.
     \item[-] \textbf{Cell State Update}: The old state $C_{t-1}$ is multiplied by $F_t$ (forgetting what we decided to drop), and then we \textit{add} $I_t * \tilde{C}_t$ (the new candidate information). This is the linear, additive path that saves our gradients!
     \item[-] \textbf{Output gate ($O_t$)}: A final sigmoid gate decides what parts of the cell state will be outputted as the new hidden state $H_t$.
 \end{itemize}
@@ -131,13 +131,13 @@ Depending on the specific task, we can arrange the unrolled network into differe
     \includegraphics[width=0.35\textwidth]{figuresML_adv/lesson_ml_adv_4_pag_11a.png}
 \end{center}
 
-When we need to map an input sequence to an output sequence of a different length, we cannot rely on a simple synchronous mapping. Instead, we use our well know \textit{encoder-decoder} (or \textit{Sequence2Sequence}) architecture, which is realized by combining two separate RNNs as shown in figure.
+When we need to map an input sequence to an output sequence of a different length, we cannot rely on a simple synchronous mapping. Instead, we use our well known \textit{encoder-decoder} (or \textit{Sequence2Sequence}) architecture, which is realized by combining two separate RNNs as shown in the figure below.
 
 \begin{center}
     \includegraphics[width=0.5\textwidth]{figuresML_adv/lesson_ml_adv_4_pag_11b.png}
 \end{center}
 
-We seen before how the logic behind this can be beautifully simple yet extremely powerful:
+We have seen before how the logic behind this can be beautifully simple yet extremely powerful:
 \begin{enumerate}
     \item \textit{The encoder}: The first RNN processes the input sequence step by step. Its sole purpose is to compress all the variable-length information of the sequence into a fixed-dimension latent space. Once the input sequence is over, the final \textit{cell state} of this encoder contains the "meaning" of the entire sequence.
     \item \textit{The decoder}: The second RNN takes over to generate the new sequence. Crucially, the final cell state of the encoder is explicitly passed as the \textit{initial state} for the decoder. The decoder then decompresses this state step by step to build the output.
@@ -224,39 +224,35 @@ print(model.predict(data))
 
 If you run this code, the output will contain three distinct arrays: the full sequence of 5 hidden states, the final hidden state (\texttt{state\_h}), and the final cell state (\texttt{state\_c}). You will immediately notice that the specific value of \texttt{state\_h} perfectly matches the exact last element of the \texttt{lstm1} sequence array, mathematically confirming that the network is outputting the final time-step representation alongside the full sequence history.
 
-\subsection{Hands-on examples for LSTMs}
+\section{Hands-on examples for LSTMs}
 
 To put these concepts into practice, the accompanying exercises involve building LSTM architectures for two different sequence tasks.
 
 \begin{itemize}
-    \item[-] \textit{LSTM Encoder Exercise}: We try building from scratch an LSTM that, given a sequence of two-dimensional vectors, finds the maximum norm and the position in the sequence. We will need to generate some data and build a network with one LSTM layer followed by a Dense one.
-    \item[-] \textit{LSTM Decoder exercise}: We will teach multiplication tables to our LSTM. We give the network a base $B$ and a number $N$ of values we want, and it should produce a sequence $[1*B, 2*B, \dots, N*B]$. Let's try to use an "end of sequence" token (e.g., -1).
+    \item[-] \textit{LSTM Encoder Exercise}: We try building from scratch an LSTM that, given a sequence of two-dimensional vectors, finds the maximum norm and the position in the sequence. We will need to generate some data and build a network with one LSTM layer followed by a Dense one. Here is the link to the Notebook: \url{https://colab.research.google.com/drive/1m9Ybt08aNbNNJgVCVEWa03bnfaNqaNJh?usp=sharing}.
+    \item[-] \textit{LSTM Decoder exercise}: We will teach multiplication tables to our LSTM. We give the network a base $B$ and a number $N$ of values we want, and it should produce a sequence $[1*B, 2*B, \dots, N*B]$. Let's try to use an "end of sequence" token (e.g., -1). Here is the link to the Notebook: \url{https://colab.research.google.com/drive/10waGCBQG_iDC2ewYZKGjUBR3YQ50BnO7?usp=sharing}
 \end{itemize}
 
-Since I have to start a new page in order to input the Notebook in my LaTeX file, here is a compilation of photos from the Grand Slam Tournaments of 1989 to occupy the rest of the page:
-
+Since I have to start a new page in order to input the Notebook in my LaTeX file, here is a compilation of photos from the Grand Slam Tournaments of 1989. In order:
 \begin{itemize}
-\item[-] Ivan Lendl with the 1989 Australian Open trophy.
-    \begin{center}
-        \includegraphics[width=0.18\textwidth]{figuresML_adv/ivan_lendl_1989.png}
-    \end{center}
-\item[-] Michael Chang after winning the 1989 Roland Garros against Stefan Edberg (after eliminating Ivan Lendl in the quarterfinals in a legendary match of psychological warfare).
-    \begin{center}
-        \includegraphics[width=0.29\textwidth]{figuresML_adv/michael_chang_1989.png}
-    \end{center}
-\item[-] Boris Becker after winning the 1989 Wimbledon final against Stefan Edberg.
-    \begin{center}
-        \includegraphics[width=0.20\textwidth]{figuresML_adv/boris_becker_1989.png}
-    \end{center}
-\item[-] Steffi Graf and Boris Becker after winning the 1989 Men's and Women's singles at the US Open for Germany.
-    \begin{center}
-        \includegraphics[width=0.29\textwidth]{figuresML_adv/becker_graff_1989.png}
-    \end{center}
+    \item[-] Ivan Lendl with the 1989 Australian Open trophy (\textit{upper left});
+    \item[-] Michael Chang after winning the 1989 Roland Garros against Stefan Edberg (after eliminating Ivan Lendl in the quarterfinals in a legendary match of psychological warfare, \textit{upper right});
+    \item[-] Boris Becker after winning the 1989 Wimbledon final against Stefan Edberg (\textit{bottom left});
+    \item[-] Steffi Graf and Boris Becker after winning the 1989 Men's and Women's singles at the US Open for Germany (\textit{bottom right}).
 \end{itemize}
+
+\begin{center}
+    \includegraphics[width=0.23\textwidth]{figuresML_adv/ivan_lendl_1989.png}
+    \includegraphics[width=0.5\textwidth]{figuresML_adv/michael_chang_1989.png}
+\end{center}
+\begin{center}
+    \includegraphics[width=0.25\textwidth]{figuresML_adv/boris_becker_1989.png}
+    \includegraphics[width=0.5\textwidth]{figuresML_adv/becker_graff_1989.png}
+\end{center}
+
 
 %\includepdf[pages=-, pagecommand={\thispagestyle{plain}}]{lezioni/e_ML_adv_4ahands_on.pdf}
 %ML_8a nel mio colab
 
 %\includepdf[pages=-, pagecommand={\thispagestyle{plain}}]{lezioni/e_ML_adv_4bhands_on.pdf}
 %ML_8b nel mio colab
-

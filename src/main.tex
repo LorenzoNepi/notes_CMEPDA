@@ -127,17 +127,27 @@
 
 % ------------------
 
-\title{\textbf{Computing Methods for Experimental Physics and Data Analysis}}
-\author{Notes adjusted from the 2025-26 course slides}
+\title{\textbf{Computing Methods for Experimental Physics and Data Analysis} \\
+\vspace{0.5em}
+{\large Notes adjusted from the 2025-26 course slides and lessons}}
+\author{Lorenzo Nepi}
 \date{\today}
 
 \begin{document}
 
 \maketitle
 
-\tableofcontents
-
 \newpage
+\thispagestyle{empty}
+\null
+\newpage
+
+\pagenumbering{roman} 
+\input{lezioni/0_preface} 
+\newpage
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
 
 % -------------------------------------------------------------------
 % PART I: BASICS
@@ -178,7 +188,7 @@
 \include{lezioni/c_parallel3_c_reminder}
 \include{lezioni/c_parallel3}
 \include{lezioni/c_parallel4}
-\include{lezioni/parallel5}
+\include{lezioni/c_parallel5}
 %\end{comment}
 
 % -------------------------------------------------------------------
@@ -192,13 +202,10 @@
 \include{lezioni/d_ML2hands_on}
 \include{lezioni/d_ML3}
 \include{lezioni/d_ML4}
-\include{lezioni/d_ML4hands_on}
 \include{lezioni/d_ML5}
-\include{lezioni/d_ML5hands_on}
 \include{lezioni/d_ML6}
 \include{lezioni/d_ML6hands_on}
 %\end{comment}
-
 
 % -------------------------------------------------------------------
 % PART IV: Machine Learning (Advanced)
@@ -216,4 +223,8 @@
 
 \include{lezioni/Appendix}
 
+% \\textcolor\{red\}\{(.*?)\}
+% $1
+
 \end{document}
+

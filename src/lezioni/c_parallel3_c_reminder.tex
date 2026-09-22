@@ -8,9 +8,9 @@ The most fundamental difference between Python and C is how the computer execute
 
 C, on the other hand, is a \textbf{compiled} language. Before you can run a C program, you must pass the source code through a compiler (like \texttt{gcc}, \texttt{g++}, or \texttt{cc} on Linux). The compiler translates your entire human-readable code into a machine-executable binary file. 
 
-This additional step makes development slightly slower, but the resulting execution is exponentially faster. Moreover, while Python reveals syntax errors only when it tries to execute the flawed line, the C compiler will catch all syntax errors beforehand, completely preventing compilation until they are fixed.
+This additional step makes development slightly slower, but the resulting execution is significantly faster. Moreover, while Python reveals syntax errors only when it tries to execute the flawed line, the C compiler will catch all syntax errors beforehand, completely preventing compilation until they are fixed.
 
-Let's now take a look at a simple program in C and go through with its execution.
+Let's now take a look at a simple program in C and go through  its execution.
 
 \subsection{The anatomy of a basic C program}
 
@@ -20,20 +20,20 @@ Here it is: the classic "Hello World" program.
 
 Now, let's analyse this piece of code step by step so we can start understanding the C syntax. 
 \begin{itemize}
-    \item First of all, you must know that in Python, code can simply exist in the global scope, but in C code to be executed \textit{must} be enclosed within "functions". As an absolute minimum, every program must have a function called \textbf{\texttt{main}} (line 3)
-    \item Python uses indentation to define blocks of code. In C, \textbf{blocks} of code instructions are enclosed in braces \textbf{\texttt{\{ \}}} (lines 3 and 8) and indentation is purely for human readability.
-    \item Every single instruction (\textbf{statement}) must end with a semicolon \textbf{\texttt{;}} (line 7). Forgetting this is the most common cause of compiler errors.
-    \item Text \textbf{strings} are enclosed by double quotes \textbf{\texttt{" "}} (line 5). Single quotes \texttt{' '} are strictly used for single characters only.
-    \item Multi-line \textbf{comments} are enclosed by \textbf{\texttt{/* ... */}} (line 4). Single-line comments use {\texttt{/ /}} instead.
-    \item You can include other pieces of code with the \texttt{\#include} directive (line 1). The \texttt{\#include <stdio.h>} line tells the compiler to include the \textit{Standard Input/Output library}, which is necessary to use the \texttt{printf} function. More generally, the word that comes after the \textbf{\texttt{\#}} symbol is called a \textbf{directive}, and, roughly speaking, it constitutes an "order" to the compiler (this concept will become clearer later).
-    \item The \texttt{return 0} instruction (line 7) is not mandatory, but you will always find it for good practice at the end of each C program.
+    \item[-] First of all, you must know that in Python, code can simply exist in the global scope, but in C, code to be executed \textit{must} be enclosed within "functions". As an absolute minimum, every program must have a function called \textbf{\texttt{main}} (line 3).
+    \item[-] Python uses indentation to define blocks of code. In C, \textbf{blocks} of code instructions are enclosed in braces \textbf{\texttt{\{ \}}} (lines 3 and 8) and indentation is purely for human readability.
+    \item[-] Every single instruction (\textbf{statement}) must end with a semicolon \textbf{\texttt{;}} (line 7). Forgetting this is the most common cause of compiler errors.
+    \item[-] Text \textbf{strings} are enclosed by double quotes \textbf{\texttt{" "}} (line 5). Single quotes \texttt{' '} are strictly used for single characters only.
+    \item[-] Multi-line \textbf{comments} are enclosed by \textbf{\texttt{/* ... */}} (line 4). Single-line comments use \texttt{//} instead.
+    \item[-] You can include other pieces of code with the \texttt{\#include} directive (line 1). The \texttt{\#include <stdio.h>} line tells the compiler to include the \textit{Standard Input/Output library}, which is necessary to use the \texttt{printf} function. More generally, the word that comes after the \textbf{\texttt{\#}} symbol is called a \textbf{directive}, and, roughly speaking, it constitutes an "order" to the compiler (this concept will become clearer later).
+    \item[-] The \texttt{return 0} instruction (line 7) is not mandatory, but you will always find it as a good practice at the end of each C program.
 \end{itemize}
 
-Now let's say that you have opened your favourite text editor and written the example program above in a file called \texttt{hello\_world.c} (the \texttt{.c} part is necessary, otherwise your compiler won't recognize the file). Let's also say that the file is saved in the directory \texttt{c/introduction\_to\_C}. If you are using Linux (as you should), in order to compile your file you must open the terminal, move inside the directory and then type \texttt{gcc hello\_world.c} (the same would be true on Windows). This will create an executable named \texttt{a.out} (or \texttt{a.exe} on Windows). In order to give it a more meaningful name, use the \texttt{-o} flag, just like this: \texttt{gcc hello\_world.c -o hello\_world} (on Windows you should type \texttt{gcc hello\_world.c -o hello\_world.exe}). \\ Once compiled, to run your program on Linux type \texttt{./hello\_world}. The \texttt{./} is mandatory as it tells the OS to look for the executable in the current directory (on Windows, you can simply type \texttt{hello\_world.exe} or just \texttt{hello\_world}). \footnote{Once you've become familiar with this process, you should consider switching to VS Code, which can hide all this operations for you and let you run C code just like a Python script.}
+Now let's say that you have opened your favourite text editor and written the example program above in a file called \texttt{hello\_world.c} (the \texttt{.c} part is necessary, otherwise your compiler won't recognize the file). Let's also say that the file is saved in the directory \texttt{c/introduction\_to\_C}. If you are using Linux (as you should), in order to compile your file you must open the terminal, move inside the directory and then type \texttt{gcc hello\_world.c} (the same would be true on Windows). This will create an executable named \texttt{a.out} (or \texttt{a.exe} on Windows). In order to give it a more meaningful name, use the \texttt{-o} flag, just like this: \texttt{gcc hello\_world.c -o hello\_world} (on Windows you should type \texttt{gcc hello\_world.c -o hello\_world.exe}). \\ Once compiled, to run your program on Linux type \texttt{./hello\_world}. The \texttt{./} is mandatory as it tells the OS to look for the executable in the current directory (on Windows, you can simply type \texttt{hello\_world.exe} or just \texttt{hello\_world}). \footnote{Once you've become familiar with this process, you should consider switching to VS Code, which can hide all these operations for you and let you run C code just like a Python script.}
 
 \subsection{Identifiers, Types and Variables}
 
-Variables and functions names in C are called \textbf{identifiers}. An identifier must start with a letter or an underscore (not a number), and can then contain letters, numbers, and underscores. 
+Variable and function names in C are called \textbf{identifiers}. An identifier must start with a letter or an underscore (not a number), and can then contain letters, numbers, and underscores. 
 
 \begin{center}
     \includegraphics[width=0.65\textwidth]{figuresP/lesson_parallel_3a_pag_11.png}
@@ -88,7 +88,7 @@ Take a look at the different possible syntaxes for variable definition and print
 
 \subsubsection{- Booleans}
 
-Booleans are not defined in plain C. You must \texttt{\#include <stdbool.h>} to have the \texttt{bool} type defined. Otherwise, you can use the smallest integer (\texttt{char}) to represent them as 1 (true) and 0 (false).
+Booleans are not defined in plain C. You must \texttt{\#include <stdbool.h>} to have the \texttt{bool} type defined. Otherwise, you can use the smallest integer (\texttt{char}) to represent them as 1 (true) and 0 (false). Here is how you can handle booleans in C:
 
 \input{pygments/c_type_2}
 
@@ -108,8 +108,9 @@ Take a look at how different literal suffixes affect the precision and the resul
 \hrulefill
 
 \subsubsection{Note: Variables vs. Literals} 
-The variables defined in the latter piece of code seem very similar to what we have seen in the paragraph about "Integers and Floating Point numbers", don't they? \\
-It is essential to distinguish between variables and literals, which represent the container and the content, respectively. While data types (e.g., \texttt{int}, \texttt{float}) define the size and range of the memory \textit{containers} used to store data, literals are the raw, immutable \textit{values} written directly into the source code. For instance, in the statement \texttt{float f = 3.14f;}, \texttt{float f} allocates a 32-bit variable (the container), whereas \texttt{3.14f} is a float literal specifying that the hardcoded value must be interpreted explicitly as a float rather than the default double (the content).\\
+The variables defined in the previous piece of code seem very similar to what we have seen in the paragraph about "Integers and Floating Point numbers", don't they? 
+
+It is essential to distinguish between variables and literals, which represent the container and the content, respectively. While data types (e.g., \texttt{int}, \texttt{float}) define the size and range of the memory \textit{containers} used to store data, literals are the raw, immutable \textit{values} written directly into the source code. For instance, in the statement \texttt{float f = 3.14f}, \texttt{float f} allocates a 32-bit variable (the container), whereas \texttt{3.14f} is a float literal specifying that the hardcoded value must be interpreted explicitly as a float rather than the default double (the content).\\
 That distinction must be perfectly clear!
 
 \hrulefill
@@ -133,8 +134,8 @@ Since C originally lacked a native boolean type, relational operators return \te
 In Python, you are used to writing \texttt{and}, \texttt{or}, and \texttt{not}. C introduces a strict separation between logical operations (which evaluate the overall truth of an expression) and bitwise operations (which act on the individual binary bits of the variables).
 
 \begin{itemize}
-    \item \textbf{Logical operators:} \texttt{\&\&} (AND), \texttt{||} (OR), and \texttt{!} (NOT). Just like in Python, they employ short-circuit evaluation: for example, the second operand in an OR expression is evaluated ONLY if the first one is false. They always return \texttt{0} or \texttt{1}.
-    \item \textbf{Bitwise operators:} \texttt{\&} (AND), \texttt{|} (OR), \texttt{\^} (XOR), and \texttt{\~{}} (NOT). These act bit by bit. There are also the \texttt{>>} and \texttt{<<} operators, which shift the bits to the right or to the left, respectively.
+    \item[-] \textbf{Logical operators:} \texttt{\&\&} (AND), \texttt{||} (OR), and \texttt{!} (NOT). Just like in Python, they employ short-circuit evaluation: for example, the second operand in an OR expression is evaluated ONLY if the first one is false. They always return \texttt{0} or \texttt{1}.
+    \item[-] \textbf{Bitwise operators:} \texttt{\&} (AND), \texttt{|} (OR), \texttt{\^} (XOR), and \texttt{\~{}} (NOT). These act bit by bit. There are also the \texttt{>>} and \texttt{<<} operators, which shift the bits to the right or to the left, respectively.
 \end{itemize}
 
 \input{pygments/c_operators_2}
@@ -144,10 +145,10 @@ In Python, you are used to writing \texttt{and}, \texttt{or}, and \texttt{not}. 
 The assignment operator \texttt{=} changes the value of a variable. A peculiar feature of C is that the assignment operation itself returns the assigned value. For instance, the expression \texttt{c = (a = 3)} is perfectly valid and results in both \texttt{a} and \texttt{c} holding the value \texttt{3}.
 Assignments can also be composed with binary operators (\texttt{+=}, \texttt{-=}, \texttt{>>=}, etc.), just like in Python.
 
-A major novelty for Python programmers is the introduction of the increment (\texttt{++}) and decrement (\texttt{--}) operators. Their behavior changes drastically depending on their position relative to the variable:
+A major novelty for Python programmers is the introduction of the increment (\texttt{++}) and decrement (\texttt{-{}-}) operators. Their behavior changes drastically depending on their position relative to the variable:
 \begin{itemize}
-    \item \textbf{Postfixed} (e.g., \texttt{a++}): Returns the original value, then increments the variable.
-    \item \textbf{Prefixed} (e.g., \texttt{++a}): Increments the variable first, then returns the new incremented value.
+    \item[-] \textbf{Postfixed} (e.g., \texttt{a++}): Returns the original value, then increments the variable.
+    \item[-] \textbf{Prefixed} (e.g., \texttt{++a}): Increments the variable first, then returns the new incremented value.
 \end{itemize}
 
 \input{pygments/c_operators_3}
@@ -155,7 +156,7 @@ A major novelty for Python programmers is the introduction of the increment (\te
 \subsubsection{- Operator Precedence}
 
 Just as algebraic rules dictate that multiplication precedes addition (\texttt{a + b * c} is obviously evaluated as \texttt{a + (b * c)}), C enforces a strict operator precedence. While standard math operations are intuitive, the precedence of bitwise, logical, and assignment operators can be tricky to remember. 
-When in doubt, it is always a best practice to use parentheses \texttt{()} to explicitly define the execution order and make your code significantly more readable. The following table shows all the operators in order of precedence (from top to bottom).
+When in doubt, it is always  best practice to use parentheses \texttt{()} to explicitly define the execution order and make your code significantly more readable. The following table shows all the operators in order of precedence (from top to bottom).
 
 \begin{center}
     \includegraphics[width=0.65\textwidth]{figuresP/lesson_parallel_3a_pag_21.png}
@@ -163,7 +164,7 @@ When in doubt, it is always a best practice to use parentheses \texttt{()} to ex
 
 \subsection{Control Flow and Output}
 
-With operators at our disposal, we can now control the flow of our programs. If you are comfortable with Python, you will find C's control flow highly familiar in its logic, though noticeably different in its syntax. Let's explore conditional statements, loops, and how to properly print our results. As always, you should try and write for yourself the pieces of code at the end of each paragraph.
+With operators at our disposal, we can now control the flow of our programs. If you are comfortable with Python, you will find C's control flow highly familiar in its logic, though noticeably different in its syntax. Let's explore conditional statements, loops, and how to properly print our results. As always, you should try to write for yourself the pieces of code at the end of each paragraph.
 
 \subsubsection{- Conditional Statements: if, else, switch}
 
@@ -173,8 +174,8 @@ Crucially, C does not have an \texttt{elif} keyword. Instead, you simply chain t
 
 C also provides two other ways to handle conditionals:
 \begin{itemize}
-    \item \textbf{The Ternary Operator (\texttt{?:}):} A compact, inline \texttt{if/else} statement. The syntax is \texttt{(expression) ? (return if true) : (return if false)}. It is the C equivalent of Python's \texttt{x if condition else y}.
-    \item \textbf{The \texttt{switch/case} statement:} When you need to match a single variable against multiple constant values, a \texttt{switch} block is much cleaner than a long chain of \texttt{else if} statements. Remember to use the \texttt{break} keyword at the end of each \texttt{case}, otherwise the execution will "fall through" and execute the subsequent cases as well!
+    \item[-] \textbf{The Ternary Operator (\texttt{?:}):} A compact, inline \texttt{if/else} statement. The syntax is \texttt{(expression) ? (return if true) : (return if false)}. It is the C equivalent of Python's \texttt{x if condition else y}.
+    \item[-] \textbf{The \texttt{switch/case} statement:} When you need to match a single variable against multiple constant values, a \texttt{switch} block is much cleaner than a long chain of \texttt{else if} statements. Remember to use the \texttt{break} keyword at the end of each \texttt{case}, otherwise the execution will "fall through" and execute the subsequent cases as well!
 \end{itemize}
 
 \input{pygments/c_control_conditionals}
@@ -185,10 +186,10 @@ So far, we have used \texttt{printf} without properly introducing it. While Pyth
 
 Placeholders inside the string start with \texttt{\%} and are followed by a specific letter depending on the variable's type. The variables are then passed as subsequent arguments. Some of the most common specifiers include:
 \begin{itemize}
-    \item \texttt{\%d} or \texttt{\%i}: Decimal integer
-    \item \texttt{\%f}: Floating point number
-    \item \texttt{\%c}: Single character
-    \item \texttt{\%s}: String of characters
+    \item[-] \texttt{\%d} or \texttt{\%i}: Decimal integer
+    \item[-] \texttt{\%f}: Floating point number
+    \item[-] \texttt{\%c}: Single character
+    \item[-] \texttt{\%s}: String of characters
 \end{itemize}
 
 Just like in Python, you can specify complex formatting, such as the number of decimal digits or leading zeroes (e.g., \texttt{\%.2f} for a float with two decimal places).
@@ -199,9 +200,9 @@ Just like in Python, you can specify complex formatting, such as the number of d
 
 This is where Python programmers usually face a small learning curve. Python's \texttt{for} loop is actually a "for-each" loop, designed to iterate over collections (like lists or ranges). C's \texttt{for} loop, instead, is explicitly mechanical and controlled by three statements separated by semicolons: \texttt{for(initialization; condition; repeated action)}.
 \begin{itemize}
-    \item \textbf{Initialization:} Executed only once before the loop starts (e.g., \texttt{int i = 0}).
-    \item \textbf{Condition:} Evaluated before every iteration. If true, the loop runs (e.g., \texttt{i < 10}).
-    \item \textbf{Repeated action:} Executed at the end of every iteration (e.g., \texttt{i++}).
+    \item[-] \textbf{Initialization:} Executed only once before the loop starts (e.g., \texttt{int i = 0}).
+    \item[-] \textbf{Condition:} Evaluated before every iteration. If true, the loop runs (e.g., \texttt{i < 10}).
+    \item[-] \textbf{Repeated action:} Executed at the end of every iteration (e.g., \texttt{i++}).
 \end{itemize}
 
 The \texttt{while} loop behaves exactly as it does in Python: it checks the condition \textit{before} the iteration starts.
@@ -218,8 +219,8 @@ In Python, defining a function is as simple as using the \texttt{def} keyword. I
 
 A crucial difference from Python is the distinction between \textbf{defining} and \textbf{declaring} a function:
 \begin{itemize}
-    \item \textbf{Defining:} Writing the full function, including its body.
-    \item \textbf{Declaring:} Providing only the signature to the compiler, usually at the top of the file or in a header file.
+    \item[-] \textbf{Defining:} Writing the full function, including its body.
+    \item[-] \textbf{Declaring:} Providing only the signature to the compiler, usually at the top of the file or in a header file.
 \end{itemize}
 Why declare? The C compiler reads code from top to bottom. If function A calls function B, function B must be known to the compiler beforehand. Declaring allows you to inform the compiler that a function exists and what it looks like, even if its actual definition is written further down in the file (or in a completely different file). This is essential for mutually recursive functions.
 
@@ -231,14 +232,14 @@ Another major difference is \textbf{variable scope}. While Python's scope is mos
 
 To truly understand C, you must understand how it manages memory. Unlike Python, which hides memory management through automatic garbage collection, C forces you to be aware of where your data lives. Variables are stored in RAM using two primary mechanisms:
 \begin{itemize}
-    \item \textbf{Stack:} Operates in a LIFO (Last In, First Out) order. It is fast, automatic, and used for local variables and function arguments. When a function finishes, its stack memory is immediately freed.
-    \item \textbf{Heap:} Memory allocated explicitly by the user (using functions like \texttt{malloc}). This memory survives until you explicitly release it (using \texttt{free}), making it essential for data that must outlive the function that created it.
+    \item[-] \textbf{Stack:} Operates in a LIFO (Last In, First Out) order. It is fast, automatic, and used for local variables and function arguments. When a function finishes, its stack memory is immediately freed.
+    \item[-] \textbf{Heap:} Memory allocated explicitly by the user (using functions like \texttt{malloc}). This memory survives until you explicitly release it (using \texttt{free}), making it essential for data that must outlive the function that created it.
 \end{itemize}
 
 Every variable is stored at a precise location in memory, called its \textbf{address}. A \textbf{pointer} is simply a special type of variable that stores a memory address instead of a standard value.
 \begin{itemize}
-    \item The \textbf{\texttt{\&}} operator returns the memory address of a variable.
-    \item The \textbf{\texttt{*}} operator, when used in declaration (e.g., \texttt{int *p}), denotes a pointer type. When used in front of an existing pointer, it "dereferences" it, allowing you to access or modify the value stored at that memory address.
+    \item[-] The \textbf{\texttt{\&}} operator returns the memory address of a variable.
+    \item[-] The \textbf{\texttt{*}} operator, when used in declaration (e.g., \texttt{int *p}), denotes a pointer type. When used in front of an existing pointer, it "dereferences" it, allowing you to access or modify the value stored at that memory address.
 \end{itemize}
 
 Pointers are the only way to modify variables passed to a function. C functions strictly pass arguments \textbf{by value} (they create local copies). If you want a function to modify an original variable, you must pass its memory address (a pointer) so the function knows exactly where to look.
@@ -263,18 +264,18 @@ If you come from Python, you are used to treating strings as a fundamental, high
 
 Because they are just arrays, you cannot use standard operators like \texttt{+} to concatenate them or \texttt{==} to compare them. Instead, you must include the \texttt{<string.h>} library, which provides specific functions to manipulate these character arrays safely:
 \begin{itemize}
-    \item \texttt{strcpy(dest, src)}: Copies the string \texttt{src} into \texttt{dest}.
-    \item \texttt{strcat(dest, src)}: Concatenates (appends) \texttt{src} to the end of \texttt{dest}.
-    \item \texttt{strlen(str)}: Returns the length of the string (excluding the null terminator).
-    \item \texttt{strcmp(str1, str2)}: Compares two strings.
+    \item[-] \texttt{strcpy(dest, src)}: Copies the string \texttt{src} into \texttt{dest}.
+    \item[-] \texttt{strcat(dest, src)}: Concatenates (appends) \texttt{src} to the end of \texttt{dest}.
+    \item[-] \texttt{strlen(str)}: Returns the length of the string (excluding the null terminator).
+    \item[-] \texttt{strcmp(str1, str2)}: Compares two strings.
 \end{itemize}
 
 \subsection{Headers, Libraries, and \texttt{<math.h>}}
 
 In Python, you use \texttt{import module} to access external code. In C, you use the \texttt{\#include} directive to include \textbf{header files} (files ending in \texttt{.h}). These files contain the declarations (signatures) of functions and variables. There are two types of inclusions:
 \begin{itemize}
-    \item \texttt{\#include <file.h>}: Used for compiler-defined, standard libraries (e.g., \texttt{<stdio.h>}, \texttt{<math.h>}).
-    \item \texttt{\#include "file.h"}: Used for user-defined header files located in your current directory.
+    \item[-] \texttt{\#include <file.h>}: Used for compiler-defined, standard libraries (e.g., \texttt{<stdio.h>}, \texttt{<math.h>}).
+    \item[-] \texttt{\#include "file.h"}: Used for user-defined header files located in your current directory.
 \end{itemize}
 
 A very common standard library is \texttt{<math.h>}, which contains functions like \texttt{acos}, \texttt{floor}, \texttt{pow}, and \texttt{sqrt}. 
@@ -290,9 +291,9 @@ The \texttt{<stdio.h>} library provides built-in functions for I/O management. C
 
 Depending on what you need to read or write, you have different tools:
 \begin{itemize}
-    \item \textbf{Single Characters:} \texttt{getchar()} reads a single character from \texttt{stdin} and returns it as an integer (its ASCII table code). \texttt{putchar(c)} does the reverse, printing the character to \texttt{stdout}.
-    \item \textbf{Strings:} \texttt{fgets(str, size, stdin)} safely reads a string of up to \texttt{size} characters from the input. \texttt{puts(str)} writes a string to \texttt{stdout}.
-    \item \textbf{Formatted I/O:} \texttt{scanf("format", \&vars)} reads input according to a format string (like \texttt{\%d} or \texttt{\%s}). \textbf{Crucially}, you must pass the \textit{memory address} of the variables (using \texttt{\&}) to \texttt{scanf} so it can modify them! \texttt{printf("format", vars)} does the exact same for outputting data.
+    \item[-] \textbf{Single Characters:} \texttt{getchar()} reads a single character from \texttt{stdin} and returns it as an integer (its ASCII table code). \texttt{putchar(c)} does the reverse, printing the character to \texttt{stdout}.
+    \item[-] \textbf{Strings:} \texttt{fgets(str, size, stdin)} safely reads a string of up to \texttt{size} characters from the input. \texttt{puts(str)} writes a string to \texttt{stdout}.
+    \item[-] \textbf{Formatted I/O:} \texttt{scanf("format", \&vars)} reads input according to a format string (like \texttt{\%d} or \texttt{\%s}). \textbf{Crucially}, you must pass the \textit{memory address} of the variables (using \texttt{\&}) to \texttt{scanf} so it can modify them! \texttt{printf("format", vars)} does the exact same for outputting data.
 \end{itemize}
 
 \input{pygments/c_standard_io}
@@ -319,9 +320,9 @@ Members of a structure are accessed using the dot operator (\texttt{.}), exactly
 
 To make working with structures (and other types) easier, C provides the \textbf{\texttt{typedef}} keyword. \texttt{typedef} is used to create an alias for an existing data type. This is incredibly useful for:
 \begin{itemize}
-    \item Renaming long standard types (e.g., turning \texttt{unsigned int} into just \texttt{uint}).
-    \item Creating readable aliases for complex types like pointers or arrays.
-    \item Simplifying \texttt{struct} declarations. Instead of typing \texttt{struct Marks} every time you want to declare a variable, you can use \texttt{typedef} to alias it to simply \texttt{Marks}.
+    \item[-] Renaming long standard types (e.g., turning \texttt{unsigned int} into just \texttt{uint}).
+    \item[-] Creating readable aliases for complex types like pointers or arrays.
+    \item[-] Simplifying \texttt{struct} declarations. Instead of typing \texttt{struct Marks} every time you want to declare a variable, you can use \texttt{typedef} to alias it to simply \texttt{Marks}.
 \end{itemize}
 
 \input{pygments/c_typedef_structs}
@@ -344,6 +345,19 @@ C also performs \textbf{automatic (implicit) casting} when you mix different typ
 
 \textit{Note from the author}
 
-When I started this course, I had never even seen a full program written in C. I (badly) learned it along the way while writing these notes and I thought that it may be useful leaving behind a way for you to practice as well. In App. \ref{app:C_exercises} you will find some useful problems and exercises that helped me become a little more fluent in C. Of course, this section was just a small reminder/introduction to some of the most basic concepts of this programming language, but, if you really understood everything, it should be enough for you to go through the next chapters with much more ease.
+When I started this course, I had never even seen a full program written in C. I (badly) learned it along the way while writing these notes and I thought that it may be useful to leave behind a way for you to practice as well. In Appendix \ref{app:C_exercises} you will find some useful problems and exercises that helped me become a little more fluent in C. Of course, this section was just a small reminder/introduction to some of the most basic concepts of this programming language, but, if you really understood everything, it should be enough for you to go through the next chapters with much more ease.
 
 \hrulefill
+
+
+
+
+
+
+
+
+
+
+
+
+

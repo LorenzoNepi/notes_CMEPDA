@@ -1,4 +1,4 @@
-\section{Advanced concepts for GANs and Gradient Reversal Layers}
+\section{More on GANs and intro to Gradient Reversal Layers}
 
 \subsection{A brief recap on Generative Adversarial Networks}
 
@@ -6,7 +6,7 @@ As we extensively discussed in Sec. \ref{sec:intro_GAN}, Generative Adversarial 
 
 A useful analogy to understand this dynamic is the forger and the police officer. Initially, the forger (generator) produces very crude fake dollars, but as the police officer (discriminator) learns to identify the fakes, the forger is forced to become more sophisticated. Both networks improve in tandem. However, it is crucial to remember that the discriminator is merely a training tool: its sole purpose is to provide a loss function and gradients for the generator. Once the training is complete, the discriminator is discarded.
 
-GANs made incredible progress over the last decade, moving from generating blurry "dogs with three heads" in 2014 to photorealistic human faces and even playable video games from simple videos of people actually playing them like PacMan or Grand Theft Auto. However, their training dynamics are notoriously unstable. 
+GANs have made incredible progress over the last decade, moving from generating blurry "dogs with three heads" in 2014 to photorealistic human faces and even playable video games from simple videos of people playing them, like PacMan or Grand Theft Auto. However, their training dynamics are notoriously unstable. 
 As we already mentioned, they suffer from two major issues:
 \begin{itemize}
     \item[-] \textit{Mode Collapse}: The generator might discover that producing one specific type of output (e.g., a perfect $\$50$ bill) fools the discriminator consistently. It will then collapse and only generate that single sample, ignoring the rest of the target distribution.
@@ -27,7 +27,7 @@ More importantly, while the pure generative usage of GANs might be declining, th
 
 Sometimes, your training sample contains information that you \textit{do not} want your network to use. We want to make the network more general and robust, ensuring it does not rely on nuisance information or dataset-specific biases. 
 
-Simply removing a column from your dataset is rarely enough, because the nuisance information is usually highly correlated with other features the network can still exploit. Let's look at three practical examples:
+Simply removing a feature from your dataset is rarely enough, because the nuisance information is usually highly correlated with other features the network can still exploit. Let's look at three practical examples:
 \begin{enumerate}
     \item \textit{Computer Vision}: You want to classify handwritten digits (MNIST) regardless of their color, but in your dataset, some numbers are always written in red and others in green. 
     \item \textit{High Energy Physics}: You want to build a jet tagger to recognize if a particle jet comes from a top quark, a Higgs boson, or a W boson. The invariant mass of the jet is highly discriminating, but you explicitly \textit{do not} want the network to use it. If the network learns the mass, applying a cut on the network's output will artificially "sculpt the background", creating fake mass peaks that ruin subsequent physics analyses.
@@ -54,7 +54,7 @@ The GRL is placed exactly between the feature extractor and the adversarial head
 
 This simple mathematical trick is extremely powerful. The adversarial head learns how to predict the nuisance variable as best as it can. But because the gradient is inverted by the GRL, the feature extractor updates its weights in the \textit{exact opposite direction}. The feature extractor is actively penalized if it retains any information useful to the adversarial head, forcing it to completely \textbf{unlearn} the nuisance variable and become domain-invariant. The total loss is simply the sum of the losses of the two heads.
 
-\subsection{Practical implementation and hands-on examples}
+\section{Practical implementation and hands-on examples}
 
 Implementing adversarial training requires stepping outside the comfort zone of standard sequential wrappers. 
 
@@ -74,13 +74,14 @@ In PyTorch, creating a GRL is beautifully simple thanks to the \texttt{torch.aut
 \subsubsection{Hands-on examples on GANs and GRLs}
 To solidify these concepts, we will jump into two practical exercises:
 \begin{itemize}
-    \item[-] \textbf{GAN Exercise}: We will create a target 2D distribution (e.g., points arranged in a circle or a ring) and build a GAN from scratch to reproduce it starting from random noise. 
-    \item[-] \textbf{GRL Exercise}: We will tackle a dataset containing two distinct features: a "Class" we want to predict, and a "Domain" we want to ignore (acting as a distractor). We will demonstrate how standard networks fail by implicitly learning the domain, and how introducing a GRL makes the transformed feature space fully domain-invariant, making the network robust even if the test dataset has a completely different domain mix.
+    \item[-] \textit{GAN Exercise}: We will create a target 2D distribution (e.g., points arranged in a circle or a ring) and build a GAN from scratch to reproduce it starting from random noise. You can access the Notebook at the following link: \url{https://colab.research.google.com/drive/1-8NUePIpozh0DyMD3gk0DKcuLukhHcCR?usp=sharing}.
+    \item[-] \textit{GRL Exercise}: We will tackle a dataset containing two distinct features: a "Class" we want to predict, and a "Domain" we want to ignore (acting as a distractor). We will demonstrate how standard networks fail by implicitly learning the domain, and how introducing a GRL makes the transformed feature space fully domain invariant, making the network robust even if the test dataset has a completely different domain mix. Here is the link to the Notebook: \url{https://colab.research.google.com/drive/1la6rC_umcygR5g_mbnL15ZGd3aNkpNsP?usp=sharing}.
 \end{itemize}
 
 %\includepdf[pages=-, pagecommand={\thispagestyle{plain}}]{lezioni/e_ML_adv_6Ahands_on.pdf}
-% ML_10a nel mio colab
+
+% ML_11a nel mio colab
 
 %\includepdf[pages=-, pagecommand={\thispagestyle{plain}}]{lezioni/e_ML_adv_6Bhands_on.pdf}
 
-% ML_10b nel mio colab
+% ML_11b nel mio colab

@@ -1,7 +1,7 @@
 \section{Graph Neural Networks (GNNs)}\label{sec:GNN_intro}
 
 \subsection{The need for graph-based architectures}
-Graph Neural Networks were theorized long before the machine learning revolution that saw them take center stage. The beginning of their rapid rise in both the international market and academic research can be traced back to the 2018 paper available at this here: \url{https://arxiv.org/abs/1806.01261}.
+Graph Neural Networks were theorized long before the machine learning revolution that saw them take center stage. The beginning of their rapid rise in both the international market and academic research can be traced back to the 2018 paper available at this link: \url{https://arxiv.org/abs/1806.01261}.
 
 In the landscape of modern machine learning, different architectures are highly optimized to exploit the specific symmetries of their input data. For instance, CNNs are the standard for computer vision because they process data structured on a multi-index euclidean grid (like the pixels of an image). By sliding a shared kernel across the grid, CNNs naturally exploit \textit{spatial translation equivariance}. Similarly, Recurrent Neural Networks (RNNs) or LSTMs (which we will see later) operate on sequentially ordered data (like text files), exploiting \textit{time-shift equivariance}. Generally speaking, a function $F$ is said to be equivariant (or often, though less appropriately, invariant) under a transformation $T$ if $F(T(t)) = T(F(t))$. The CNN example is straightforward: if we have an algorithm that identifies a cat in an image by overlaying a mask on it, shifting the cat by one pixel will result in the mask shifting by the exact same amount. Try to independently apply this same reasoning to RNNs and temporal equivariance.
 
@@ -15,7 +15,7 @@ However, in many scientific and industrial applications, data does not easily fi
 
 Attempting to cast this heterogeneous data into standard grid formats requires severe approximations, such as arbitrary binning (which leads to information loss) or the creation of highly sparse data structures filled primarily with zeros. To process this data natively, we require a structure that focuses on the nodes and their local connections, exploiting a new fundamental symmetry: \textbf{permutation equivariance} (or invariance). Because a point cloud has no inherent physical ordering, shuffling the input order of the points must yield the exact same overall result. This is the domain of \textbf{Graph Neural Networks (GNNs)}. \\ 
 Generally speaking, an ML algorithm is easier to train the more the inherent equivariances of the problem are taken into account when designing its architecture. CNNs, LSTMs/GRUs, and GNNs are built to exploit equivariance under spatial translations, temporal translations, and permutations, respectively, thereby reducing both the number of parameters required for them to function and the necessary size of the training datasets. Extracting information from the local to the global scale (over tensor patches for CNNs and over small groups of connected nodes for GNNs) further increases their efficiency.\\
-Recently GNNs were popularized by Google's DeepMind for weather forecast, which obtained similar or better results than state of the art non-ML models, but with less run time.
+Recently GNNs were popularized by Google DeepMind for their weather forecasting model, which obtained similar or better results than state-of-the-art non-ML models, but with less run time.
 
 \subsection{From Deep-Sets to Graphs}
 Imagine we now want to write the simplest possible algorithm that is equivariant to permutations, suitable for these point clouds. CNNs and RNNs must obviously be ruled out right away. 
@@ -93,40 +93,40 @@ Depending on the specific goal of the analysis, GNNs are extremely versatile and
 To solve these tasks, the GNN must learn new, richer representations for the nodes, edges, and global state. Just as a CNN extracts hierarchical features through successive convolutional layers, a GNN creates new features by mapping inputs to a high-dimensional latent space and iterating updates across the graph in a process called \textbf{Message Passing}. The mathematical logic follows a sequence of specific operations:
 
 \textbf{1. The Embedding Phase:}
-The raw input data typically resides in a physical space $X$, where features might represent concrete quantities like spatial coordinates or velocities. Let ${x_i}$ be the input vector of the node $v_i$ (e.g position, velocity, mass of a celestial body if your graph is representing an astrophysical system). Embedding consists in mapping ${x_i}$ (the physical data) into a higher dimensional vector 
+The raw input data typically resides in a physical space $X$, where features might represent concrete quantities like spatial coordinates or velocities. Let $x_i$ be the input vector of the node $v_i$ (e.g. position, velocity, mass of a celestial body if your graph is representing an astrophysical system). Embedding consists of mapping $x_i$ (the physical data) into a higher dimensional vector 
 \begin{equation}
-    {h_i}=\phi_{\text{EMB}}({x_i})
+    h_i = \phi_{\text{EMB}}(x_i)
 \end{equation} 
-that lies in a latent non-physical space $H$. ${h_i}$ is the so called \textbf{hidden} or \textbf{latent representation} of the node. Crucially, since the same embedding function (which is effectively an embedding neural network) is run over all the nodes, then permutation equivariance is preserved, just like a shared kernel assures translation equivariance for CNNs. 
+that lies in a latent non-physical space $H$. $h_i$ is the so-called \textbf{hidden} or \textbf{latent representation} of the node. Crucially, since the same embedding function (which is effectively an embedding neural network) is run over all the nodes, then permutation equivariance is preserved, just like a shared kernel assures translation equivariance for CNNs. 
 
 \textbf{2. The Message Passing Mechanism:}
 Once embedded in the high-dimensional latent space, the network updates each node's representation by letting it exchange information with its neighbors. This is the core of message passing, which can be broken down into generating messages, aggregating them, and updating the nodes:
 
 \begin{itemize}
-    \item \textbf{Edge Update (Message Generation):} First, information must be passed along the connections. In the absolute simplest scenario, the message on an edge connecting a sender to a receiver could just be a direct copy of the sender's latent vector. More generally, an edge neural network $\phi^e$ computes a message ${e}'_k$ based on the current edge features, the latent vectors of connected nodes, and potentially the global state ${u}$ of the network:
+    \item \textbf{Edge Update (Message Generation):} First, information must be passed along the connections. In the absolute simplest scenario, the message on an edge connecting a sender to a receiver could just be a direct copy of the sender's latent vector. More generally, an edge neural network $\phi^e$ computes a message $e'_k$ based on the current edge features, the latent vectors of connected nodes, and potentially the global state $u$ of the network:
     \begin{equation}
-        {e}'_k = \phi^e({e}_k, {h}_{r_k}, {h}_{s_k}, {u})
+        e'_k = \phi^e(e_k, h_{r_k}, h_{s_k}, u)
     \end{equation}
-    \item \textbf{Aggregation:} A single node may receive multiple messages from various neighbors, since they might be connected to more than one edges. To process them, the network uses an \textbf{aggregator}, which is a permutation-invariant \textbf{pooling function} $\rho^{e \to v}$ (such as an element-wise sum, a max or a mean). This step effectively compresses the set of incoming message vectors ($E'_i$) into a single unified vector $\bar{{e}}'_i$ of the same dimensionality:
+    \item \textbf{Aggregation:} A single node may receive multiple messages from various neighbors, since they might be connected to more than one edge. To process them, the network uses an \textbf{aggregator}, which is a permutation-invariant \textbf{pooling function} $\rho^{e \to v}$ (such as an element-wise sum, a max or a mean). This step effectively compresses the set of incoming message vectors ($E'_i$) into a single unified vector $\bar{e}'_i$ of the same dimensionality:
     \begin{equation}
-        \bar{{e}}'_i = \rho^{e \to v}(E'_i)
+        \bar{e}'_i = \rho^{e \to v}(E'_i)
     \end{equation}
-    \item \textbf{Node Update:} The node must now synthesize its own current state with the summarized information from its neighbors. A node neural network $\phi^v$ takes the aggregated message $\bar{{e}}'_i$ and the node's current state ${h}_i$ to output the newly updated latent state ${h}'_i$:
+    \item \textbf{Node Update:} The node must now synthesize its own current state with the summarized information from its neighbors. A node neural network $\phi^v$ takes the aggregated message $\bar{e}'_i$ and the node's current state $h_i$ to output the newly updated latent state $h'_i$:
     \begin{equation}\label{eq:node_update}
-        {h}'_i = \phi^v(\bar{{e}}'_i, {h}_i, {u})
+        h'_i = \phi^v(\bar{e}'_i, h_i, u)
     \end{equation}
 \end{itemize}
-With that said, why do we need the higher dimensional latent space? \textit{Couldn't we have done it directly with the ${x_i}$ vectors?} The answer lies in the network's capacity to learn complex correlations and structural patterns. Raw physical features often reside in a low-dimensional space and possess heterogeneous units, making direct aggregation mathematically and physically inconsistent. By embedding $X$ into a higher-dimensional latent space, we provide the neural network with the necessary degrees of freedom to unravel non-linear relationships between a node and its neighborhood. Furthermore, in this abstract space, the message passing mechanism can safely aggregate information, combining learned representations rather than incompatible physical quantities and allowing the GNN to effectively cluster nodes based on task-specific similarities. In other words, by iterating this message passing procedure multiple times, nodes gather information from increasingly distant regions of the graph and, after training, nodes with similar relational roles or features will naturally cluster in similar regions of the latent space.
+With that said, why do we need the higher dimensional latent space? \textit{Couldn't we have done it directly with the $x_i$ vectors?} The answer lies in the network's capacity to learn complex correlations and structural patterns. Raw physical features often reside in a low-dimensional space and possess heterogeneous units, making direct aggregation mathematically and physically inconsistent. By embedding $X$ into a higher-dimensional latent space, we provide the neural network with the necessary degrees of freedom to unravel non-linear relationships between a node and its neighborhood. Furthermore, in this abstract space, the message passing mechanism can safely aggregate information, combining learned representations rather than incompatible physical quantities and allowing the GNN to effectively cluster nodes based on task-specific similarities. In other words, by iterating this message passing procedure multiple times, nodes gather information from increasingly distant regions of the graph and, after training, nodes with similar relational roles or features will naturally cluster in similar regions of the latent space.
 
 \textbf{3. Global Update (Optional):}
 Finally, if the task requires an understanding of the entire system (a graph-level task), a global state can be updated. All updated edges ($E'$) and nodes ($V'$) are pooled into summary vectors:
 \begin{align}
-    \bar{{e}}' &= \rho^{e \to u}(E') \\
-    \bar{{v}}' &= \rho^{v \to u}(V')
+    \bar{e}' &= \rho^{e \to u}(E') \\
+    \bar{v}' &= \rho^{v \to u}(V')
 \end{align}
-A global neural network $\phi^u$ then generates the updated global state ${u}'$:
+A global neural network $\phi^u$ then generates the updated global state $u'$:
 \begin{equation}
-    {u}' = \phi^u(\bar{{e}}', \bar{{v}}', {u})
+    u' = \phi^u(\bar{e}', \bar{v}', u)
 \end{equation}
 
 \subsection{Information propagation}
@@ -154,7 +154,7 @@ You can find much more on the topic of GNNs in the following review article: \ur
 \subsection{Designing the Loss Function}
 As we discussed in the previous sections, GNNs are incredibly versatile because they can handle tasks at the node, edge, and graph levels. But how do we actually train such a multi-faceted network? The answer is that you have total freedom to design a loss function tailored specifically to your physical problem.
 
-Let's consider a practical example from High Energy Physics. When a quark is produced in a collider, it cannot exist in isolation due to the strong nuclear force; instead, it generates a "spray" of multiple particles. We can enclose this entire system in a "box" and represent it as a graph, where the input features are the kinematic properties (e.g., 4-momentum vectors) of the individual particles. If our main goal is a graph-level task (such as determining whether the original parent particle flew a certain distance before decaying or not) we are looking at a global classification problem. The GNN will embed the initial features, perform message passing to update the hidden representations, and finally apply a pooling function to extract a global vector $u'$. Passing $u'$ through MLP yields an output probability. We can then compute a standard \textit{graph-level loss} $\mathcal{L}_{graph}$ as a binary cross entropy.
+Let's consider a practical example from High Energy Physics. When a quark is produced in a collider, it cannot exist in isolation due to the strong nuclear force; instead, it generates a "spray" of multiple particles. We can enclose this entire system in a "box" and represent it as a graph, where the input features are the kinematic properties (e.g., 4-momentum vectors) of the individual particles. If our main goal is a graph-level task (such as determining whether the original parent particle flew a certain distance before decaying or not) we are looking at a global classification problem. The GNN will embed the initial features, perform message passing to update the hidden representations, and finally apply a pooling function to extract a global vector $u'$. Passing $u'$ through an MLP yields an output probability. We can then compute a standard \textit{graph-level loss} $\mathcal{L}_{graph}$ as a binary cross entropy.
 
 However, what if we also want to extract local information? Suppose our simulation tells us that one specific particle in the jet is "special" (e.g., it carries a specific physical signature), and we want our network to accurately identify it. We can compute a \textit{node-level loss}, $\mathcal{L}_{node}$, by evaluating the output of the individual node representations.\\
 Similarly, returning to our planetary example, if we wanted the network to predict the exact Newtonian force between pairs of planets, we would need to evaluate an \textit{edge-level loss}, $\mathcal{L}_{edge}$, working directly on the edge representations.
@@ -168,10 +168,10 @@ By doing so, the gradients backpropagating through the network will optimize the
 \subsection{Examples of application of GNNs}
 
 \textbf{LHC Jet Tagging} \\
-At the LHC, algorithms must quickly determine the origin of particle jets (e.g., identifying if a jet originated from a bottom quark, charm quark, or light quark). Because jets are point clouds, GNN architectures like CMS's \textit{ParticleNet} and ATLAS's \textit{GN1/GN2} have superseded older sequence-based models (like RNNs) and CNNs. These graph networks achieve dramatic improvements, such as a $\sim 5\times$ better background rejection rate when isolating specific decay channels.
+At the LHC, algorithms must quickly determine the origin of particle jets (e.g., identifying if a jet originated from a bottom quark, charm quark, or light quark). Because jets are point clouds, GNN architectures like the CMS \textit{ParticleNet} and the ATLAS \textit{GN1/GN2} models have superseded older sequence-based models (like RNNs) and CNNs. These graph networks achieve dramatic improvements, such as a $\sim 5\times$ better background rejection rate when isolating specific decay channels.
 
 \textbf{Global Weather Forecasting}\\
-GNNs excel beyond particle physics. Google DeepMind \textit{GraphCast} models the Earth's atmosphere as a simultaneous multi-mesh graph to perform global weather forecasting. By passing messages across this massive spherical grid, it achieves predictions with similar or better accuracy than state of the art high-resolution numerical simulations (HRES) while operating significantly faster.
+GNNs excel beyond particle physics. Google DeepMind \textit{GraphCast} models the Earth's atmosphere as a simultaneous multi-mesh graph to perform global weather forecasting. By passing messages across this massive spherical grid, it achieves predictions with similar or better accuracy than state-of-the-art high-resolution numerical simulations (HRES) while operating significantly faster.
 
 \subsection{Advanced Concepts: Attention Mechanisms and Dynamic Topologies}\label{sec:intro_att_mech}
 While standard Message Passing Neural Networks are incredibly powerful, they traditionally treat the graph's connectivity as an \textit{a priori} hyperparameter. Furthermore, they update node representations without altering the underlying graph structure, which means that the number of nodes and edges remains strictly constant throughout the process. However, modern research and advanced physics applications often require much more flexible architectures.
@@ -180,7 +180,7 @@ Instead of hard-coding which nodes are connected using a binary incidence matrix
 
 Moreover, a standard GNN falls short when the task requires mapping an input graph of cardinality $M$ to an output of cardinality $N$, especially when $M \gg N$. A classic example in High Energy Physics is particle tracking: a small number of generated particles (cardinality $N$) might leave dozens of scattered hits (cardinality $M$) across different detector layers. A standard message passing block cannot intuitively reduce these $M$ reconstructed hits back to the $N$ original particles because it preserves the graph's initial dimensions.
 
-To bypass this limitation, researchers are exploring generalized structures like \textbf{hypergraphs}, where hyperedges can connect multiple nodes simultaneously. Another highly effective, state of the art technique is \textbf{Object Condensation}. In this approach, the GNN maps the input nodes into the latent representation space, where we mathematically define interactive potentials. For example, we can introduce a "spring-like" attractive potential that pulls together latent objects belonging to the same physical source, alongside a repulsive potential for background noise or distinct particles. By minimizing this defined potential, the calculation naturally becomes the neural network's loss function, allowing the model to cluster relevant objects together and dynamically reconstruct the original particle sources.
+To bypass this limitation, researchers are exploring generalized structures like \textbf{hypergraphs}, where hyperedges can connect multiple nodes simultaneously. Another highly effective, state-of-the-art technique is \textbf{Object Condensation}. In this approach, the GNN maps the input nodes into the latent representation space, where we mathematically define interactive potentials. For example, we can introduce a "spring-like" attractive potential that pulls together latent objects belonging to the same physical source, alongside a repulsive potential for background noise or distinct particles. By minimizing this defined potential, the calculation naturally becomes the neural network's loss function, allowing the model to cluster relevant objects together and dynamically reconstruct the original particle sources.
 
 \begin{comment}
 \subsection{Advanced Concepts: Set-to-Set Problems and Attention}
