@@ -142,9 +142,12 @@
 \null
 \newpage
 
-\tableofcontents
-
+\pagenumbering{roman} 
+\input{lezioni/0_preface} 
 \newpage
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
 
 % -------------------------------------------------------------------
 % PART I: BASICS
@@ -199,13 +202,10 @@
 \include{lezioni/d_ML2hands_on}
 \include{lezioni/d_ML3}
 \include{lezioni/d_ML4}
-\include{lezioni/d_ML4hands_on}
 \include{lezioni/d_ML5}
-\include{lezioni/d_ML5hands_on}
 \include{lezioni/d_ML6}
 \include{lezioni/d_ML6hands_on}
 %\end{comment}
-
 
 % -------------------------------------------------------------------
 % PART IV: Machine Learning (Advanced)
@@ -227,3 +227,4 @@
 % $1
 
 \end{document}
+

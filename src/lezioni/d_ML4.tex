@@ -1,12 +1,13 @@
 \section{Regularization, bias and variance more in depth}
 
 \subsection{A brief review}
-Let's review some useful concepts from the previous sections. \\
-Different machine learning techniques with specific sets of hyper-parameters) can represent different types of functions. Generally, a model with more free parameters can approximate a larger number of functions. This ability to represent many functions is referred to as the model \textit{capacity}, which basically represents the model ability to use information effectively. In the context of a Neural Network, adding more neurons (making it wider) or more layers (making it deeper) directly translates to a greater capacity. Remember also that our goal is not simply to fit the training data perfectly, but to ensure that the algorithm works well on unseen data, which means it has to have a good \textit{generalization capability}. if a model has too low of a capacity for the complexity of the data, it will fail to capture the underlying trend, resulting in \textit{underfitting}. Conversely, if the capacity is too high, the model will memorize the noise in the training set rather than the actual signal, leading to \textit{overfitting}. The difference between the training error and the generalization error is known as the \textit{generalization gap}. To achieve good performance on unseen data even when utilizing a high number of parameters, we must rely on \textit{regularization techniques}. The cost function can be modified by introducing a penalty term to limit certain parts of the model-parameter space, or we can use techniques like data augmentation, adding stochastic noise, or applying invariant transformations.
+Let's review some useful concepts from the previous sections. 
+
+Different machine learning techniques (with specific sets of hyper-parameters) can represent different types of functions. Generally, a model with more free parameters can approximate a larger number of functions. This ability to represent many functions is referred to as the model's \textit{capacity}, which basically represents the model's ability to use information effectively. In the context of a Neural Network, adding more neurons (making it wider) or more layers (making it deeper) directly translates to a greater capacity. Remember also that our goal is not simply to fit the training data perfectly, but to ensure that the algorithm works well on unseen data, which means it has to have a good \textit{generalization capability}. If a model has a capacity that is too low for the complexity of the data, it will fail to capture the underlying trend, resulting in \textit{underfitting}. Conversely, if the capacity is too high, the model will memorize the noise in the training set rather than the actual signal, leading to \textit{overfitting}. The difference between the training error and the generalization error is known as the \textit{generalization gap}. To achieve good performance on unseen data even when utilizing a high number of parameters, we must rely on \textit{regularization techniques}. The cost function can be modified by introducing a penalty term to limit certain parts of the model-parameter space, or we can use techniques like data augmentation, adding stochastic noise, or applying invariant transformations.
 
 \subsection{Bias vs Variance: a formal derivation for regression}
 
-Generalization and capacity are deeply connected, and finding the right balance is one of the core challenges in Machine Learning. To better understand this kind of tradeoff, we will lay out a formal mathematical demonstration in the case of regression.
+Generalization and capacity are deeply connected, and finding the right balance is one of the core challenges in Machine Learning. To better understand this kind of tradeoff, we will lay out a formal mathematical derivation in the case of regression.
 
 Let us consider a training dataset $S = \{x^{(i)}, y^{(i)}\}_{i=1}^n$ such that the true relationship is given by:
 \begin{equation}
@@ -43,7 +44,9 @@ where:
 
 \begin{figure}[H]
     \begin{minipage}[c]{0.6\textwidth}
-        Bias tends to decrease when the model becomes more complex, while variance shows the opposite behavior, as shown here. As you might imagine is never easy to reach the sweet spot between the two. \\ The concepts of capacity, generalization, bias, and variance are strictly intertwined. A model's capacity dictates its position on the bias-variance tradeoff: low-capacity models lack the expressivity to capture the true function, leading to high bias (underfitting), while high-capacity models tend to memorize the training noise, resulting in high variance (overfitting).
+        Bias tends to decrease when the model becomes more complex, while variance shows the opposite behavior, as shown here. As you might imagine, it is never easy to reach the sweet spot between the two. 
+        
+        The concepts of capacity, generalization, bias, and variance are strictly intertwined. A model's capacity dictates its position on the bias-variance tradeoff: low-capacity models lack the expressivity to capture the true function, leading to high bias (underfitting), while high-capacity models tend to memorize the training noise, resulting in high variance (overfitting).
     \end{minipage}\hfill 
     \begin{minipage}[c]{0.39\textwidth}
         \centering
@@ -74,19 +77,21 @@ While neural networks are extremely powerful, decision trees remain particularly
     \item[-] \textit{Pruning}: After building a full tree, branches that do not improve performance on a separate validation set are systematically removed.
 \end{itemize}
 
-To further combat the high variance inherent in decision trees, we rely on technique called \textbf{ensembling}. \\
+To further combat the high variance inherent in decision trees, we rely on a technique called \textbf{ensembling}. 
+
 Let's take $n$ random variables that are independently and identically distributed with variance $var(x)=\sigma^2$. The variance of their average is $var(\bar{x}) = \frac{\sigma^2}{n}$. If we drop the independence assumption, we introduce a correlation factor $\rho$:
 \begin{equation}
     var(\bar{x}) = \rho\sigma^2 + \frac{1-\rho}{n}\sigma^2
 \end{equation}
-Ensembling is a technique that combines many models called \textit{weak learners} to obtain a more robust metamodel. Here $x_i$ does not represent a training sample, but a different model / decision tree. That's why it is useful to drop the independence assumption, since different models may be trained on the same dataset. By increasing the number of models $n$ and decreasing the correlation $\rho$ between them, the overall variance drops significantly. There are four main ways to do this: using different algorithms, using different training sets, implementing bagging or implementing boosting. Let's see how those work
+Ensembling is a technique that combines many models called \textit{weak learners} to obtain a more robust metamodel. Here $x_i$ does not represent a training sample, but a different model / decision tree. That's why it is useful to drop the independence assumption, since different models may be trained on the same dataset. By increasing the number of models $n$ and decreasing the correlation $\rho$ between them, the overall variance drops significantly. There are four main ways to do this: using different algorithms, using different training sets, implementing bagging or implementing boosting. Let's see how those work.
 
-\textbf{Bagging} or \textbf{Bootstrap Aggregating)} is a typical method used in statistics to measure uncertainty. To implement it we define bootstrap samples $Z \sim S$ (where $S$ is our original training sample), sampling $M$ times from the training set \textit{with replacement} (each subsample has the same dimension as the initial dataset but with duplicates and missing data). We train a single model $G_m$ on each bootstrap sample, and we define the metamodel by averaging their outputs:
+\textbf{Bagging} or \textbf{Bootstrap Aggregating} is a typical method used in statistics to measure uncertainty. To implement it we define bootstrap samples $Z \sim S$ (where $S$ is our original training sample), sampling $M$ times from the training set \textit{with replacement} (each subsample has the same dimension as the initial dataset but with duplicates and missing data). We train a single model $G_m$ on each bootstrap sample, and we define the metamodel by averaging their outputs:
 \begin{equation*}
    G(m) = \frac{\sum_{m=1}^M G_m(x)}{M}
 \end{equation*}
-The larger $M$ is, the smaller the variance. \newline\newline
-This technique is fundamental for the so called \textit{Random Forest} algorithms. Bagging is well suited for decision trees because they inherently have high variance. However, to reduce correlation among single decision trees, random forests perform bagging plus a random subsampling in the feature space. This decreases the correlation term $\rho$.
+The larger $M$ is, the smaller the variance. 
+
+This technique is fundamental for the so-called \textit{Random Forest} algorithms. Bagging is well suited for decision trees because they inherently have high variance. However, to reduce correlation among single decision trees, random forests perform bagging plus a random subsampling in the feature space. This decreases the correlation term $\rho$.
 
 Unlike bagging, where models are trained independently, \textbf{boosting} trains models sequentially. The logic follows a recursive pattern:
 \begin{enumerate}
@@ -129,10 +134,10 @@ RMSprop fixes AdaGrad's vanishing learning rate by replacing the accumulator wit
 \begin{equation}
     r_j^{(t)} = \beta r_j^{(t-1)} + (1-\beta)\left(\frac{\partial J(\theta_j)}{\partial \theta_j}\right)^2
 \end{equation}
-By progressively "forgetting" older gradients (regulated by the decay coefficient $\beta$), RMSprop avoids the continuous accumulation of the second momentum. It works incredibly well, though it can be unstable in the very early stages of optimization.
+By progressively "forgetting" older gradients (regulated by the decay coefficient $\beta$), RMSprop avoids the continuous accumulation of the second moment. It works incredibly well, though it can be unstable in the very early stages of optimization.
 
 \textbf{Adam (Adaptive Moment Estimation)}:
-Adam delightfully merges momentum and RMSprop by keeping track of both the first momentum and the second momentum, adding a correction for initialization bias:
+Adam delightfully merges momentum and RMSprop by keeping track of both the first moment and the second moment, adding a correction for initialization bias:
 \begin{align}
     m_t &= \beta_1 m_{t-1} + (1-\beta_1)\frac{\partial J(\theta_j)}{\partial \theta_j} \\
     v_t &= \beta_2 v_{t-1} + (1-\beta_2)\left(\frac{\partial J(\theta_j)}{\partial \theta_j}\right)^2
@@ -146,3 +151,20 @@ Final update:
     \theta_j := \theta_j - \alpha \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}
 \end{equation}
 Typically, hyperparameters are set to $\beta_1 = 0.9$, $\beta_2 = 0.999$, and $\epsilon = 10^{-8}$.
+
+\section{Hands-on examples for CNNs}
+
+This section contains a simple but extremely useful example of computer vision using a CNN. You can take a better look at the notebook on Colab at the following link: \url{https://colab.research.google.com/drive/1dVbpncWSrYIXVQxWVv20HgCtG11kQQ7g?usp=sharing}.
+
+Since I have to start a new page in order to input the Notebook in my LaTeX file, here is a table containing all the Slam winners between 2006 and 2019, showcasing the dominance of the Big 3. As you can see, on this board there are only 4 names that are not spelled "Roger Federer", "Novak Djokovic" or "Rafael Nadal": the Swiss champion Stanislas Wawrinka (with his marvelous one-handed backhand), Britain's favorite Andy Murray (one of the best returners in the history of the sport), the Argentinian giant Juan Martin del Potro (with his terrifying forehand, unfortunately stopped by wrist injuries) and the Croatian warrior Marin Cilic.  
+
+\begin{center}
+    \includegraphics[width=\textwidth]{figuresML/slam_winners.png}
+\end{center}
+
+%left down right up
+%\includegraphics[page=1, width=0.85\textwidth, clip, trim=3cm 1cm 3cm 1.5cm]{lezioni/d_ML4_SOL.pdf}
+%\includepdf[pages=2-]{lezioni/d_ML4_SOL.pdf}
+
+\includepdf[pages=-, pagecommand={\thispagestyle{plain}}]{lezioni/d_ML4_SOL.pdf}
+% ML_3 nel mio Colab

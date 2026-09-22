@@ -212,17 +212,27 @@ The \texttt{multiprocessing} module provides a \texttt{Lock} class to deal with 
 
 \input{pygments/synchro2}
 
-\subsection{Threading in Python}
+\subsection{Threading in Python} 
 
-As said, multiple threads (which share the same global variables stored in the heap) can exist within one process, and each one of them contains its own register set and local variables (stored in the stack). 
 
-\begin{center}
-\includegraphics[width=0.4\textwidth]{figuresP/lesson_parallel_2B_pag_18}
-\end{center}
+\begin{figure}[H]
+\begin{minipage}{0.55\textwidth}
+As said, multiple threads (which share the same global variables stored in the heap) can exist within one process, and each one of them contains its own register set and local variables (stored in the stack), as represented in figure.
 
 \subsubsection{- The \texttt{threading} module}
 
 Here's a simple example on how to define multiple threads using the \texttt{Thread} object in the \texttt{threading} module. Note that the syntax is very much similar to the \texttt{multiprocessing} module. First of all note that the PID of the process is the same for both threads, as expected. The following piece of code gives the impression that the threads \texttt{t1} and \texttt{t2} are running in parallel, but due to the GIL that's not the case. 
+
+\end{minipage}\hfill
+\begin{minipage}[c]{0.38\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figuresP/lesson_parallel_2B_pag_18}
+\end{minipage}
+\end{figure}
+
+%\begin{center}
+%\includegraphics[width=0.3\textwidth]{figuresP/lesson_parallel_2B_pag_18}
+%\end{center}
 
 \input{pygments/thread1}
 
